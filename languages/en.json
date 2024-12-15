@@ -3,5 +3,10 @@
     "NSContactsUsageDescription": "Commercial management app",
     "welcome": "Welcome",
     "what_do_you_want_to_do_today": "What do you want to do today?",
-    "clear_all": "Clear all"
+    "clear_all": "Clear all",
+    "email": "Email",
+    "email_placeholder": "bruce@wayne.com",
+    "password": "Password",
+    "password_placeholder": "91939Dc#31",
+    "sign-in": "Sign In"
 }

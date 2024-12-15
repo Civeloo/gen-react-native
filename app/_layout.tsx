@@ -1,45 +1,11 @@
-import { deviceLanguage } from "@/languages/languages";
-import { TITLE_VALUES, db, useAndStartPersister } from "@/services/database/database";
-import { Stack } from "expo-router";
-import { StyleSheet, Text } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { Provider, useCreateStore } from "tinybase/ui-react";
+import { Slot } from 'expo-router';
+import { SessionProvider } from '@/services/session/ctx';
 
-function RootLayout() {
-  // Initialize the (memoized) TinyBase store and persist it.
-  const store = useCreateStore(() => db);
-  useAndStartPersister(store);
-  const projectId = crypto.randomUUID();
-  store.setValue('currentProject', projectId)
-  store.setValue(TITLE_VALUES, 'Todo App');
+export default function Root() {
+  // Set up the auth context and render our layout inside of it.
   return (
-    // Wrap the app in TinyBase context, so the store is default throughout and
-    // a SafeAreaProvider/SafeAreaView so it fits the screen.
-    <Provider store={store}>
-      <SafeAreaProvider>
-        <SafeAreaView style={styles.container}>
-          <Stack />
-          <Text>{deviceLanguage}</Text>
-        </SafeAreaView>
-      </SafeAreaProvider>
-    </Provider>
+    <SessionProvider>
+      <Slot />
+    </SessionProvider>
   );
-}
-
-let AppEntryPoint = RootLayout;
-
-const storybookEnabled = process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === "true";
-if (storybookEnabled) {
-  AppEntryPoint = require("../.storybook").default;
-}
-
-export default AppEntryPoint;
-
-// Styles for the app.
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#fff',
-    flex: 1,
-    margin: 16,
-  },
-});
+};

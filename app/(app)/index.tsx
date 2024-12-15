@@ -3,6 +3,7 @@ import { ListTodo } from '@/components/list-todo';
 import { NewTodoForm } from '@/components/new-todo-form';
 import { DONE_CELL, TEXT_CELL, TITLE_VALUES, TODO_TABLE } from '@/services/database/database';
 import Todos from '@/services/database/todos.model';
+import { useSession } from '@/services/session/ctx';
 import { useState } from 'react';
 import {
   StyleSheet, Text,
@@ -14,6 +15,8 @@ import {
 } from 'tinybase/ui-react';
 
 export default function Index() {
+  const { signOut } = useSession();
+
   const getData = () => Todos.all();
   const [data, setData] = useState(getData());
   const refreshData = () => setData(getData());
@@ -41,6 +44,13 @@ export default function Index() {
       <NewTodoForm onSave={handleSave} />
       <ListTodo data={data} onRemove={handleRemove} />
       <ClearTodos show={useHasTable(TODO_TABLE)} onPress={handleClear} />
+      <Text
+        onPress={() => {
+          // The `app/(app)/_layout.tsx` will redirect to the sign-in screen.
+          signOut();
+        }}>
+        Sign Out
+      </Text>
     </View>
   );
 }

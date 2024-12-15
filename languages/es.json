@@ -3,5 +3,10 @@
     "NSContactsUsageDescription": "App de gestión comercial",
     "welcome": "Hola",
     "what_do_you_want_to_do_today": "Que quieres hacer hoy?",
-    "clear_all": "Borrar todo"
+    "clear_all": "Borrar todo",
+    "email": "Correo electrónico",
+    "email_placeholder": "bruno@diaz.com.ar",
+    "password": "Contraseña",
+    "password_placeholder": "91939Dc#31",
+    "sign-in": "Iniciar sesión"
 }
