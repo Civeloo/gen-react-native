@@ -8,5 +8,8 @@
     "email_placeholder": "bruno@diaz.com.ar",
     "password": "Contraseña",
     "password_placeholder": "91939Dc#31",
-    "sign-in": "Iniciar sesión"
+    "confirm": "Confirmar",
+    "confirm_placeholder": "Reescriba su Contraseña",
+    "sign-in": "Iniciar sesión",
+    "sign-up": "Registrarse"
 }

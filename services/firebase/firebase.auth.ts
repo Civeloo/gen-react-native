@@ -1,7 +1,7 @@
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "./firebase-config";
 
-const authSignupPassword = async (email, password) => {
+const firebaseSignUp = async (email, password) => {
     const user = await createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             // Signed up 
@@ -11,15 +11,12 @@ const authSignupPassword = async (email, password) => {
         })
         .catch((error) => {
             const errorCode = error.code;
-            console.error(errorCode);
             const errorMessage = error.message;
-            console.error(errorMessage);
-            // ..
         });
     return user;
 }
 
-const authSigninPassword = (email, password) =>
+const firebaseSignIn = (email, password) =>
     signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             // Signed in 
@@ -28,22 +25,22 @@ const authSigninPassword = (email, password) =>
         })
         .catch((error) => {
             const errorCode = error.code;
-            console.error(errorCode);
             const errorMessage = error.message;
-            console.error(errorMessage);
         });
 
-const authStateListener = () =>
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            // User is signed in, see docs for a list of available properties
-            // https://firebase.google.com/docs/reference/js/auth.user
-            const uid = user.uid;
-            // ...
-        } else {
-            // User is signed out
-            // ...
-        }
-    });
+const firebaseAuthState = () =>
+    new Promise((resolve, reject) => {
+        const unsubscribe = onAuthStateChanged(
+          auth,
+          (user) => {
+            unsubscribe(); 
+            resolve(user || null);
+          },
+          (error) => {
+            unsubscribe(); 
+            reject(error);
+          }
+        );
+      });
 
-export { authSigninPassword, authSignupPassword, authStateListener };
+export { firebaseSignIn, firebaseSignUp, firebaseAuthState };

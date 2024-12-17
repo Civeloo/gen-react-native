@@ -2,16 +2,19 @@ import { deviceLanguage } from "@/languages/languages";
 import { TITLE_VALUES, db, useAndStartPersister } from "@/services/database/database";
 import { useSession } from "@/services/session/ctx";
 import { Redirect, Stack } from "expo-router";
-import { StyleSheet, Text } from "react-native";
+import { useEffect } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Provider, useCreateStore } from "tinybase/ui-react";
 
 function RootLayout() {
-  const { session, isLoading } = useSession();
+  const { authState, session, isLoading } = useSession();
 
   // You can keep the splash screen open, or render a loading screen like we do here.
   if (isLoading) {
-    return <Text>Loading...</Text>;
+    return (<View style={styles.container}>
+      <Text>Loading...</Text>
+    </View>);
   }
 
   // Only require authentication within the (app) group's layout as users
@@ -28,6 +31,11 @@ function RootLayout() {
   const projectId = crypto.randomUUID();
   store.setValue('currentProject', projectId)
   store.setValue(TITLE_VALUES, 'Todo App');
+
+  useEffect(() => {
+    authState();
+  }, []);
+
   return (
     // Wrap the app in TinyBase context, so the store is default throughout and
     // a SafeAreaProvider/SafeAreaView so it fits the screen.
