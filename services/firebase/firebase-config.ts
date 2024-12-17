@@ -1,9 +1,12 @@
 import { FIREBASE_CONFIG } from '@/config';
-import { initializeApp } from 'firebase/app';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getAnalytics } from "firebase/analytics";
+import { getApps, initializeApp } from 'firebase/app';
+import { browserLocalPersistence, getAuth, getReactNativePersistence, initializeAuth } from 'firebase/auth';
+import { Platform } from 'react-native';
 
 // Optionally import the services that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
-import { getAnalytics } from "firebase/analytics";
 // import {...} from "firebase/auth";
 // import {...} from "firebase/database";
 // import {...} from "firebase/firestore";
@@ -23,8 +26,21 @@ import { getAnalytics } from "firebase/analytics";
   appId: 'app-id',
   measurementId: 'G-measurement-id',
 }; */
+const firebaseConfig = FIREBASE_CONFIG;
 
-const app = initializeApp(FIREBASE_CONFIG);
+let auth, analytics;
+// Initialize the firebase app if no app exists
+if (!getApps().length) {
+  const app = initializeApp(firebaseConfig);
+  auth = initializeAuth(app, {
+    persistence: (Platform?.OS === 'web') ? browserLocalPersistence : getReactNativePersistence(AsyncStorage),
+  });
+  // analytics = getAnalytics(app);
+} else {
+  auth = getAuth();
+  // analytics = getAnalytics();
+}
 // For more information on how to access Firebase in your project,
 // see the Firebase documentation: https://firebase.google.com/docs/web/setup#access-firebase
-const analytics = getAnalytics(app);
+
+export { analytics, auth };

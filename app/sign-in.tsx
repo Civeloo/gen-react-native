@@ -23,8 +23,9 @@ const SignInPage: React.FC = () => {
     const { ...methods } = useForm<FormValues>({ resolver: yupResolver(schema) });
 
     const onSubmit: SubmitHandler<FormValues> = (data) => {
+        const { email, password } = data;
         methods.reset();
-        signIn();
+        signIn(email, password);
         // Navigate after signing in. You may want to tweak this to ensure sign-in is
         // successful before navigating.
         router.replace('/');
