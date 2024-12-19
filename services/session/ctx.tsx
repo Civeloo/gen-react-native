@@ -1,12 +1,13 @@
 import { useStorageState } from '@/hooks/useStorageState';
 import { createContext, useContext, type PropsWithChildren } from 'react';
-import { firebaseAuthState, firebaseSignIn, firebaseSignUp } from '../firebase/firebase.auth';
+import { firebaseAuthState, firebaseGoogleSignIn, firebaseSignIn, firebaseSignOut, firebaseSignUp } from '../firebase/firebase.auth';
 
 type Sign = (email: string, password: string) => void;
 type AuthContextProps = {
   authState: () => void;
   signIn: Sign;
   signUp: Sign;
+  googleSignIn: (token: string) => void;
   signOut: () => void;
   session?: string | null;
   isLoading: boolean;
@@ -16,6 +17,7 @@ const AuthContext = createContext<AuthContextProps>({
   authState: () => null,
   signIn: () => null,
   signUp: () => null,
+  googleSignIn: () => null,
   signOut: () => null,
   session: null,
   isLoading: false,
@@ -55,7 +57,14 @@ export function SessionProvider({ children }: PropsWithChildren) {
               setSession(user ? user.uid : null);
             });
         },
+        googleSignIn: (token) => {
+          firebaseGoogleSignIn(token)
+            .then((user) => {
+              setSession(user ? user.uid : null);
+            });
+        },
         signOut: () => {
+          firebaseSignOut()
           setSession(null);
         },
         session,

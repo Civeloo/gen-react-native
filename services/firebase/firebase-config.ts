@@ -1,8 +1,8 @@
 import { FIREBASE_CONFIG } from '@/config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getAnalytics } from "firebase/analytics";
+import { Analytics } from "firebase/analytics";
 import { getApps, initializeApp } from 'firebase/app';
-import { browserLocalPersistence, getAuth, getReactNativePersistence, initializeAuth } from 'firebase/auth';
+import { Auth, browserLocalPersistence, getAuth, getReactNativePersistence, initializeAuth } from 'firebase/auth';
 import { Platform } from 'react-native';
 
 // Optionally import the services that you want to use
@@ -28,7 +28,8 @@ import { Platform } from 'react-native';
 }; */
 const firebaseConfig = FIREBASE_CONFIG;
 
-let auth, analytics;
+let auth: Auth;
+let analytics: Analytics;
 // Initialize the firebase app if no app exists
 if (!getApps().length) {
   const app = initializeApp(firebaseConfig);

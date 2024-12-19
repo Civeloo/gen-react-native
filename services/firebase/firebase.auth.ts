@@ -1,4 +1,5 @@
-import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { GoogleAuthProvider, createUserWithEmailAndPassword, onAuthStateChanged, signInWithCredential, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "./firebase-config";
 
 const firebaseSignUp = async (email, password) => {
@@ -28,19 +29,37 @@ const firebaseSignIn = (email, password) =>
             const errorMessage = error.message;
         });
 
+const firebaseGoogleSignIn = (token) =>
+    signInWithCredential(auth, GoogleAuthProvider.credential(token))
+        .then((result) => {
+            // Signed in
+            const user = result.user;
+            return user;
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+        });
+
 const firebaseAuthState = () =>
     new Promise((resolve, reject) => {
         const unsubscribe = onAuthStateChanged(
-          auth,
-          (user) => {
-            unsubscribe(); 
-            resolve(user || null);
-          },
-          (error) => {
-            unsubscribe(); 
-            reject(error);
-          }
+            auth,
+            (user) => {
+                unsubscribe();
+                resolve(user || null);
+            },
+            (error) => {
+                unsubscribe();
+                reject(error);
+            }
         );
-      });
+    });
 
-export { firebaseSignIn, firebaseSignUp, firebaseAuthState };
+const firebaseSignOut = () => {
+    auth.signOut();
+    GoogleSignin.revokeAccess();
+    GoogleSignin.signOut();
+}
+
+export { firebaseAuthState, firebaseGoogleSignIn, firebaseSignIn, firebaseSignOut, firebaseSignUp };
