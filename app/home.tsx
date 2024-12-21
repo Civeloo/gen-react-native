@@ -4,18 +4,10 @@ import { useSession } from "@/services/session/ctx";
 import { GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import { router } from "expo-router";
 import { useEffect } from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
-export default function Index() {
+export default function HomePage() {
   const { session, googleSignIn } = useSession();
-
-  useEffect(() => {
-    GoogleSignin.configure({
-      webClientId: GOOGLE_SIGN_IN_WEB_CLIENT_ID,
-      offlineAccess: true,
-      forceCodeForRefreshToken: true,
-    });
-  }, []);
 
   async function onGoogleButtonPress() {
     // Check if your device supports Google Play
@@ -31,21 +23,31 @@ export default function Index() {
     if (!idToken) {
       throw new Error('No ID token found');
     }
-    console.log('idToken', idToken)
     googleSignIn(idToken);
-    router.replace(session ? '/(app)' : '/');
   }
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: GOOGLE_SIGN_IN_WEB_CLIENT_ID,
+      offlineAccess: true,
+      forceCodeForRefreshToken: true,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (session) {
+      router.replace('/(app)');
+    }
+  }, [session]);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{getLocalizedText('CFBundleDisplayName')}</Text>
       <View style={styles.buttons}>
-        <Button title={getLocalizedText('sign-in')} onPress={() => router.push("/sign-in")} />
-        <Button title={getLocalizedText('sign-up')} onPress={() => router.push("/sign-up")} />
         <GoogleSigninButton
           // size={GoogleSigninButton.Size.Wide}
           // color={GoogleSigninButton.Color.Dark}
-          onPress={onGoogleButtonPress}
+          onPress={() => onGoogleButtonPress()}
         />
       </View>
     </View>

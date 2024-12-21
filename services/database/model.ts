@@ -1,9 +1,10 @@
 import { db } from './database';
+import * as Crypto from 'expo-crypto';
 
 const Model = (table) => {
 
   const add = (object) => {
-    const id = crypto.randomUUID();
+    const id = Crypto.randomUUID();
     db.setRow(table, id, object)
     return { [id]: object };
   }

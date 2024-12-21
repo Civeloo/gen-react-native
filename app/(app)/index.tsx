@@ -4,6 +4,7 @@ import { NewTodoForm } from '@/components/new-todo-form';
 import { DONE_CELL, TEXT_CELL, TITLE_VALUES, TODO_TABLE } from '@/services/database/database';
 import Todos from '@/services/database/todos.model';
 import { useSession } from '@/services/session/ctx';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import {
   StyleSheet, Text,
@@ -32,6 +33,11 @@ export default function Index() {
     refreshData();
   }
 
+  const handleSignOut = () => {
+    signOut();
+    router.replace('/');
+  }
+
   return (
     <View
       style={{
@@ -45,10 +51,7 @@ export default function Index() {
       <ListTodo data={data} onRemove={handleRemove} />
       <ClearTodos show={useHasTable(TODO_TABLE)} onPress={handleClear} />
       <Text
-        onPress={() => {
-          // The `app/(app)/_layout.tsx` will redirect to the sign-in screen.
-          signOut();
-        }}>
+        onPress={handleSignOut}>
         Sign Out
       </Text>
     </View>
