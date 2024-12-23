@@ -1,21 +1,14 @@
 import { Platform } from "react-native";
-import { Store, TablesSchema, ValuesSchema, createIndexes, createRelationships, createStore } from 'tinybase';
+import { Store, ValuesSchema, createIndexes, createRelationships, createStore } from 'tinybase';
 import {
     useCreatePersister
 } from 'tinybase/ui-react';
+import { tablesSchema } from "./schema";
 
 const valuesSchema: ValuesSchema = {
     title: { type: 'string' },
 } as const; // NB the `as const` modifier
 const TITLE_VALUES = Object.keys(valuesSchema)[0];
-
-// The TinyBase table contains the todos, with 'text' and 'done' cells.
-const tablesSchema: TablesSchema = {
-    todos: {
-        text: { type: 'string' },
-        done: { type: 'boolean', default: false },
-    },
-} as const;
 const TODO_TABLE = Object.keys(tablesSchema)[0];
 const TEXT_CELL = Object.keys(tablesSchema[TODO_TABLE])[0];
 const DONE_CELL = Object.keys(tablesSchema[TODO_TABLE])[1];
@@ -38,4 +31,5 @@ const db = store.setSchema(tablesSchema, valuesSchema);
 const indexes = createIndexes(db);
 const relations = createRelationships(db);
 
-export { DONE_CELL, TEXT_CELL, TITLE_VALUES, TODO_TABLE, db, useAndStartPersister, indexes, relations };
+export { DONE_CELL, TEXT_CELL, TITLE_VALUES, TODO_TABLE, db, indexes, relations, useAndStartPersister };
+
