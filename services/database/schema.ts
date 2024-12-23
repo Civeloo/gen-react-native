@@ -90,8 +90,8 @@ const tablesSchema: TablesSchema = {
     ); */
     products: {
         productName: { type: 'string' },
-        supplierID: { type: 'number' },
-        categoryID: { type: 'number' },
+        supplierID: { type: 'string' },
+        categoryID: { type: 'string' },
         unit: { type: 'string' },
         price: { type: 'number' },
     },
@@ -106,10 +106,10 @@ const tablesSchema: TablesSchema = {
         FOREIGN KEY (ShipperID) REFERENCES Shippers (ShipperID)
     ); */
     orders: {
-        customerID: { type: 'number' },
-        employeeID: { type: 'number' },
+        customerID: { type: 'string' },
+        employeeID: { type: 'string' },
         orderDate: { type: 'string' },
-        shipperID: { type: 'number' },
+        shipperID: { type: 'string' },
     },
     /* CREATE TABLE OrderDetails(
         OrderDetailID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -120,8 +120,8 @@ const tablesSchema: TablesSchema = {
         FOREIGN KEY (ProductID) REFERENCES Products (ProductID)
     ); */
     orderDetails: {
-        orderID: { type: 'number' },
-        productID: { type: 'number' },
+        orderID: { type: 'string' },
+        productID: { type: 'string' },
         quantity: { type: 'number' },
     },
 } as const; // NB the `as const` modifier
