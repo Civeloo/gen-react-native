@@ -94,8 +94,6 @@ const tablesSchema: TablesSchema = {
         categoryID: { type: 'number' },
         unit: { type: 'string' },
         price: { type: 'number' },
-        category: { type: 'string' },
-        supplier: { type: 'string' },
     },
     /* CREATE TABLE Orders(
         OrderID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -112,9 +110,6 @@ const tablesSchema: TablesSchema = {
         employeeID: { type: 'number' },
         orderDate: { type: 'string' },
         shipperID: { type: 'number' },
-        employee: { type: 'string' },
-        customer: { type: 'string' },
-        shipper: { type: 'string' },
     },
     /* CREATE TABLE OrderDetails(
         OrderDetailID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -128,8 +123,6 @@ const tablesSchema: TablesSchema = {
         orderID: { type: 'number' },
         productID: { type: 'number' },
         quantity: { type: 'number' },
-        order: { type: 'string' },
-        product: { type: 'string' },
     },
 } as const; // NB the `as const` modifier
 
