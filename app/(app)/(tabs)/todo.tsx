@@ -15,8 +15,8 @@ import {
   useValue
 } from 'tinybase/ui-react';
 
-export default function Index() {
-  const { signOut } = useSession();
+export default function TodoPage() {
+  // const { signOut } = useSession();
 
   const getData = () => Todos.all();
   const [data, setData] = useState(getData());
@@ -33,10 +33,7 @@ export default function Index() {
     refreshData();
   }
 
-  const handleSignOut = () => {
-    signOut();
-    router.replace('/');
-  }
+
 
   return (
     <View
@@ -50,10 +47,6 @@ export default function Index() {
       <NewTodoForm onSave={handleSave} />
       <ListTodo data={data} onRemove={handleRemove} />
       <ClearTodos show={useHasTable(TODO_TABLE)} onPress={handleClear} />
-      <Text
-        onPress={handleSignOut}>
-        Sign Out
-      </Text>
     </View>
   );
 }

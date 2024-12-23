@@ -1,4 +1,3 @@
-import { deviceLanguage } from "@/languages/languages";
 import { TITLE_VALUES, db, useAndStartPersister } from "@/services/database/database";
 import { useSession } from "@/services/session/ctx";
 import * as Crypto from 'expo-crypto';
@@ -42,8 +41,15 @@ function RootLayout() {
     <Provider store={store}>
       <SafeAreaProvider>
         <SafeAreaView style={styles.container}>
-          {isLoading ? <IsLoading /> : <Stack />}
-          <Text>{deviceLanguage}</Text>
+          {isLoading
+            ?
+            <IsLoading />
+            :
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              {/* <Stack.Screen name="+not-found" /> */}
+            </Stack>}
+          {/* <Text>{deviceLanguage}</Text> */}
         </SafeAreaView>
       </SafeAreaProvider>
     </Provider>
@@ -57,13 +63,12 @@ if (storybookEnabled) {
   AppEntryPoint = require("@/.storybook").default;
 }
 
-export default AppEntryPoint;
-
 // Styles for the app.
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
     flex: 1,
-    margin: 16,
   },
 });
+
+export default AppEntryPoint;
