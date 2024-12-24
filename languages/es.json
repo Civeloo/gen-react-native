@@ -11,5 +11,8 @@
     "confirm": "Confirmar",
     "confirm_placeholder": "Reescriba su Contraseña",
     "sign-in": "Iniciar sesión",
-    "sign-up": "Registrarse"
+    "sign-up": "Registrarse",
+    "product-name-placeholder": "Nombre del producto",
+    "unit-placeholder": "Unidad",
+    "price-placeholder": "Precio"
 }

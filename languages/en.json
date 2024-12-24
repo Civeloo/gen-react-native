@@ -11,5 +11,8 @@
     "confirm": "Confirm",
     "confirm_placeholder": "Retype your password",
     "sign-in": "Sign In",
-    "sign-up": "Sign Up"
+    "sign-up": "Sign Up",
+    "product-name-placeholder": "Product name",
+    "unit-placeholder": "Unit",
+    "price-placeholder": "Price"
 }
