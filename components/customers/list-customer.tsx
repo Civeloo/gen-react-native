@@ -1,24 +1,24 @@
 import { Button, FlatList, StyleSheet, Text, View } from "react-native";
 
-// A list component to show all the products.
-export const ListProduct = ({ data, onRemove }) => {
+// A list component to show all the customers.
+export const ListCustomer = ({ data, onRemove }) => {
     const renderItem = ({ item }) =>
         <View style={styles.item}>
-            <Text style={styles.text}>{item['productName']}</Text>
-            <Text style={styles.text}>{item['unit']}</Text>
-            <Text style={styles.text}>{item['price']}</Text>
+            <Text style={styles.text}>{item['customerName']}</Text>
+            <Text style={styles.text}>{item['contact']}</Text>
+            <Text style={styles.text}>{item['tin']}</Text>
             <Button
                 title="-"
                 color="red"
                 onPress={() => onRemove(item?.id)} />
         </View>;
     return (
-    <View style={styles.container}>
-        <FlatList
-            data={data}
-            renderItem={renderItem}
-        />
-    </View>
+        <View style={styles.container}>
+            <FlatList
+                data={data}
+                renderItem={renderItem}
+            />
+        </View>
     );
 };
 

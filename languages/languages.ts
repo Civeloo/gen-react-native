@@ -26,4 +26,3 @@ const deviceLanguage = i18n.locale;
 const getLocalizedText = (key: string): string => i18n.t(key);
 
 export { deviceLanguage, getLocalizedText };
-

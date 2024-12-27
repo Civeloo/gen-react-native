@@ -14,5 +14,8 @@
     "sign-up": "Sign Up",
     "product-name-placeholder": "Product name",
     "unit-placeholder": "Unit",
-    "price-placeholder": "Price"
+    "price-placeholder": "Price",
+    "customer-name-placeholder": "Customer name",
+    "contact-placeholder": "Contact",
+    "tin-placeholder": "TIN"
 }

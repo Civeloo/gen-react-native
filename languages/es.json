@@ -14,5 +14,8 @@
     "sign-up": "Registrarse",
     "product-name-placeholder": "Nombre del producto",
     "unit-placeholder": "Unidad",
-    "price-placeholder": "Precio"
+    "price-placeholder": "Precio",
+    "customer-name-placeholder": "Nombre del cliente",
+    "contact-placeholder": "Contacto",
+    "tin-placeholder": "Número de identificación fiscal"
 }

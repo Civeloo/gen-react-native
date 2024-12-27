@@ -28,11 +28,13 @@ const tablesSchema: TablesSchema = {
     ); */
     customers: {
         customerName: { type: 'string' },
-        contactName: { type: 'string' },
-        address: { type: 'string' },
-        city: { type: 'string' },
-        postalCode: { type: 'string' },
-        country: { type: 'string' },
+        // contactName: { type: 'string' },
+        // address: { type: 'string' },
+        // city: { type: 'string' },
+        // postalCode: { type: 'string' },
+        // country: { type: 'string' },
+        contact: { type: 'string' },
+        tin: { type: 'string' },
     },
     /* CREATE TABLE Employees
     (
