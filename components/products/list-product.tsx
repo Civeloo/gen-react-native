@@ -1,13 +1,12 @@
-import { PRODUCT_NAME_CELL, UNIT_CELL, PRICE_CELL } from "@/services/database/schema";
 import { Button, FlatList, StyleSheet, Text, View } from "react-native";
 
 // A list component to show all the products.
 export const ListProduct = ({ data, onRemove }) => {
     const renderItem = ({ item }) =>
         <View style={styles.item}>
-            <Text style={styles.text}>{item[PRODUCT_NAME_CELL]}</Text>
-            <Text style={styles.text}>{item[UNIT_CELL]}</Text>
-            <Text style={styles.text}>{item[PRICE_CELL]}</Text>
+            <Text style={styles.text}>{item['ProductName']}</Text>
+            <Text style={styles.text}>{item['Unit']}</Text>
+            <Text style={styles.text}>{item['Price']}</Text>
             <Button
                 title="-"
                 color="red"

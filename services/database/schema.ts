@@ -126,19 +126,4 @@ const tablesSchema: TablesSchema = {
     },
 } as const; // NB the `as const` modifier
 
-const PRODUCTS_TABLE = Object.keys(tablesSchema)[6];
-const PRODUCT_NAME_CELL = Object.keys(tablesSchema[PRODUCTS_TABLE])[0];
-const SUPPLIER_ID_CELL = Object.keys(tablesSchema[PRODUCTS_TABLE])[1];
-const CATEGORY_ID_CELL = Object.keys(tablesSchema[PRODUCTS_TABLE])[2];
-const UNIT_CELL = Object.keys(tablesSchema[PRODUCTS_TABLE])[3];
-const PRICE_CELL = Object.keys(tablesSchema[PRODUCTS_TABLE])[4];
-
-export {
-    PRODUCTS_TABLE,
-    PRODUCT_NAME_CELL,
-    SUPPLIER_ID_CELL,
-    CATEGORY_ID_CELL,
-    UNIT_CELL,
-    PRICE_CELL,
-    tablesSchema
-};
+export { tablesSchema };

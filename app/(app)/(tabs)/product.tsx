@@ -19,7 +19,7 @@ export default function ProductPage() {
     return (
         <View style={styles.container}>
             <NewProductForm onSave={handleSave} />
-                <ListProduct data={data} onRemove={handleRemove} />
+            <ListProduct data={data} onRemove={handleRemove} />
         </View>
     );
 };
