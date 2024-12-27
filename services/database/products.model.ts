@@ -1,16 +1,15 @@
 import { indexes } from './database';
 import Model from './model';
-import { PRODUCTS_TABLE } from './schema';
 
 indexes.setIndexDefinition(
     'byPriority',
-    PRODUCTS_TABLE,
+    'products',
     'priority'
 );
 
 const Products = (() => {
     // our base functionality...
-    const baseProducts = Model(PRODUCTS_TABLE);
+    const base = Model('products');
 
     // get all the todo ids associated with this project
     const priorities = () =>
@@ -18,10 +17,10 @@ const Products = (() => {
     const idsByPriority = (priority) =>
         indexes.getSliceRowIds('byPriority', priority);
     const byPriority = (priority) =>
-        idsByPriority(priority).map(baseProducts.byId)
+        idsByPriority(priority).map(base.byId)
 
     return {
-        ...baseProducts,
+        ...base,
         priorities,
         byPriority
     }
