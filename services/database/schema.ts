@@ -124,6 +124,7 @@ const tablesSchema: TablesSchema = {
     orderDetails: {
         orderID: { type: 'string' },
         productID: { type: 'string' },
+        price: { type: 'number' },
         quantity: { type: 'number' },
     },
 } as const; // NB the `as const` modifier

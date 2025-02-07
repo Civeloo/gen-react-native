@@ -4,6 +4,7 @@ import {
     useCreatePersister
 } from 'tinybase/ui-react';
 import { tablesSchema } from "./schema";
+import { INITIAL_ORDER_DETAILS, INITIAL_ORDERS, INITIAL_PRODUCTS } from "./data";
 
 const valuesSchema: ValuesSchema = {
     title: { type: 'string' },
@@ -27,9 +28,21 @@ const useAndStartPersister = (store: Store) =>
 
 // Initialize the (memoized) TinyBase store and persist it.
 const store = createStore();
-const db = store.setSchema(tablesSchema, valuesSchema);
+const db = store
+    .setSchema(tablesSchema, valuesSchema)
+    .setTables({
+        products: INITIAL_PRODUCTS.products,
+        orders: INITIAL_ORDERS.orders,
+        orderDetails: INITIAL_ORDER_DETAILS.orderDetails
+    });
+
 const indexes = createIndexes(db);
 const relations = createRelationships(db);
+relations.setRelationshipDefinition(
+  'orderWithDetails', // relationshipId
+  'orderDetails', //       localTableId to link from
+  'orders', //    remoteTableId to link to
+  'orderID', //    cellId containing remote key
+);
 
 export { DONE_CELL, TEXT_CELL, TITLE_VALUES, TODO_TABLE, db, indexes, relations, useAndStartPersister };
-
