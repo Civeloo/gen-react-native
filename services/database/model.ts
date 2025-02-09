@@ -1,10 +1,11 @@
+import { getUUIDv4 } from '@/utils';
 import { db, relations } from './database';
-import * as Crypto from 'expo-crypto';
+
 
 const Model = (table) => {
 
-  const add = (object) => {
-    const id = Crypto.randomUUID();
+  const add = (object: any, id?: string) => {
+    id = id ?? getUUIDv4();
     db.setRow(table, id, object)
     return { [id]: object };
   }

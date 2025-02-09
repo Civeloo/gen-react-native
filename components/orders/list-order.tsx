@@ -1,37 +1,50 @@
+import Customers from "@/services/database/customers.model";
 import Orders from "@/services/database/orders.model";
 import { Button, FlatList, StyleSheet, Text, View } from "react-native";
+import { SearchList } from "../search-list";
+import { useState } from "react";
 
 // A list component to show all the orders.
 export const ListOrder = ({ data, onRemove }) => {
-    const renderItem = ({ item }) => {
-        const orderDetails = Orders.inner(item?.id, 'orderWithDetails') as OrderDetails[];
+    const [selected, setSelected] = useState({});
+
+    const renderItem = ({item}:{item:Order}) => {
+        const order = item;
+        const orderDetails = Orders.inner(order?.id, 'orderWithDetails') as OrderDetails[];
+        const customer = Customers.byId(order?.customerID);
+        const customerName = customer?.customerName || 'Customer';
         const total = orderDetails.reduce((acc, orderDetail) => acc + orderDetail.price * orderDetail.quantity, 0);
+
         return (
-            <View style={styles.item}>
+            <View style={styles.order}>
                 <View style={styles.header}>
-                    <Text style={styles.title}>{item['customerID']}</Text>
+                    <Text style={styles.title}>{customerName}</Text>
                     <Button
                         title="  -  "
                         color="red"
-                        onPress={() => onRemove(item?.id)} />
+                        onPress={() => onRemove(order?.id)} />
                 </View>
-                <Text style={styles.date}>{item['orderDate']}</Text>
+                <Text style={styles.date}>{order['orderDate']}</Text>
                 <Text style={styles.total}>Total: ${total.toFixed(2)}</Text>
                 <View style={styles.detailList}>
                     {orderDetails.map((orderDetail: OrderDetails) => (
-                        <Text key={orderDetail.productID} style={styles.detail}>
-                            {orderDetail.productID} x{orderDetail.quantity} - ${(orderDetail.price * orderDetail.quantity).toFixed(2)}
+                        <Text key={orderDetail.productName + orderDetail.productBarcode} style={styles.detail}>
+                            {orderDetail.productName} x{orderDetail.quantity} - ${(orderDetail.price * orderDetail.quantity).toFixed(2)}
                         </Text>
                     ))}
                 </View>
             </View>);
-    }
+    };
+
     return (
         <View style={styles.container}>
-            <FlatList
+            <SearchList
                 data={data}
+                selected={selected}
+                elementKey="orderCode"
+                placeholder="Search orders..."
                 renderItem={renderItem}
-            />
+              />   
         </View>
     );
 };
@@ -40,9 +53,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         marginTop: 16,
-        minWidth: 200,
+//        minHeight: 200,
     },
-    item: {
+    order: {
         backgroundColor: 'silver',
         padding: 16,
         borderRadius: 8,

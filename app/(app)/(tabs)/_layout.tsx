@@ -14,20 +14,29 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="order"
+        options={{
+          title: 'Orders',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? 'apps' : 'apps-outline'} color={color} size={24} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="product"
         options={{
-          title: 'Product',
+          title: 'Products',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? 'add-circle' : 'add-circle-outline'} color={color} size={24} />
           ),
         }}
       />
       <Tabs.Screen
-        name="todo"
+        name="customer"
         options={{
-          title: 'Todo',
+          title: 'Customers',
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'apps' : 'apps-outline'} color={color} size={24} />
+            <Ionicons name={focused ? 'person' : 'person-outline'} color={color} size={24} />
           ),
         }}
       />

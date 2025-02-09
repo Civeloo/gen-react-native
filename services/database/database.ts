@@ -4,7 +4,7 @@ import {
     useCreatePersister
 } from 'tinybase/ui-react';
 import { tablesSchema } from "./schema";
-import { INITIAL_ORDER_DETAILS, INITIAL_ORDERS, INITIAL_PRODUCTS } from "./data";
+import { INITIAL_CUSTOMERS, INITIAL_ORDER_CODES, INITIAL_ORDER_DETAILS, INITIAL_ORDERS, INITIAL_PRODUCTS } from "./data";
 
 const valuesSchema: ValuesSchema = {
     title: { type: 'string' },
@@ -31,18 +31,21 @@ const store = createStore();
 const db = store
     .setSchema(tablesSchema, valuesSchema)
     .setTables({
-        products: INITIAL_PRODUCTS.products,
-        orders: INITIAL_ORDERS.orders,
-        orderDetails: INITIAL_ORDER_DETAILS.orderDetails
+        products: INITIAL_PRODUCTS,
+        customers: INITIAL_CUSTOMERS,
+        orders: INITIAL_ORDERS,
+        orderDetails: INITIAL_ORDER_DETAILS,
+        orderCodes: INITIAL_ORDER_CODES,
     });
 
 const indexes = createIndexes(db);
 const relations = createRelationships(db);
-relations.setRelationshipDefinition(
-  'orderWithDetails', // relationshipId
-  'orderDetails', //       localTableId to link from
-  'orders', //    remoteTableId to link to
-  'orderID', //    cellId containing remote key
-);
+relations
+    .setRelationshipDefinition(
+        'orderWithDetails', // relationshipId
+        'orderDetails', //       localTableId to link from
+        'orders', //    remoteTableId to link to
+        'orderID', //    cellId containing remote key
+    );
 
 export { DONE_CELL, TEXT_CELL, TITLE_VALUES, TODO_TABLE, db, indexes, relations, useAndStartPersister };

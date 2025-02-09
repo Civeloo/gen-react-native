@@ -5,7 +5,7 @@ export const SearchList = (props) => {
     const { data, selected, elementKey, placeholder, renderItem } = props;
     const [searchQuery, setSearchQuery] = useState("");
     const [filtered, setFiltered] = useState(data);
-
+    
     useEffect(() => {
         const lowercasedQuery = searchQuery.toLowerCase()
         const filtered = data.filter(e =>
@@ -15,6 +15,10 @@ export const SearchList = (props) => {
         );
         setFiltered(filtered);
     }, [searchQuery]);
+
+    useEffect(() => {
+        setSearchQuery("");
+    }, [selected]);
 
     return (
         <View style={styles.container}>

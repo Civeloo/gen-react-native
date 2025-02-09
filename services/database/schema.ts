@@ -16,25 +16,15 @@ const tablesSchema: TablesSchema = {
         categoryName: { type: 'string' },
         description: { type: 'string' },
     },
-    /* CREATE TABLE Customers
-    (      
-        CustomerID INTEGER PRIMARY KEY AUTOINCREMENT,
-        CustomerName TEXT,
-        ContactName TEXT,
-        Address TEXT,
-        City TEXT,
-        PostalCode TEXT,
-        Country TEXT
-    ); */
     customers: {
         customerName: { type: 'string' },
-        // contactName: { type: 'string' },
-        // address: { type: 'string' },
-        // city: { type: 'string' },
-        // postalCode: { type: 'string' },
-        // country: { type: 'string' },
+        address: { type: 'string' },
+        city: { type: 'string' },
+        postalCode: { type: 'string' },
+        country: { type: 'string' },
         contact: { type: 'string' },
         tin: { type: 'string' },
+        customerType: { type: 'string', default: '0' },
     },
     /* CREATE TABLE Employees
     (
@@ -97,35 +87,36 @@ const tablesSchema: TablesSchema = {
         unit: { type: 'string' },
         price: { type: 'number' },
     },
-    /* CREATE TABLE Orders(
-        OrderID INTEGER PRIMARY KEY AUTOINCREMENT,
-        CustomerID INTEGER,
-        EmployeeID INTEGER,
-        OrderDate DATETIME,
-        ShipperID INTEGER,
-        FOREIGN KEY (EmployeeID) REFERENCES Employees (EmployeeID),
-        FOREIGN KEY (CustomerID) REFERENCES Customers (CustomerID),
-        FOREIGN KEY (ShipperID) REFERENCES Shippers (ShipperID)
-    ); */
     orders: {
+        orderCode: { type: 'string' },
         customerID: { type: 'string' },
         employeeID: { type: 'string' },
         orderDate: { type: 'string' },
         shipperID: { type: 'string' },
     },
-    /* CREATE TABLE OrderDetails(
-        OrderDetailID INTEGER PRIMARY KEY AUTOINCREMENT,
-        OrderID INTEGER,
-        ProductID INTEGER,
-        Quantity INTEGER,
-        FOREIGN KEY (OrderID) REFERENCES Orders (OrderID),
-        FOREIGN KEY (ProductID) REFERENCES Products (ProductID)
-    ); */
     orderDetails: {
         orderID: { type: 'string' },
-        productID: { type: 'string' },
+        productBarcode: { type: 'string' },
+        productName: { type: 'string' },
         price: { type: 'number' },
         quantity: { type: 'number' },
+    },
+    ordersCancelled: {
+        orderCode: { type: 'string' },
+        customerID: { type: 'string' },
+        employeeID: { type: 'string' },
+        orderDate: { type: 'string' },
+        shipperID: { type: 'string' },
+    },
+    orderCancelledDetails: {
+        orderID: { type: 'string' },
+        productBarcode: { type: 'string' },
+        productName: { type: 'string' },
+        price: { type: 'number' },
+        quantity: { type: 'number' },
+    },
+    orderCodes: {
+        orderNumber: { type: 'number' },
     },
 } as const; // NB the `as const` modifier
 

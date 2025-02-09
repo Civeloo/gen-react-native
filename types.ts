@@ -1,5 +1,6 @@
 type Product = {
     id: string;
+    productBarcode: string;
     productName: string;
     supplierID?: string;
     categoryID?: string;
@@ -13,6 +14,7 @@ type Products = {
 
 type Order = {
     id: string;
+    orderCode: string;
     customerID: string;
     employeeID?: string;
     orderDate: string;
@@ -22,7 +24,8 @@ type Order = {
 type OrderDetails = {
     id: string;
     orderID: string;
-    productID: string;
+    productBarcode: string;
+    productName: string;
     quantity: number;
     price: number;
 };
@@ -36,6 +39,11 @@ type Category = {
 type Customer = {
     id: string;
     customerName: string;
-    contact: string;
-    tin: string;
+    address?: string;
+    city?: string;
+    postalCode?: string;
+    country?: string;
+    contact?: string;
+    tin?: string;
+    customerType?: string;
 };
