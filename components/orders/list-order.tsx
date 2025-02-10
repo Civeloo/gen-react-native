@@ -1,31 +1,35 @@
+import { getLocalizedText } from "@/languages/languages";
 import Customers from "@/services/database/customers.model";
 import Orders from "@/services/database/orders.model";
-import { Button, FlatList, StyleSheet, Text, View } from "react-native";
-import { SearchList } from "../search-list";
 import { useState } from "react";
+import { Button, StyleSheet, Text, View } from "react-native";
+import { SearchList } from "../search-list";
 
-// A list component to show all the orders.
-export const ListOrder = ({ data, onRemove }) => {
+type Props = {
+    data: Order[];
+    onRemove: (id: string) => void;
+};
+
+export const ListOrder: React.FC<Props> = ({ data, onRemove }) => {
     const [selected, setSelected] = useState({});
 
-    const renderItem = ({item}:{item:Order}) => {
+    const renderItem = ({ item }: { item: Order }) => {
         const order = item;
         const orderDetails = Orders.inner(order?.id, 'orderWithDetails') as OrderDetails[];
         const customer = Customers.byId(order?.customerID);
-        const customerName = customer?.customerName || 'Customer';
+        const customerName = customer?.customerName || getLocalizedText('cash-customer');
         const total = orderDetails.reduce((acc, orderDetail) => acc + orderDetail.price * orderDetail.quantity, 0);
-
         return (
             <View style={styles.order}>
                 <View style={styles.header}>
                     <Text style={styles.title}>{customerName}</Text>
+                    <Text style={styles.detail}>{order?.orderCode}</Text>
+                    <Text style={styles.date}>{order?.orderDate.split('T')[0]}</Text>
                     <Button
                         title="  -  "
                         color="red"
                         onPress={() => onRemove(order?.id)} />
                 </View>
-                <Text style={styles.date}>{order['orderDate']}</Text>
-                <Text style={styles.total}>Total: ${total.toFixed(2)}</Text>
                 <View style={styles.detailList}>
                     {orderDetails.map((orderDetail: OrderDetails) => (
                         <Text key={orderDetail.productName + orderDetail.productBarcode} style={styles.detail}>
@@ -33,6 +37,7 @@ export const ListOrder = ({ data, onRemove }) => {
                         </Text>
                     ))}
                 </View>
+                <Text style={styles.total}>Total: ${total.toFixed(2)}</Text>
             </View>);
     };
 
@@ -42,9 +47,9 @@ export const ListOrder = ({ data, onRemove }) => {
                 data={data}
                 selected={selected}
                 elementKey="orderCode"
-                placeholder="Search orders..."
+                placeholder={getLocalizedText('search-orders')}
                 renderItem={renderItem}
-              />   
+            />
         </View>
     );
 };
@@ -53,7 +58,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         marginTop: 16,
-//        minHeight: 200,
     },
     order: {
         backgroundColor: 'silver',
@@ -80,6 +84,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 8,
+        alignSelf: 'flex-end',
     },
     detailList: {
         marginTop: 8,

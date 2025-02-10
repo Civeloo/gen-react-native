@@ -1,8 +1,9 @@
-import { ListOrder } from '@/components/orders/list-order';
 import { AddOrder } from '@/components/orders/add-order';
+import { ListOrder } from '@/components/orders/list-order';
+import { getLocalizedText } from '@/languages/languages';
 import Orders from '@/services/database/orders.model';
 import { useState } from 'react';
-import { Button, StyleSheet, View } from 'react-native';
+import { Button, ScrollView, StyleSheet } from 'react-native';
 
 export default function OrderPage() {
     const getData = () => Orders.all();
@@ -22,15 +23,15 @@ export default function OrderPage() {
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
             <Button
-                title={addOrder ? "Cancel" : "+"}
+                title={addOrder ? getLocalizedText("cancel") : getLocalizedText("create")}
                 onPress={() => setAddOrder(!addOrder)}
                 color={addOrder ? 'red' : '#2196F3'} />
             {addOrder
                 ? <AddOrder onSave={handleSave} />
                 : <ListOrder data={data} onRemove={handleRemove} />}
-        </View>
+        </ScrollView>
     );
 };
 
@@ -38,8 +39,5 @@ const styles = StyleSheet.create({
     container: {
         padding: 16,
         flex: 1,
-        // alignItems: "center",
-        // justifyContent:"space-between",
-        // height: "100%",
     },
 });

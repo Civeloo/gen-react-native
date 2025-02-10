@@ -1,4 +1,6 @@
+import { getLocalizedText } from '@/languages/languages';
 import Customers from '@/services/database/customers.model';
+import { OrderCodes } from '@/services/database/models';
 import OrderDetails from '@/services/database/orderDetail.model';
 import Orders from '@/services/database/orders.model';
 import Products from '@/services/database/products.model';
@@ -6,7 +8,6 @@ import { getDate, getUUIDv4 } from '@/utils';
 import React, { useState } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SearchList } from '../search-list';
-import { OrderCodes } from '@/services/database/models';
 
 type Props = {
   onSave: () => void;
@@ -79,15 +80,16 @@ export const AddOrder: React.FC<Props> = ({ onSave }) => {
 
   const renderProductItem = ({ item }: { item: Product }) => (
     <View style={styles.productItem}>
-      <Text>{item.productName} - ${item.price.toFixed(2)}</Text>
+      <Text style={styles.itemText}>{item.productName}</Text>
+      <Text style={styles.itemText}>${item.price.toFixed(2)}</Text>
       <View style={styles.quantityControl}>
         <TouchableOpacity onPress={() => handleRemoveProduct(item.id)} style={styles.quantityButton}>
-          <Text>  -  </Text>
+          <Text style={styles.increaseDecrease}>{"-"}</Text>
         </TouchableOpacity>
 
         <Text style={styles.quantityText}>{selectedProducts[item.id] || 0}</Text>
         <TouchableOpacity onPress={() => handleAddProduct(item.id)} style={styles.quantityButton}>
-          <Text>  +  </Text>
+          <Text style={styles.increaseDecrease}>{"+"}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -96,45 +98,35 @@ export const AddOrder: React.FC<Props> = ({ onSave }) => {
   const renderCustomerItem = ({ item }: { item: Customer }) => (
     <TouchableOpacity onPress={() => handleSelectCustomer(item.id)}>
       <View style={
-        selectedCustomer[item.id] ? {
-          backgroundColor: "silver",
-          borderRadius: 8,
-          padding: 16,
-          marginBottom: 8,
-        } : { padding: 16, marginBottom: 8 }
+        selectedCustomer[item.id] ? styles.customerItemSelected : styles.customerItem
       }>
-        <Text>{item.customerName}</Text>
+        <Text style={styles.itemText}>{item.customerName}</Text>
       </View>
     </TouchableOpacity>
   )
 
   return (
     <View style={styles.container}>
-      {/* <View style={{
-      flex: 1,
-      justifyContent: 'space-between',
-    }}> */}
       <View>
         <SearchList
           data={availableCustomers}
           selected={selectedCustomer}
           elementKey="customerName"
-          placeholder="Search customers..."
+          placeholder={getLocalizedText('search-customers')}
           renderItem={renderCustomerItem}
         />
         <SearchList
           data={availableProducts}
           selected={selectedProducts}
           elementKey="productName"
-          placeholder="Search products..."
+          placeholder={getLocalizedText('search-products')}
           renderItem={renderProductItem}
         />
       </View>
       <View>
         <Text style={styles.total}>Total: ${calculateTotal().toFixed(2)}</Text>
-        <Button title="+" onPress={handleSubmit} />
+        <Button title={getLocalizedText('process')} onPress={handleSubmit} />
       </View>
-      {/* </View> */}
     </View>
   );
 };
@@ -144,38 +136,35 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 10,
   },
-  scrollContent: {
-    padding: 16,
+  customerItem: {
+    padding: 12,
+    marginBottom: 8
   },
-  button: {
-
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 16,
-  },
-  subHeader: {
-    fontSize: 18,
-    fontWeight: "bold",
+  customerItemSelected: {
+    backgroundColor: "silver",
+    borderRadius: 8,
+    padding: 12,
     marginBottom: 8,
   },
   productItem: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#ffffff",
+    backgroundColor: "silver",
     borderRadius: 8,
     padding: 12,
     marginBottom: 8,
-    // width: '100%',
+  },
+  itemText: {
+    fontWeight: "bold",
+    fontSize: 16,
   },
   quantityControl: {
     flexDirection: "row",
     alignItems: "center",
   },
   quantityButton: {
-    backgroundColor: "silver",
+    backgroundColor: "gray",
     borderRadius: 4,
     padding: 8,
     marginHorizontal: 4,
@@ -184,34 +173,18 @@ const styles = StyleSheet.create({
     minWidth: 20,
     textAlign: "center",
     fontWeight: "bold",
+    fontSize: 16,
+  },
+  increaseDecrease: {
+    color: "white",
+    height: 20,
+    width: 20,
+    textAlign: "center",
   },
   total: {
     fontSize: 18,
     fontWeight: "bold",
     marginTop: 16,
     marginBottom: 24,
-  },
-  submitButton: {
-    backgroundColor: "#4CAF50",
-    borderRadius: 8,
-    padding: 16,
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  submitButtonText: {
-    color: "#ffffff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  cancelButton: {
-    backgroundColor: "#f44336",
-    borderRadius: 8,
-    padding: 16,
-    alignItems: "center",
-  },
-  cancelButtonText: {
-    color: "#ffffff",
-    fontSize: 18,
-    fontWeight: "bold",
   },
 });

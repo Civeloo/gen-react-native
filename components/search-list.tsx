@@ -12,7 +12,13 @@ export const SearchList = (props) => {
             lowercasedQuery
                 ? e[elementKey]?.toLowerCase().includes(lowercasedQuery) || selected[e.id] > 0
                 : selected[e.id] > 0
-        );
+        ).sort((a, b) => {
+            const aIncludes = a[elementKey]?.toLowerCase().includes(lowercasedQuery);
+            const bIncludes = b[elementKey]?.toLowerCase().includes(lowercasedQuery);
+            if (aIncludes && !bIncludes) return -1;
+            if (!aIncludes && bIncludes) return 1;
+            return 0;
+        });
         setFiltered(filtered);
     }, [searchQuery]);
 
