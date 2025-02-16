@@ -70,22 +70,13 @@ const tablesSchema: TablesSchema = {
         country: { type: 'string' },
         phone: { type: 'string' },
     },
-    /* CREATE TABLE Products(
-        ProductID INTEGER PRIMARY KEY AUTOINCREMENT,
-        ProductName TEXT,
-        SupplierID INTEGER,
-        CategoryID INTEGER,
-        Unit TEXT,
-        Price NUMERIC DEFAULT 0,
-        FOREIGN KEY (CategoryID) REFERENCES Categories (CategoryID),
-        FOREIGN KEY (SupplierID) REFERENCES Suppliers (SupplierID)
-    ); */
     products: {
         productName: { type: 'string' },
         supplierID: { type: 'string' },
         categoryID: { type: 'string' },
         unit: { type: 'string' },
         price: { type: 'number' },
+        quantity: { type: 'number'},
     },
     orders: {
         orderCode: { type: 'string' },
@@ -97,7 +88,7 @@ const tablesSchema: TablesSchema = {
     },
     orderDetails: {
         orderID: { type: 'string' },
-        productBarcode: { type: 'string' },
+        productID: { type: 'string' },
         productName: { type: 'string' },
         price: { type: 'number' },
         quantity: { type: 'number' },

@@ -1,12 +1,12 @@
 export const INITIAL_PRODUCTS = {
-    product0: { productBarcode: '123456789012', productName: "T-Shirt", price: 29.99 },
-    product1: { productBarcode: '987654321098', productName: "Jeans", price: 70.01 },
-    product2: { productBarcode: '112233445566', productName: "Sneakers", price: 89.97 },
-    product3: { productBarcode: '665544332211', productName: "Hoodie", price: 49.99 },
-    product4: { productBarcode: '102030405060', productName: "Socks", price: 9.99 },
-    product5: { productBarcode: '605040302010', productName: "Hat", price: 24.99 },
-    product6: { productBarcode: '121212121212', productName: "Jacket", price: 99.99 },
-    product7: { productBarcode: '989898989898', productName: "Shorts", price: 34.99 },
+    product0: { productBarcode: '123456789012', productName: "T-Shirt", price: 29.99, quantity: 98 },
+    product1: { productBarcode: '987654321098', productName: "Jeans", price: 70.01, quantity: 99 },
+    product2: { productBarcode: '112233445566', productName: "Sneakers", price: 89.97, quantity: 99 },
+    product3: { productBarcode: '665544332211', productName: "Hoodie", price: 49.99, quantity: 100 },
+    product4: { productBarcode: '102030405060', productName: "Socks", price: 9.99, quantity: 100 },
+    product5: { productBarcode: '605040302010', productName: "Hat", price: 24.99, quantity: 100 },
+    product6: { productBarcode: '121212121212', productName: "Jacket", price: 99.99, quantity: 100 },
+    product7: { productBarcode: '989898989898', productName: "Shorts", price: 34.99, quantity: 100 },
 };
 
 export const INITIAL_CUSTOMERS = {
@@ -22,10 +22,10 @@ export const INITIAL_ORDERS = {
 };
 
 export const INITIAL_ORDER_DETAILS = {
-    orderDetail0: { orderID: 'order0', productBarcode: '123456789012', productName: "T-Shirt", price: 29.99, quantity: 2 },
-    orderDetail1: { orderID: 'order0', productBarcode: '987654321098', productName: "Jeans", price: 70.01, quantity: 1 },
-    orderDetail2: { orderID: 'order1', productBarcode: '112233445566', productName: "Sneakers", price: 189.97, quantity: 1 },
-    orderDetail3: { orderID: 'order2', productBarcode: '665544332211', productName: "Hoodie", price: 49.99, quantity: 3 },
+    orderDetail0: { orderID: 'order0', productID: 'product0', productName: "T-Shirt", price: 29.99, quantity: 2 },
+    orderDetail1: { orderID: 'order0', productID: 'product1', productName: "Jeans", price: 70.01, quantity: 1 },
+    orderDetail2: { orderID: 'order1', productID: 'product2', productName: "Sneakers", price: 189.97, quantity: 1 },
+    orderDetail3: { orderID: 'order2', productID: 'product3', productName: "Hoodie", price: 49.99, quantity: 3 },
 };
 
 export const INITIAL_ORDER_CODES = {

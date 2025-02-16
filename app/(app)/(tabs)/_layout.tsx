@@ -27,6 +27,7 @@ export default function TabLayout() {
         name="product"
         options={{
           title: getLocalizedText('products'),
+          href:"/product?refresh=true",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? 'add-circle' : 'add-circle-outline'} color={color} size={24} />
           ),

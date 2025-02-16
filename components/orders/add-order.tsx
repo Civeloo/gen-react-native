@@ -20,7 +20,7 @@ export const AddOrder: React.FC<Props> = ({ onSave }) => {
 
   const [selectedCustomer, setSelectedCustomer] = useState<{ [key: string]: number }>({ customer0: 1 });
   const [selectedProducts, setSelectedProducts] = useState<{ [key: string]: number }>({});
-
+  
   const handleSubmit = () => {
     const orderID = getUUIDv4();
     const customer = availableCustomers.find((c) => Object.keys(selectedCustomer)[0] === c.id) as Customer;
@@ -36,6 +36,7 @@ export const AddOrder: React.FC<Props> = ({ onSave }) => {
     Orders.add(order, orderID);
     Object.entries(selectedProducts).forEach(([productId, quantity]) => {
       const product = availableProducts.find((p) => p.id === productId) as Product;
+      Products.update(productId, {quantity: product.quantity - quantity});
       const orderDetail = {
         orderID,
         productBarcode: product.productBarcode,

@@ -2,23 +2,23 @@ import { Button, FlatList, StyleSheet, Text, View } from "react-native";
 
 // A list component to show all the products.
 export const ListProduct = ({ data, onRemove }) => {
-    const renderItem = ({ item }) =>
+    const renderItem = ({ item }: { item: Product }) =>
         <View style={styles.item}>
-            <Text style={styles.text}>{item['productName']}</Text>
-            <Text style={styles.text}>{item['unit']}</Text>
-            <Text style={styles.text}>{item['price']}</Text>
+            <Text style={styles.text}>{item.productName}</Text>
+            <Text style={styles.text}>{item.quantity}</Text>
+            <Text style={styles.text}>{item.price}</Text>
             <Button
                 title="-"
                 color="red"
                 onPress={() => onRemove(item?.id)} />
         </View>;
     return (
-    <View style={styles.container}>
-        <FlatList
-            data={data}
-            renderItem={renderItem}
-        />
-    </View>
+        <View style={styles.container}>
+            <FlatList
+                data={data}
+                renderItem={renderItem}
+            />
+        </View>
     );
 };
 

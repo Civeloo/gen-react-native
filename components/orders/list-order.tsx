@@ -4,14 +4,24 @@ import Orders from "@/services/database/orders.model";
 import { useEffect, useState } from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
 import { SearchList } from "../search-list";
+import Products from "@/services/database/products.model";
 
 type Props = {
     data: Order[];
-    onRemove: (id: string) => void;
+    onRemove: () => void;
 };
 
 export const ListOrder: React.FC<Props> = ({ data, onRemove }) => {
     const [selected, setSelected] = useState({});
+
+    const handleRemove = (orderDetails:OrderDetails[]) => {
+        orderDetails.map((orderDetail: OrderDetails) => {
+            const product = Products.byId(orderDetail.productID) as Product;
+            Products.update(orderDetail.productID, {quantity: product.quantity + orderDetail.quantity});
+        });
+        Orders.cancel(orderDetails[0]?.orderID);        
+        onRemove();
+    };
 
     const renderItem = ({ item }: { item: Order }) => {
         const order = item;
@@ -28,11 +38,11 @@ export const ListOrder: React.FC<Props> = ({ data, onRemove }) => {
                     <Button
                         title="  -  "
                         color="red"
-                        onPress={() => onRemove(order?.id)} />
+                        onPress={() => handleRemove(orderDetails)} />
                 </View>
                 <View style={styles.detailList}>
                     {orderDetails.map((orderDetail: OrderDetails) => (
-                        <Text key={orderDetail.productName + orderDetail.productBarcode} style={styles.detail}>
+                        <Text key={orderDetail.productName + orderDetail.productID} style={styles.detail}>
                             {orderDetail.productName} x{orderDetail.quantity} - ${(orderDetail.price * orderDetail.quantity).toFixed(2)}
                         </Text>
                     ))}
