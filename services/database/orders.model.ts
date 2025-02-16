@@ -1,4 +1,4 @@
-import { indexes } from './database';
+import { db, indexes, queries } from './database';
 import Model from './model';
 
 indexes.setIndexDefinition(
@@ -19,10 +19,22 @@ const Orders = (() => {
     const byPriority = (priority) =>
         idsByPriority(priority).map(base.byId)
 
+    queries.setQueryDefinition('notCancelledOrders', 'orders', ({ select, where }) => {
+        db.getTableCellIds('orders').map((cellId) => select(cellId));
+        where((getCell) => getCell('status') != 'cancelled');
+    });
+    const getNotCancelledOrders = () =>
+        Object.entries(queries.getResultTable('notCancelledOrders'))
+            .map(([id, value]) => ({
+                id,
+                ...value
+            }));
+
     return {
         ...base,
         priorities,
-        byPriority
+        byPriority,
+        getNotCancelledOrders
     }
 })();
 

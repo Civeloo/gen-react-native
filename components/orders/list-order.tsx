@@ -1,7 +1,7 @@
 import { getLocalizedText } from "@/languages/languages";
 import Customers from "@/services/database/customers.model";
 import Orders from "@/services/database/orders.model";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
 import { SearchList } from "../search-list";
 
@@ -40,6 +40,10 @@ export const ListOrder: React.FC<Props> = ({ data, onRemove }) => {
                 <Text style={styles.total}>Total: ${total.toFixed(2)}</Text>
             </View>);
     };
+
+    useEffect(() => {
+        setSelected({});
+    },[data]);
 
     return (
         <View style={styles.container}>

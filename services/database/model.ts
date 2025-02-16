@@ -15,13 +15,15 @@ const Model = (table) => {
       .setPartialRow(table, id, object)
       .getRow(table, id);
 
+  const cancel = (id) => db.setPartialRow(table, id, { status: 'cancelled' });
+
   const remove = (id) => db.delRow(table, id);
 
   const removeWithRelationships = (id, relationship) =>
     db.transaction(() => {
       const localTableId = relations.getLocalTableId(relationship);
       if (!localTableId) return;
-      const localRowIds = relations.getLocalRowIds(relationship, id);      
+      const localRowIds = relations.getLocalRowIds(relationship, id);
       localRowIds.forEach((localRowId) => db.delRow(localTableId, localRowId));
       const remoteTableId = relations.getRemoteTableId(relationship);
       if (!remoteTableId) return;
@@ -32,7 +34,7 @@ const Model = (table) => {
 
   const inner = (id, relationship) => {
     const localTableId = relations.getLocalTableId(relationship);
-      if (!localTableId) return;
+    if (!localTableId) return;
     const localRowIds = relations.getLocalRowIds(relationship, id);
     return localRowIds.map((localRowId) => db.getRow(localTableId, localRowId));
   };
@@ -43,11 +45,12 @@ const Model = (table) => {
         id,
         ...value
       }));
-  }
+  };
 
   return {
     add,
     update,
+    cancel,
     remove,
     removeWithRelationships,
     byId,

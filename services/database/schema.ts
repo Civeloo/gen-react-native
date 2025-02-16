@@ -93,22 +93,9 @@ const tablesSchema: TablesSchema = {
         employeeID: { type: 'string' },
         orderDate: { type: 'string' },
         shipperID: { type: 'string' },
+        status: { type: 'string', default: 'pending' },
     },
     orderDetails: {
-        orderID: { type: 'string' },
-        productBarcode: { type: 'string' },
-        productName: { type: 'string' },
-        price: { type: 'number' },
-        quantity: { type: 'number' },
-    },
-    ordersCancelled: {
-        orderCode: { type: 'string' },
-        customerID: { type: 'string' },
-        employeeID: { type: 'string' },
-        orderDate: { type: 'string' },
-        shipperID: { type: 'string' },
-    },
-    orderCancelledDetails: {
         orderID: { type: 'string' },
         productBarcode: { type: 'string' },
         productName: { type: 'string' },

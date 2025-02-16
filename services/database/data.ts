@@ -18,12 +18,14 @@ export const INITIAL_CUSTOMERS = {
 export const INITIAL_ORDERS = {
     order0: { orderCode: 'A1', customerID: 'customer1', orderDate: '2023-05-15' },
     order1: { orderCode: 'B1', customerID: 'customer2', orderDate: '2023-05-14' },
+    order2: { orderCode: 'C1', customerID: 'customer0', orderDate: '2023-05-13', status:'cancelled' },
 };
 
 export const INITIAL_ORDER_DETAILS = {
     orderDetail0: { orderID: 'order0', productBarcode: '123456789012', productName: "T-Shirt", price: 29.99, quantity: 2 },
     orderDetail1: { orderID: 'order0', productBarcode: '987654321098', productName: "Jeans", price: 70.01, quantity: 1 },
     orderDetail2: { orderID: 'order1', productBarcode: '112233445566', productName: "Sneakers", price: 189.97, quantity: 1 },
+    orderDetail3: { orderID: 'order2', productBarcode: '665544332211', productName: "Hoodie", price: 49.99, quantity: 3 },
 };
 
 export const INITIAL_ORDER_CODES = {

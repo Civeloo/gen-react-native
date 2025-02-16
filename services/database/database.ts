@@ -1,5 +1,5 @@
 import { Platform } from "react-native";
-import { Store, ValuesSchema, createIndexes, createRelationships, createStore } from 'tinybase';
+import { Store, ValuesSchema, createIndexes, createQueries, createRelationships, createStore } from 'tinybase';
 import {
     useCreatePersister
 } from 'tinybase/ui-react';
@@ -43,9 +43,11 @@ const relations = createRelationships(db);
 relations
     .setRelationshipDefinition(
         'orderWithDetails', // relationshipId
-        'orderDetails', //       localTableId to link from
-        'orders', //    remoteTableId to link to
-        'orderID', //    cellId containing remote key
+        'orderDetails', // localTableId to link from
+        'orders', // remoteTableId to link to
+        'orderID', // cellId containing remote key
     );
 
-export { DONE_CELL, TEXT_CELL, TITLE_VALUES, TODO_TABLE, db, indexes, relations, useAndStartPersister };
+const queries = createQueries(db);
+
+export { DONE_CELL, TEXT_CELL, TITLE_VALUES, TODO_TABLE, db, indexes, relations, queries, useAndStartPersister };
