@@ -1,19 +1,23 @@
 import { ListProduct } from '@/components/products/list-product';
 import { NewProductForm } from '@/components/products/new-product-form';
+import { getLocalizedText } from '@/languages/languages';
 import Products from '@/services/database/products.model';
 import { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Button, StyleSheet, ScrollView } from 'react-native';
 
 export default function ProductPage(props) {
     const getData = () => Products.all();
-    const [data, setData] = useState({});
     const refreshData = () => setData(getData());
 
-    const handleSave = (data) => {
-        Products.add(data);
+    const [data, setData] = useState<Product[]>([]);
+    const [addProduct, setAddProduct] = useState(false);
+
+    const handleSave = (values: Product) => {
+        Products.add(values);
+        setAddProduct(false);
         refreshData();
     };
-    const handleRemove = (id) => {
+    const handleRemove = (id: string) => {
         Products.remove(id);
         refreshData();
     }
@@ -21,10 +25,16 @@ export default function ProductPage(props) {
     useEffect(() => { refreshData() }, [props]);
 
     return (
-        <View style={styles.container}>
-            <NewProductForm onSave={handleSave} />
-            <ListProduct data={data} onRemove={handleRemove} />
-        </View>
+        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+            <Button
+                title={addProduct ? getLocalizedText("cancel") : getLocalizedText("create")}
+                onPress={() => setAddProduct(!addProduct)}
+                color={addProduct ? 'red' : '#2196F3'} />
+            {addProduct
+                ? <NewProductForm onSave={handleSave} />
+                : <ListProduct data={data} onRemove={handleRemove} />
+            }
+        </ScrollView>
     );
 };
 
@@ -32,6 +42,6 @@ const styles = StyleSheet.create({
     container: {
         padding: 16,
         flex: 1,
-        alignItems: "center",
+        // alignItems: "center",
     },
 });

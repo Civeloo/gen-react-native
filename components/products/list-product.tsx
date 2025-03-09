@@ -1,7 +1,17 @@
+import { useEffect, useState } from "react";
 import { Button, FlatList, StyleSheet, Text, View } from "react-native";
+import { SearchList } from "../search-list";
+import { getLocalizedText } from "@/languages/languages";
 
-// A list component to show all the products.
-export const ListProduct = ({ data, onRemove }) => {
+type Props = {
+    data: Product[];
+    onRemove: (id: string) => void;
+};
+
+export const ListProduct: React.FC<Props> = ({ data, onRemove }) => {
+
+    const [selected, setSelected] = useState({});
+
     const renderItem = ({ item }: { item: Product }) =>
         <View style={styles.item}>
             <Text style={styles.text}>{item.productName}</Text>
@@ -12,15 +22,24 @@ export const ListProduct = ({ data, onRemove }) => {
                 color="red"
                 onPress={() => onRemove(item?.id)} />
         </View>;
+
+    useEffect(() => {
+        setSelected({});
+    }, [data]);
+
     return (
         <View style={styles.container}>
-            <FlatList
+            <SearchList
                 data={data}
+                selected={selected}
+                elementKey="productName"
+                placeholder={getLocalizedText('search-products')}
                 renderItem={renderItem}
             />
         </View>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {

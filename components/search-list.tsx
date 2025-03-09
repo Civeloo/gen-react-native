@@ -8,7 +8,7 @@ export const SearchList = (props) => {
     
     useEffect(() => {
         const lowercasedQuery = searchQuery.toLowerCase()
-        const filtered = data.filter(e =>
+        const filtered = data?.filter(e =>
             lowercasedQuery
                 ? e[elementKey]?.toLowerCase().includes(lowercasedQuery) || selected[e.id] > 0
                 : selected[e.id] > 0

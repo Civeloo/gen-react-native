@@ -9,22 +9,23 @@ import { TextInputController } from '../text-input-controller';
 const schema = yup
   .object({
     productName: yup.string().max(50).required(),
-    unit: yup.string().max(50).required(),
-    price: yup.number().min(0).required(),
+    // unit: yup.string().max(50).required(),
+    quantity: yup.number().required(),
+    price: yup.number().required(),
   })
   .required();
 
 type FormValues = yup.InferType<typeof schema>
 
 type NewProductFormProps = {
-  onSave: (data: FormValues) => void;
+  onSave: (values: Product) => void;
 };
 
 export const NewProductForm: React.FC<NewProductFormProps> = ({ onSave }) => {
   const { ...methods } = useForm<FormValues>({ resolver: yupResolver(schema) });
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
-    onSave(data);
+  const onSubmit: SubmitHandler<FormValues> = (values) => {
+    onSave(values);
     methods.reset();
   };
 
@@ -35,17 +36,22 @@ export const NewProductForm: React.FC<NewProductFormProps> = ({ onSave }) => {
         placeholder={getLocalizedText('product-name-placeholder')}
         keyboardType="default"
       />
-      <TextInputController
+      {/* <TextInputController
         name="unit"
         placeholder={getLocalizedText('unit-placeholder')}
         keyboardType="default"
+      /> */}
+      <TextInputController
+        name="quantity"
+        placeholder={getLocalizedText('quantity-placeholder')}
+        keyboardType="numeric"
       />
       <TextInputController
         name="price"
         placeholder={getLocalizedText('price-placeholder')}
         keyboardType="numeric"
       />
-      <Button title="+" onPress={methods.handleSubmit(onSubmit)} />
+      <Button title={getLocalizedText('add')} onPress={methods.handleSubmit(onSubmit)} />
     </View>
   );
 
@@ -66,7 +72,7 @@ export const NewProductForm: React.FC<NewProductFormProps> = ({ onSave }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 10,
-    width: 200,
+    flex: 1,
+    marginTop: 20,
   },
 });
