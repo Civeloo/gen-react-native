@@ -6,6 +6,7 @@ type Product = {
     categoryID?: string;
     unit?: string;
     price: number;
+    quantity: number;
 };
 
 type Products = {
@@ -24,7 +25,7 @@ type Order = {
 type OrderDetails = {
     id: string;
     orderID: string;
-    productBarcode: string;
+    productID: string;
     productName: string;
     quantity: number;
     price: number;

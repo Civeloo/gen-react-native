@@ -49,9 +49,7 @@ export const TextInputController: FC<Props> = (props) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        width: 200,
-    },
+    container: {},
     label: {},
     input: {
         paddingHorizontal: 10,

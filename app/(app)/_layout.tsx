@@ -26,7 +26,7 @@ function RootLayout() {
 
   // Initialize the (memoized) TinyBase store and persist it.
   const store = useCreateStore(() => db);
-  useAndStartPersister(store);
+  // useAndStartPersister(store);
   const projectId = Crypto.randomUUID();
   store.setValue('currentProject', projectId)
   store.setValue(TITLE_VALUES, 'Todo App');
