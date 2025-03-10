@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
-import { FlatList, StyleSheet, Text, TextInput, View } from "react-native";
+import { Button, FlatList, StyleSheet, Text, TextInput, View } from "react-native";
 
 export const SearchList = (props) => {
-    const { data, selected, elementKey, placeholder, renderItem } = props;
+    const { data, selected, elementKey, placeholder, renderItem, onRefresh } = props;
     const [searchQuery, setSearchQuery] = useState("");
     const [filtered, setFiltered] = useState(data);
-    
+    const handleRefresh = () => {
+        setSearchQuery('');
+        onRefresh();
+    }
+
     useEffect(() => {
         const lowercasedQuery = searchQuery.toLowerCase()
         const filtered = data?.filter(e =>
@@ -28,12 +32,15 @@ export const SearchList = (props) => {
 
     return (
         <View style={styles.container}>
-            <TextInput
-                style={styles.input}
-                placeholder={placeholder}
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-            />
+            <View style={styles.search}>
+                <TextInput
+                    style={styles.input}
+                    placeholder={placeholder}
+                    value={searchQuery}
+                    onChangeText={setSearchQuery}
+                />
+                <Button title="⚡" onPress={handleRefresh}/>
+            </View>
             <FlatList
                 data={filtered}
                 renderItem={renderItem}
@@ -48,9 +55,19 @@ const styles = StyleSheet.create({
     container: {},
     input: {
         backgroundColor: "#ffffff",
-        borderRadius: 8,
-        padding: 12,
-        marginBottom: 16,
+        flex:1,
         fontSize: 16,
+        padding: 8,
+        height:'100%'
+
     },
+    search: {
+        borderRadius: 8,
+        marginVertical: 16,
+        flex:1,
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignItems:'center',
+        alignContent:'center'
+    }
 });

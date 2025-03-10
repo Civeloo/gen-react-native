@@ -33,7 +33,7 @@ export const TextInputController: FC<Props> = (props) => {
                             style={styles.textInput}
                             onBlur={onBlur}
                             onChangeText={onChange}
-                            value={value || ''}
+                            value={String(value) || ''}
                             placeholderTextColor={'gray'}
                             {...rest}
                         />
@@ -49,7 +49,9 @@ export const TextInputController: FC<Props> = (props) => {
 };
 
 const styles = StyleSheet.create({
-    container: {},
+    container: {
+        flex:1,
+    },
     label: {},
     input: {
         paddingHorizontal: 10,

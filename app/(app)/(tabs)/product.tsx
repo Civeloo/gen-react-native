@@ -10,29 +10,42 @@ export default function ProductPage(props) {
     const refreshData = () => setData(getData());
 
     const [data, setData] = useState<Product[]>([]);
-    const [addProduct, setAddProduct] = useState(false);
+    const [product, setProduct] = useState(false);
 
-    const handleSave = (values: Product) => {
-        Products.add(values);
-        setAddProduct(false);
+    const handleSave = (values: Product, id: string) => {
+        if (id) {
+            Products.add(values, id);
+        } else {
+            Products.add(values);
+        }
+        setProduct(false);
         refreshData();
     };
+
     const handleRemove = (id: string) => {
         Products.remove(id);
         refreshData();
-    }
+    };
+
+    const handleEdit = (item: Product) => {
+        setProduct(item);
+    };
 
     useEffect(() => { refreshData() }, [props]);
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
             <Button
-                title={addProduct ? getLocalizedText("cancel") : getLocalizedText("create")}
-                onPress={() => setAddProduct(!addProduct)}
-                color={addProduct ? 'red' : '#2196F3'} />
-            {addProduct
-                ? <NewProductForm onSave={handleSave} />
-                : <ListProduct data={data} onRemove={handleRemove} />
+                title={product ? getLocalizedText("cancel") : getLocalizedText("create")}
+                onPress={() => setProduct(!product)}
+                color={product ? 'red' : '#2196F3'} />
+            {product
+                ? <NewProductForm product={product} onSave={handleSave} />
+                : <ListProduct 
+                    data={data} 
+                    onRemove={handleRemove} 
+                    onEdit={handleEdit} 
+                    onRefresh={()=>refreshData()} />
             }
         </ScrollView>
     );

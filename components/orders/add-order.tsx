@@ -13,14 +13,20 @@ type Props = {
   onSave: () => void;
 };
 
-export const AddOrder: React.FC<Props> = ({ onSave }) => {
+export const AddOrder: React.FC<Props> = (props) => {
+  const { onSave } = props;
 
-  const availableProducts = Products.all() as Product[];
-  const availableCustomers = Customers.all() as Customer[];
+  const getProducts = () => Products.all() as Product[];
+  const getCustomers = () => Customers.all() as Customer[];
 
+  const [availableProducts, setAvailableProducts] = useState<Product[]>(getProducts());
+  const [availableCustomers, setAvailableCustomers] = useState<Customer[]>(getCustomers());
   const [selectedCustomer, setSelectedCustomer] = useState<{ [key: string]: number }>({ customer0: 1 });
   const [selectedProducts, setSelectedProducts] = useState<{ [key: string]: number }>({});
-  
+
+  const refreshProducts = () => setAvailableProducts(getProducts());
+  const refreshCustomers = () => setAvailableCustomers(getCustomers());
+
   const handleSubmit = () => {
     const orderID = getUUIDv4();
     const customer = availableCustomers.find((c) => Object.keys(selectedCustomer)[0] === c.id) as Customer;
@@ -36,7 +42,7 @@ export const AddOrder: React.FC<Props> = ({ onSave }) => {
     Orders.add(order, orderID);
     Object.entries(selectedProducts).forEach(([productId, quantity]) => {
       const product = availableProducts.find((p) => p.id === productId) as Product;
-      Products.update(productId, {quantity: product.quantity - quantity});
+      Products.update(productId, { quantity: product.quantity - quantity });
       const orderDetail = {
         orderID,
         productBarcode: product.productBarcode,
@@ -51,33 +57,33 @@ export const AddOrder: React.FC<Props> = ({ onSave }) => {
 
   const handleSelectCustomer = (customerId: string) => {
     setSelectedCustomer({ [customerId]: 1 });
-  }
+  };
 
   const handleAddProduct = (productId: string) => {
     setSelectedProducts((prev) => ({
       ...prev,
       [productId]: (prev[productId] || 0) + 1,
-    }))
-  }
+    }));
+  };
 
   const calculateTotal = () => {
     return Object.entries(selectedProducts).reduce((total, [productId, quantity]) => {
       const product = availableProducts.find((p) => p.id === productId) as Product;
-      return total + (product ? product.price * quantity : 0)
-    }, 0)
-  }
+      return total + (product ? product.price * quantity : 0);
+    }, 0);
+  };
 
   const handleRemoveProduct = (productId: string) => {
     setSelectedProducts((prev) => {
-      const newSelected = { ...prev }
+      const newSelected = { ...prev };
       if (newSelected[productId] > 1) {
-        newSelected[productId]--
+        newSelected[productId]--;
       } else {
-        delete newSelected[productId]
-      }
-      return newSelected
-    })
-  }
+        delete newSelected[productId];
+      };
+      return newSelected;
+    });
+  };
 
   const renderProductItem = ({ item }: { item: Product }) => (
     <View style={styles.productItem}>
@@ -94,7 +100,7 @@ export const AddOrder: React.FC<Props> = ({ onSave }) => {
         </TouchableOpacity>
       </View>
     </View>
-  )
+  );
 
   const renderCustomerItem = ({ item }: { item: Customer }) => (
     <TouchableOpacity onPress={() => handleSelectCustomer(item.id)}>
@@ -104,7 +110,7 @@ export const AddOrder: React.FC<Props> = ({ onSave }) => {
         <Text style={styles.itemText}>{item.customerName}</Text>
       </View>
     </TouchableOpacity>
-  )
+  );
 
   return (
     <View style={styles.container}>
@@ -115,6 +121,7 @@ export const AddOrder: React.FC<Props> = ({ onSave }) => {
           elementKey="customerName"
           placeholder={getLocalizedText('search-customers')}
           renderItem={renderCustomerItem}
+          onRefresh={() => refreshCustomers()}
         />
         <SearchList
           data={availableProducts}
@@ -122,6 +129,7 @@ export const AddOrder: React.FC<Props> = ({ onSave }) => {
           elementKey="productName"
           placeholder={getLocalizedText('search-products')}
           renderItem={renderProductItem}
+          onRefresh={() => refreshProducts()}
         />
       </View>
       <View>
