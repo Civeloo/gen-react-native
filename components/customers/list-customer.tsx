@@ -1,16 +1,15 @@
 import {useEffect, useState} from "react";
-import {Button, FlatList, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {SearchList} from "../search-list";
 import {getLocalizedText} from "@/languages/languages";
 
 type Props = {
     data: Customer[];
-    onRemove: (id: string) => void;
     onEdit: (item: Customer) => void;
     onRefresh: () => void;
 };
 
-export const ListCustomer: React.FC<Props> = ({data, onRemove, onEdit, onRefresh}) => {
+export const ListCustomer: React.FC<Props> = ({data, onEdit, onRefresh}) => {
 
     const [selected, setSelected] = useState({});
 
