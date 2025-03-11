@@ -80,7 +80,7 @@ export const AddOrder: React.FC<Props> = (props) => {
         newSelected[productId]--;
       } else {
         delete newSelected[productId];
-      };
+      }
       return newSelected;
     });
   };

@@ -45,7 +45,6 @@ export default function CustomerPage(props) {
                 ? <CustomerForm customer={customer} onSave={handleSave} onRemove={handleRemove}/>
                 : <ListCustomer
                     data={data}
-                    onRemove={handleRemove}
                     onEdit={handleEdit}
                     onRefresh={() => refreshData()}/>
             }
