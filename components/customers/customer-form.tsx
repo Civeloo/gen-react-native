@@ -14,7 +14,7 @@ const schema = yup
     // city: yup.string().max(50).required(),
     // postalCode: yup.string().max(50).required(),
     // country: yup.string().max(50).required(),
-    contact: yup.string().max(50).required(), 
+    contact: yup.string().max(50).required(),
     tin: yup.string().max(50).required(),
   })
   .required();
@@ -22,14 +22,23 @@ const schema = yup
 type FormValues = yup.InferType<typeof schema>
 
 type NewCustomerFormProps = {
-  onSave: (data: FormValues) => void;
+  customer: Customer;
+  onSave: (values: FormValues, id?: string) => void;
+  onRemove?: (id: string) => void;
 };
 
-export const NewCustomerForm: React.FC<NewCustomerFormProps> = ({ onSave }) => {
-  const { ...methods } = useForm<FormValues>({ resolver: yupResolver(schema) });
+export const CustomerForm: React.FC<NewCustomerFormProps> = ({ customer, onSave, onRemove }) => {
+  const { ...methods } = useForm<FormValues>({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      customerName: customer.customerName || '',
+      contact: customer.contact || '',
+      tin: customer.tin || '',
+    }
+  });
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
-    onSave(data);
+  const onSubmit: SubmitHandler<FormValues> = (values) => {
+    onSave(values, customer?.id);
     methods.reset();
   };
 
@@ -50,7 +59,15 @@ export const NewCustomerForm: React.FC<NewCustomerFormProps> = ({ onSave }) => {
         placeholder={getLocalizedText('tin-placeholder')}
         keyboardType="default"
       />
-      <Button title="+" onPress={methods.handleSubmit(onSubmit)} />
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View style={{ flex: 1 }} >
+          <Button title={getLocalizedText('add')} onPress={methods.handleSubmit(onSubmit)} />
+        </View>
+        { onRemove && customer?.id && <Button
+          color="red"
+          title="  -  "
+          onPress={() => onRemove(customer?.id)} /> }
+      </View>
     </View>
   );
 
@@ -65,13 +82,26 @@ export const NewCustomerForm: React.FC<NewCustomerFormProps> = ({ onSave }) => {
           FormContent
         )}
       </FormProvider>
+
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 10,
-    width: 200,
+    flex: 1,
+    marginTop: 20,
   },
+  input: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'stretch',
+    gap: 10,
+  },
+  label: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'gray',
+  }
 });
