@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, FlatList, StyleSheet, Text, TextInput, View } from "react-native";
+import { Button, FlatList, StyleSheet, TextInput, View } from "react-native";
 
 export const SearchList = (props) => {
     const { data, selected, elementKey, placeholder, renderItem, onRefresh } = props;
@@ -39,7 +39,7 @@ export const SearchList = (props) => {
                     value={searchQuery}
                     onChangeText={setSearchQuery}
                 />
-                <Button title="⚡" onPress={handleRefresh}/>
+                {onRefresh && <Button title="⚡" onPress={handleRefresh} />}
             </View>
             <FlatList
                 data={filtered}
@@ -55,19 +55,19 @@ const styles = StyleSheet.create({
     container: {},
     input: {
         backgroundColor: "#ffffff",
-        flex:1,
+        flex: 1,
         fontSize: 16,
         padding: 8,
-        height:'100%'
+        height: '100%'
 
     },
     search: {
         borderRadius: 8,
         marginVertical: 16,
-        flex:1,
-        flexDirection:'row',
-        justifyContent:'space-between',
-        alignItems:'center',
-        alignContent:'center'
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        alignContent: 'center'
     }
 });
