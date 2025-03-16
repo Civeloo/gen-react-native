@@ -24,6 +24,7 @@ export default function CustomerPage(props) {
 
     const handleRemove = (id: string) => {
         Customers.remove(id);
+        setCustomer(false);
         refreshData();
     };
 
