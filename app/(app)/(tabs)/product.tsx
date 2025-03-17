@@ -1,5 +1,5 @@
 import { ListProduct } from '@/components/products/list-product';
-import { NewProductForm } from '@/components/products/new-product-form';
+import { ProductForm } from '@/components/products/product-form';
 import { getLocalizedText } from '@/languages/languages';
 import Products from '@/services/database/products.model';
 import { useEffect, useState } from 'react';
@@ -24,6 +24,7 @@ export default function ProductPage(props) {
 
     const handleRemove = (id: string) => {
         Products.remove(id);
+        setProduct(false);
         refreshData();
     };
 
@@ -40,11 +41,10 @@ export default function ProductPage(props) {
                 onPress={() => setProduct(!product)}
                 color={product ? 'red' : '#2196F3'} />
             {product
-                ? <NewProductForm product={product} onSave={handleSave} />
+                ? <ProductForm product={product} onSave={handleSave} onRemove={handleRemove}/>
                 : <ListProduct 
                     data={data} 
-                    onRemove={handleRemove} 
-                    onEdit={handleEdit} 
+                    onEdit={handleEdit}
                     onRefresh={()=>refreshData()} />
             }
         </ScrollView>

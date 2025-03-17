@@ -1,10 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { NewProductForm } from '@/components/products/new-product-form';
+import { ProductForm } from '@/components/products/product-form';
 import { View } from 'react-native';
 
 const meta = {
   title: 'NewProductForm',
-  component: NewProductForm,
+  component: ProductForm,
   tags: ['autodocs'],
   decorators: [
     (Story) => (
@@ -13,7 +13,7 @@ const meta = {
       </View>
     ),
   ],
-} satisfies Meta<typeof NewProductForm>;
+} satisfies Meta<typeof ProductForm>;
 
 export default meta;
 type StoryType = StoryObj<typeof meta>;
