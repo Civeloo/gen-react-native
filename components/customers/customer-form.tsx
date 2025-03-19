@@ -5,6 +5,7 @@ import {FormProvider, SubmitHandler, useForm} from 'react-hook-form';
 import {Button, Platform, StyleSheet, View} from 'react-native';
 import * as yup from "yup";
 import {TextInputController} from '../text-input-controller';
+import {cleanPhoneNumber} from "@/utils";
 
 const schema = yup
     .object({
@@ -38,6 +39,7 @@ export const CustomerForm: React.FC<NewCustomerFormProps> = ({customer, onSave, 
     });
 
     const onSubmit: SubmitHandler<FormValues> = (values) => {
+        values.contact = cleanPhoneNumber(values.contact);
         onSave(values, customer?.id);
         methods.reset();
     };

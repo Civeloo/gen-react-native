@@ -10,9 +10,9 @@ export const INITIAL_PRODUCTS = {
 };
 
 export const INITIAL_CUSTOMERS = {
-    customer0: { customerName: "Customer", address: "789 Oak St", city: "Chicago", postalCode: '60001', country: "USA", contact: "323-456-7890", tin: '323456789', customerCode: 'C' },
-    customer1: { customerName: "John Doe", address: "123 Main St", city: "New York", postalCode: '10001', country: "USA", contact: "123-456-7890", tin: '123456789', customerCode: 'A' },
-    customer2: { customerName: "Jane Smith", address: "456 Elm St", city: "Los Angeles", postalCode: '90001', country: "USA", contact: "223-456-7890", tin: '223456789', customerCode: 'B' },
+    customer0: { customerName: "Customer", address: "789 Oak St", city: "Chicago", postalCode: '60001', country: "USA", contact: '0', tin: '0', customerCode: 'C' },
+    customer1: { customerName: "John Doe", address: "123 Main St", city: "New York", postalCode: '10001', country: "USA", contact: '15551234567', tin: '123456789', customerCode: 'A' },
+    customer2: { customerName: "Jane Smith", address: "456 Elm St", city: "Los Angeles", postalCode: '90001', country: "USA", contact: '15552345678', tin: '223456789', customerCode: 'B' },
 };
 
 export const INITIAL_ORDERS = {
