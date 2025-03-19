@@ -42,18 +42,22 @@ export const ProductForm: React.FC<NewProductFormProps> = ({product, onSave, onR
 
     const FormContent = (
         <View>
-            <TextInputController
-                name="productName"
-                placeholder={getLocalizedText('product-name-placeholder')}
-                keyboardType="default"
-            />
-            <TextInputController
-                name="quantity"
-                placeholder={getLocalizedText('quantity-placeholder')}
-                keyboardType="numeric"
-            />
             <View style={styles.input}>
-                <Text style={styles.label}>$</Text>
+                <Text style={styles.label}>✏</Text>
+                <TextInputController
+                    name="productName"
+                    placeholder={getLocalizedText('product-name-placeholder')}
+                    keyboardType="default"
+                /></View>
+            <View style={styles.input}>
+                <Text style={styles.label}>✖</Text>
+                <TextInputController
+                    name="quantity"
+                    placeholder={getLocalizedText('quantity-placeholder')}
+                    keyboardType="numeric"
+                /></View>
+            <View style={styles.input}>
+                <Text style={styles.label}>💲</Text>
                 <TextInputController
                     name="price"
                     placeholder={getLocalizedText('price-placeholder')}
@@ -102,7 +106,8 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: 'gray',
+        width: 30,
+        textAlign: "center",
     },
     buttons: {
         flexDirection: 'row',

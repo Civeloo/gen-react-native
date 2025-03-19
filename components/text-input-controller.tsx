@@ -1,23 +1,23 @@
-import { FC } from "react";
-import { Controller, useController, UseControllerProps, useFormContext } from "react-hook-form";
-import { StyleSheet, Text, TextInput, TextInputProps, View } from "react-native";
+import {FC} from "react";
+import {Controller, UseControllerProps, useFormContext} from "react-hook-form";
+import {StyleSheet, Text, TextInput, TextInputProps, View} from "react-native";
 
 type Props = TextInputProps & UseControllerProps & {
     label?: string;
+    icon?: any;
 };
 
 export const TextInputController: FC<Props> = (props) => {
     const {
         label,
+        icon,
         ...rest
     } = props;
+    // const tip: TextInputProps = props;
     const ucp: UseControllerProps = props;
-    const tip: TextInputProps = props;
-    const { name, rules, defaultValue } = ucp;
-
-    const { control, formState } = useFormContext();
-    const { field } = useController({ name, control });
-
+    const {name/*, rules, defaultValue */} = ucp;
+    const {control, formState} = useFormContext();
+    // const { field } = useController({ name, control });
     const error = formState?.errors[ucp.name];
     const hasError = Boolean(error);
     const errorText = error ? String(error.message) : '';
@@ -26,9 +26,10 @@ export const TextInputController: FC<Props> = (props) => {
         <View style={styles.container}>
             {label && (<Text style={styles.label}>{label}</Text>)}
             <View style={styles.input}>
+                {icon}
                 <Controller
                     control={control}
-                    render={({ field: { onChange, onBlur, value } }) => (
+                    render={({field: {onChange, onBlur, value}}) => (
                         <TextInput
                             style={styles.textInput}
                             onBlur={onBlur}
@@ -50,10 +51,11 @@ export const TextInputController: FC<Props> = (props) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex:1,
+        flex: 1,
     },
     label: {},
     input: {
+        flex: 1,
         paddingHorizontal: 10,
         height: 30,
         borderRadius: 5,
