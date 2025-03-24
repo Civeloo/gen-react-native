@@ -10,11 +10,12 @@ import {sendWhatsapp} from "@/utils";
 
 type Props = {
     data: Order[];
+    selected: string;
     onRemove: () => void;
 };
 
-export const ListOrder: FC<Props> = ({data, onRemove}) => {
-    const [selected, setSelected] = useState({});
+export const ListOrder: FC<Props> = ({data, selected, onRemove}) => {
+    const [selectedOrder, setSelectedOrder] = useState({});
 
     const handleRemove = (orderDetails: OrderDetails[]) => {
         orderDetails.map((orderDetail: OrderDetails) => {
@@ -72,14 +73,18 @@ export const ListOrder: FC<Props> = ({data, onRemove}) => {
     };
 
     useEffect(() => {
-        setSelected({});
+        setSelectedOrder({});
     }, [data]);
+
+    useEffect(() => {
+        setSelectedOrder(selected);
+    }, [selected]);
 
     return (
         <View style={styles.container}>
             <SearchList
                 data={data}
-                selected={selected}
+                selected={selectedOrder}
                 elementKey="orderCode"
                 placeholder={getLocalizedText('search-orders')}
                 renderItem={renderItem}

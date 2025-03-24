@@ -10,7 +10,7 @@ import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SearchList } from '../search-list';
 
 type Props = {
-  onSave: () => void;
+  onSave: (orderCode:string) => void;
 };
 
 export const AddOrder: React.FC<Props> = (props) => {
@@ -31,11 +31,12 @@ export const AddOrder: React.FC<Props> = (props) => {
     const orderID = getUUIDv4();
     const customer = availableCustomers.find((c) => Object.keys(selectedCustomer)[0] === c.id) as Customer;
     const customerCodeKey = customer?.customerType;
-    const orderCode = OrderCodes.byId(customerCodeKey);
-    const orderNumber = Number(orderCode.orderNumber) + 1;
+    const orderCodeLast = OrderCodes.byId(customerCodeKey);
+    const orderNumber = Number(orderCodeLast.orderNumber) + 1;
+    const orderCode = customerCodeKey + orderNumber.toString();
     OrderCodes.update(customerCodeKey, { orderNumber });
     const order = {
-      orderCode: customerCodeKey + orderNumber.toString(),
+      orderCode: orderCode,
       customerID: Object.keys(selectedCustomer)[0],
       orderDate: getDate(),
     };
@@ -52,7 +53,7 @@ export const AddOrder: React.FC<Props> = (props) => {
       };
       OrderDetails.add(orderDetail);
     });
-    onSave();
+    onSave(orderCode);
   };
 
   const handleSelectCustomer = (customerId: string) => {

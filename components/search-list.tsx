@@ -27,7 +27,7 @@ export const SearchList = (props) => {
     }, [searchQuery]);
 
     useEffect(() => {
-        setSearchQuery("");
+        setSearchQuery(typeof selected == 'string'? selected : "");
     }, [selected]);
 
     return (
