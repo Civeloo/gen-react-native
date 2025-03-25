@@ -36,6 +36,13 @@ export default function Index() {
                 <Text style={styles.buttonText}>{getLocalizedText('orders')}</Text>
             </TouchableOpacity>
         </Link>
+        <Link style={styles.link}
+              href="/company" asChild>
+            <TouchableOpacity style={styles.button}>
+                <Ionicons name={'settings'} size={24} color={'white'}/>
+                <Text style={styles.buttonText}>{getLocalizedText('company')}</Text>
+            </TouchableOpacity>
+        </Link>
         <View style={styles.link}>
             <Button title={getLocalizedText('sign-out')} onPress={handleSignOut}/>
         </View>
@@ -59,5 +66,6 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: 'white',
+        fontSize: 16,
     }
 });

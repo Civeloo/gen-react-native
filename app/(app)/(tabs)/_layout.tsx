@@ -42,6 +42,15 @@ export default function TabLayout() {
           ),
         }}
       />
+        <Tabs.Screen
+            name="company"
+            options={{
+                title: getLocalizedText('company'),
+                tabBarIcon: ({ color, focused }) => (
+                    <Ionicons name={focused ? 'settings' : 'settings-outline'} color={color} size={24} />
+                ),
+            }}
+        />
     </Tabs>
   );
 }

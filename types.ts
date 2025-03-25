@@ -48,3 +48,15 @@ type Customer = {
     tin?: string;
     customerType?: string;
 };
+
+type Company = {
+    id: string;
+    companyName: string;
+    address?: string;
+    city?: string;
+    postalCode?: string;
+    country?: string;
+    contact?: string;
+    tin?: string;
+    companyType?: string;
+};
