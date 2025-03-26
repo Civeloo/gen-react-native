@@ -29,10 +29,10 @@ export const AddOrder: React.FC<Props> = (props) => {
 
   const handleSubmit = () => {
     const orderID = getUUIDv4();
-    const customer = availableCustomers.find((c) => Object.keys(selectedCustomer)[0] === c.id) as Customer;
-    const customerCodeKey = customer?.customerType;
-    const orderCodeLast = OrderCodes.byId(customerCodeKey);
-    const orderNumber = Number(orderCodeLast.orderNumber) + 1;
+    // const customer = availableCustomers.find((c) => Object.keys(selectedCustomer)[0] === c.id) as Customer;
+    const customerCodeKey = '#';//customer?.customerType;
+    const orderCodeLast = Number(OrderCodes.byId(customerCodeKey).orderNumber) || 0;
+    const orderNumber = orderCodeLast + 1;
     const orderCode = customerCodeKey + orderNumber.toString();
     OrderCodes.update(customerCodeKey, { orderNumber });
     const order = {
