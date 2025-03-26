@@ -1,19 +1,20 @@
-import { AddOrder } from '@/components/orders/add-order';
-import { ListOrder } from '@/components/orders/list-order';
-import { getLocalizedText } from '@/languages/languages';
+import {AddOrder} from '@/components/orders/add-order';
+import {ListOrder} from '@/components/orders/list-order';
+import {getLocalizedText} from '@/languages/languages';
 import Orders from '@/services/database/orders.model';
-import { useState } from 'react';
-import { Button, ScrollView, StyleSheet } from 'react-native';
+import {useState} from 'react';
+import {Button, ScrollView, StyleSheet} from 'react-native';
 
 export default function OrderPage() {
 
-    const getData = () => Orders.getNotCancelledOrders();
+    const getData = () => Orders.getNotCancelledOrders() as Order[];
+
     const refreshData = () => {
         setData(getData());
         setSelected({});
     }
 
-    const [data, setData] = useState(getData());
+    const [data, setData] = useState<Order[]>([]);
     const [selected, setSelected] = useState({});
     const [addOrder, setAddOrder] = useState(false);
 
@@ -21,7 +22,7 @@ export default function OrderPage() {
         refreshData();
     };
 
-    const handleSave = (orderCode:string) => {
+    const handleSave = (orderCode: string) => {
         setAddOrder(false);
         refreshData();
         setSelected(orderCode);
@@ -32,10 +33,15 @@ export default function OrderPage() {
             <Button
                 title={addOrder ? getLocalizedText("cancel") : getLocalizedText("create")}
                 onPress={() => setAddOrder(!addOrder)}
-                color={addOrder ? 'red' : '#2196F3'} />
+                color={addOrder ? 'red' : '#2196F3'}/>
             {addOrder
-                ? <AddOrder onSave={handleSave} />
-                : <ListOrder data={data} onRemove={handleRemove} selected={selected} />}
+                ? <AddOrder onSave={handleSave}/>
+                : <ListOrder
+                    data={data}
+                    onRemove={handleRemove}
+                    selected={selected}
+                    onRefresh={() => refreshData()}/>
+            }
         </ScrollView>
     );
 };

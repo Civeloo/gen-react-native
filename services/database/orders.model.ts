@@ -19,8 +19,13 @@ const Orders = (() => {
     const byPriority = (priority) =>
         idsByPriority(priority).map(base.byId)
 
+    const getTableCellIds = () => {
+        const cellIds = db.getTableCellIds('orders');
+        // TODO: get cell ids
+        return cellIds?.length>0 ? cellIds : ['orderCode', 'customerID', 'employeeID', 'orderDate', 'shipperID', 'status'];
+    }
     queries.setQueryDefinition('notCancelledOrders', 'orders', ({ select, where }) => {
-        db.getTableCellIds('orders').map((cellId) => select(cellId));
+        getTableCellIds().map((cellId) => select(cellId));
         where((getCell) => getCell('status') != 'cancelled');
     });
     const getNotCancelledOrders = () =>

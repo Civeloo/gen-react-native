@@ -1,15 +1,17 @@
 import {CompanyForm} from '@/components/company/company-form';
-import {Company} from '@/services/database/models';
 import {useEffect, useState} from 'react';
 import {Button, ScrollView, StyleSheet} from 'react-native';
 import {getLocalizedText} from "@/languages/languages";
 import {router} from "expo-router";
+import {Company} from "@/services/database/models";
 
 export default function CompanyPage(props) {
     const getData = () => Company.all();
-    const refreshData = () => setData(getData()[0]);
+    const refreshData = () => {
+        setData(getData());
+    }
 
-    const [data, setData] = useState<Company>();
+    const [data, setData] = useState<Company[]>([]);
 
     const handleSave = (values: Company, id: string) => {
         Company.add(values, id);
@@ -27,7 +29,7 @@ export default function CompanyPage(props) {
                 title={getLocalizedText("cancel")}
                 onPress={() => router.back()}
                 color={'red'}/>
-            {data && <CompanyForm company={data} onSave={handleSave}/>}
+            {data?.length > 0 && <CompanyForm company={data[0]} onSave={handleSave}/>}
         </ScrollView>
     );
 };

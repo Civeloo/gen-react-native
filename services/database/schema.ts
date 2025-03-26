@@ -23,7 +23,7 @@ const tablesSchema: TablesSchema = {
         country: { type: 'string' },
         contact: { type: 'string' },
         tin: { type: 'string' },
-        customerType: { type: 'string', default: '0' },
+        customerType: { type: 'string', default: '#' },
     },
     employees: {
         lastName: { type: 'string' },

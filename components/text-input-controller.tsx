@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
     },
     textInput: {
         height: '100%',
+        fontSize: 16,
     },
     error: {
         height: 20,

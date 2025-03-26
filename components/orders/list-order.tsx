@@ -7,14 +7,16 @@ import {SearchList} from "../search-list";
 import Products from "@/services/database/products.model";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {sendWhatsapp} from "@/utils";
+import {Company} from "@/services/database/models";
 
 type Props = {
     data: Order[];
     selected: string;
     onRemove: () => void;
+    onRefresh: () => void;
 };
 
-export const ListOrder: FC<Props> = ({data, selected, onRemove}) => {
+export const ListOrder: FC<Props> = ({data, selected, onRemove, onRefresh}) => {
     const [selectedOrder, setSelectedOrder] = useState({});
 
     const handleRemove = (orderDetails: OrderDetails[]) => {
@@ -27,7 +29,8 @@ export const ListOrder: FC<Props> = ({data, selected, onRemove}) => {
     };
 
     const handleSendWsp = (orderCode, orderDate, total, details, customerName, customerContact) => {
-        const message = `${customerName}\n${orderCode}\n${orderDate}\n${details.join('\n')}\n${total}`;
+        const company = Company.byId('company0');
+        const message = `${company?.companyName}\n${customerName}\n${orderCode}\n${orderDate.split('T')[0]}\n${details.join('\n')}\n$ ${total.toFixed(2)}`;
         sendWhatsapp(customerContact, message);
     };
 
@@ -45,8 +48,8 @@ export const ListOrder: FC<Props> = ({data, selected, onRemove}) => {
             <View style={styles.order}>
                 <View style={styles.header}>
                     <Text style={styles.title}>{customerName}</Text>
-                    <Text style={styles.detail}>{order?.orderCode}</Text>
-                    <Text style={styles.date}>{order?.orderDate.split('T')[0]}</Text>
+                    <Text style={styles.detail}>{orderCode}</Text>
+                    <Text style={styles.date}>{orderDate.split('T')[0]}</Text>
                     <Button
                         title="  -  "
                         color="red"
@@ -54,7 +57,7 @@ export const ListOrder: FC<Props> = ({data, selected, onRemove}) => {
                 </View>
                 <View style={styles.detailList}>
                     {orderDetails.map((orderDetail: OrderDetails) => {
-                        const detail = `${orderDetail.productName} x${orderDetail.quantity} - ${(orderDetail.price * orderDetail.quantity).toFixed(2)}`;
+                        const detail = `${orderDetail.productName} x ${orderDetail.quantity} - $ ${(orderDetail.price * orderDetail.quantity).toFixed(2)}`;
                         details.push(detail);
                         return (
                             <Text key={orderDetail.productName + orderDetail.productID} style={styles.detail}>
@@ -88,6 +91,7 @@ export const ListOrder: FC<Props> = ({data, selected, onRemove}) => {
                 elementKey="orderCode"
                 placeholder={getLocalizedText('search-orders')}
                 renderItem={renderItem}
+                onRefresh={() => onRefresh()}
             />
         </View>
     );

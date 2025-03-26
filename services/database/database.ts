@@ -6,8 +6,6 @@ import {
     INITIAL_COMPANY,
     INITIAL_CUSTOMERS,
     INITIAL_ORDER_CODES,
-    INITIAL_ORDER_DETAILS,
-    INITIAL_ORDERS,
     INITIAL_PRODUCTS
 } from "./data";
 
@@ -35,8 +33,8 @@ const db = store
     .setTables({
         products: INITIAL_PRODUCTS,
         customers: INITIAL_CUSTOMERS,
-        orders: INITIAL_ORDERS,
-        orderDetails: INITIAL_ORDER_DETAILS,
+        // orders: INITIAL_ORDERS,
+        // orderDetails: INITIAL_ORDER_DETAILS,
         orderCodes: INITIAL_ORDER_CODES,
         company: INITIAL_COMPANY,
     });

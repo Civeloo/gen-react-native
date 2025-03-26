@@ -5,7 +5,8 @@ import {FormProvider, SubmitHandler, useForm} from 'react-hook-form';
 import {Button, Platform, StyleSheet, Text, View} from 'react-native';
 import * as yup from "yup";
 import {TextInputController} from '../text-input-controller';
-import {cleanPhoneNumber} from "@/utils";
+import {cleanPhoneNumber, getCustomerCode} from "@/utils";
+import {Company} from "@/services/database/models";
 
 const schema = yup
     .object({
@@ -17,6 +18,7 @@ const schema = yup
         // country: yup.string().max(50).required(),
         contact: yup.string().max(50).required(),
         tin: yup.string().max(50).required(),
+        customerType: yup.string().max(50),
     })
     .required();
 
@@ -32,14 +34,17 @@ export const CustomerForm: React.FC<NewCustomerFormProps> = ({customer, onSave, 
     const {...methods} = useForm<FormValues>({
         resolver: yupResolver(schema),
         defaultValues: {
-            customerName: customer.customerName || '',
-            contact: customer.contact || '',
-            tin: customer.tin || '',
+            customerName: customer?.customerName || '',
+            contact: customer?.contact || '',
+            tin: customer?.tin || '',
+            customerType: customer?.customerType || '',
         }
     });
 
     const onSubmit: SubmitHandler<FormValues> = (values) => {
         values.contact = cleanPhoneNumber(values.contact);
+        const company = Company.all()[0] as Company;
+        values.customerType = getCustomerCode(company?.companyType);
         onSave(values, customer?.id);
         methods.reset();
     };

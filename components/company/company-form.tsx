@@ -5,7 +5,6 @@ import {FormProvider, SubmitHandler, useForm} from 'react-hook-form';
 import {Button, Platform, StyleSheet, Text, View} from 'react-native';
 import * as yup from "yup";
 import {TextInputController} from '../text-input-controller';
-import {cleanPhoneNumber} from "@/utils";
 
 const schema = yup
     .object({
@@ -43,9 +42,9 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
     });
 
     const onSubmit: SubmitHandler<FormValues> = (values) => {
-        values.contact = cleanPhoneNumber(values.contact);
+        values.companyType = values?.companyType?.toUpperCase() || 'USA';
         onSave(values, company?.id);
-        methods.reset();
+        // methods.reset();
     };
 
     const FormContent = (
@@ -76,7 +75,6 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
                 <TextInputController
                     name="companyType"
                     placeholder={getLocalizedText('region-code-placeholder')}
-                    keyboardType="default"
                 /></View>
             <View style={styles.okButton}>
                 <Button title={getLocalizedText('ok')} onPress={methods.handleSubmit(onSubmit)}/>

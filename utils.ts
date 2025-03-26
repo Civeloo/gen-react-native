@@ -1,5 +1,6 @@
 import * as Crypto from 'expo-crypto';
 import * as Linking from "expo-linking";
+import ExpoLocalization from "expo-localization/src/ExpoLocalization";
 
 export const getUUIDv4 = () => Crypto.randomUUID();
 
@@ -15,3 +16,7 @@ export const sendWhatsapp = (phoneNumber: number, message: string) => {
             console.error('An error occurred', e);
         });
 }
+
+export const getRegionCode = () => ExpoLocalization.getLocales()[0].regionCode || 'US';
+
+export const getCustomerCode = (regionCode)  => regionCode == 'AR' ? 'C' : '0';
