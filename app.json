@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "gen-react-native",
+    "name": "GeN",
     "slug": "gen-react-native",
-    "version": "1.0.0",
+    "version": "0.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "civeloo-gen",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -14,10 +14,10 @@
         "CFBundleAllowMixedLocalizations": true
       },
       "googleServicesFile": "./GoogleService-Info.plist",
-      "bundleIdentifier": "com.degsoft.gen"
+      "bundleIdentifier": "com.civeloo.gen"
     },
     "android": {
-      "package": "com.degsoft.gen",
+      "package": "com.civeloo.gen",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -60,6 +60,6 @@
         "projectId": "f9cb767f-1ea8-46db-8ecb-37734905b667"
       }
     },
-    "owner": "degsoft"
+    "owner": "civeloo"
   }
 }

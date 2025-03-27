@@ -3,7 +3,7 @@ import { ProductForm } from '@/components/products/product-form';
 import { View } from 'react-native';
 
 const meta = {
-  title: 'NewProductForm',
+  title: 'ProductForm',
   component: ProductForm,
   tags: ['autodocs'],
   decorators: [
