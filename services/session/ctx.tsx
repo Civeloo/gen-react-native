@@ -1,6 +1,6 @@
 import { useStorageState } from '@/hooks/useStorageState';
 import { createContext, useContext, type PropsWithChildren } from 'react';
-import { firebaseAuthState, firebaseGoogleSignIn, firebaseSignIn, firebaseSignOut, firebaseSignUp } from '../firebase/firebase.auth';
+// import { firebaseAuthState, firebaseGoogleSignIn, firebaseSignIn, firebaseSignOut, firebaseSignUp } from '../firebase/firebase.auth';
 
 type Sign = (email: string, password: string) => void;
 type AuthContextProps = {
@@ -41,30 +41,30 @@ export function SessionProvider({ children }: PropsWithChildren) {
     <AuthContext.Provider
       value={{
         authState: () => {
-          firebaseAuthState().then((user) => {
-            setSession(user ? user.uid : null);
-          });
+          // firebaseAuthState().then((user) => {
+          //   setSession(user ? user.uid : null);
+          // });
         },
         signIn: (email, password) => {
-          firebaseSignIn(email, password)
-            .then((user) => {
-              setSession(user ? user.uid : null);
-            });
+          // firebaseSignIn(email, password)
+          //   .then((user) => {
+          //     setSession(user ? user.uid : null);
+          //   });
         },
         signUp: (email, password) => {
-          firebaseSignUp(email, password)
-            .then((user) => {
-              setSession(user ? user.uid : null);
-            });
+          // firebaseSignUp(email, password)
+          //   .then((user) => {
+          //     setSession(user ? user.uid : null);
+          //   });
         },
         googleSignIn: (token) => {
-          firebaseGoogleSignIn(token)
-            .then((user) => {
-              setSession(user ? user.uid : null);
-            });
+          // firebaseGoogleSignIn(token)
+          //   .then((user) => {
+          //     setSession(user ? user.uid : null);
+          //   });
         },
         signOut: () => {
-          firebaseSignOut()
+          // firebaseSignOut()
           setSession(null);
         },
         session,

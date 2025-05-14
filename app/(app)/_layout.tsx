@@ -7,7 +7,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Provider, useCreateStore } from "tinybase/ui-react";
 
-function RootLayout() {
+function RootLayout(){
   const { authState, session, isLoading } = useSession();
 
   // You can keep the splash screen open, or render a loading screen like we do here.
