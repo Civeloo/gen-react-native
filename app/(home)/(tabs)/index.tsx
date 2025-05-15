@@ -1,20 +1,16 @@
-import {useSession} from "@/services/session/ctx";
-import {router} from "expo-router";
-import {Button, StyleSheet, Text, View, TouchableOpacity} from "react-native";
+import {Link} from "expo-router";
+import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import {Link} from 'expo-router';
 import {getLocalizedText} from "@/languages/languages";
+import {SignOutButton} from "@/components/sign-out-button";
 
 export default function Index() {
 
-    const {signOut} = useSession();
-
-    const handleSignOut = () => {
-        signOut();
-        router.replace('/');
-    }
-
     return (<View style={styles.container}>
+        <View style={styles.link}>
+            <SignOutButton/>
+        </View>
+
         <Link style={styles.link}
               href="/customer" asChild>
             <TouchableOpacity style={styles.button}>
@@ -43,15 +39,19 @@ export default function Index() {
                 <Text style={styles.buttonText}>{getLocalizedText('company')}</Text>
             </TouchableOpacity>
         </Link>
-        <View style={styles.link}>
-            <Button title={getLocalizedText('sign-out')} onPress={handleSignOut}/>
-        </View>
+
     </View>);
 }
 
 const styles = StyleSheet.create({
     container: {
         margin: 'auto',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    title: {
+        fontSize: 20,
+        fontWeight: 'bold',
     },
     link: {
         margin: 10,

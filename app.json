@@ -14,8 +14,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
-      "googleServicesFile": "./google-services.json"
+      "edgeToEdgeEnabled": true
     },
     "locales": {
       "en": "./languages/en.json",
@@ -34,8 +33,7 @@
       ],
       "expo-sqlite",
       "expo-localization",
-      "expo-secure-store",
-      "@react-native-google-signin/google-signin"
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true
