@@ -94,7 +94,7 @@ const SignUpPage: React.FC = () => {
             // and redirect the user
             if (signUpAttempt.status === 'complete') {
                 await setActive({session: signUpAttempt.createdSessionId})
-                router.replace('/')
+                router.replace('/');
             } else {
                 // If the status is not complete, check why. User may need to
                 // complete further steps.
@@ -125,7 +125,7 @@ const SignUpPage: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>{getLocalizedText('sign-up')}</Text>
+            {/*<Text style={styles.title}>{getLocalizedText('sign-up')}</Text>*/}
             <FormProvider {...methods}>
                 {Platform.OS == 'web' ? (
                     <form onSubmit={methods.handleSubmit(onSubmit)}>

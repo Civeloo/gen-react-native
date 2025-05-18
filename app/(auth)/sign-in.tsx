@@ -1,33 +1,17 @@
-import {TextInputController} from '@/components/text-input-controller';
-import {getLocalizedText} from '@/languages/languages';
-import {yupResolver} from '@hookform/resolvers/yup';
 import React from 'react';
-import {FormProvider, SubmitHandler, useForm} from 'react-hook-form';
-import {Button, Platform, StyleSheet, Text, View} from 'react-native';
-import * as yup from 'yup';
-import {useSignIn} from '@clerk/clerk-expo'
-import {Link, useRouter} from 'expo-router'
-
-const schema = yup
-    .object({
-        email: yup.string().email().required(),
-        password: yup.string().min(8).max(16).required()
-    })
-    .required();
-
-type FormValues = yup.InferType<typeof schema>
+import {SignInForm} from "@/components/sign-in/sign-in-form";
+import {Link, useRouter} from "expo-router";
+import {useSignIn} from "@clerk/clerk-expo";
+import {StyleSheet, Text, View} from "react-native";
+import {getLocalizedText} from "@/languages/languages";
+import {BackButton} from "@/components/back-button";
 
 const SignInPage: React.FC = () => {
-
-    const {signIn, setActive, isLoaded} = useSignIn();
     const router = useRouter();
+    const {signIn, setActive, isLoaded} = useSignIn();
 
-    const {...methods} = useForm<FormValues>({resolver: yupResolver(schema)});
-
-    const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    const handleOnSave = async (data) => {
         const {email, password} = data;
-
-        methods.reset();
 
         if (!isLoaded) return
 
@@ -52,68 +36,41 @@ const SignInPage: React.FC = () => {
             // for more info on error handling
             console.error(JSON.stringify(err, null, 2));
         }
-
-    };
-
-    const FormContent = (
-        <View>
-            <TextInputController
-                name='email'
-                label={getLocalizedText('email')}
-                placeholder={getLocalizedText('email_placeholder')}
-                keyboardType='email-address'
-            />
-            <TextInputController
-                name='password'
-                label={getLocalizedText('password')}
-                placeholder={getLocalizedText('password_placeholder')}
-                keyboardType='visible-password'
-                secureTextEntry
-            />
-            <Button title={getLocalizedText('sign-in')} onPress={methods.handleSubmit(onSubmit)}/>
-        </View>
-    );
-
-    return (<>
-        <View style={styles.container}>
-            <Text style={styles.title}>{getLocalizedText('sign-in')}</Text>
-            <FormProvider {...methods}>
-                {Platform.OS == 'web' ? (
-                    <form onSubmit={methods.handleSubmit(onSubmit)}>
-                        {FormContent}
-                    </form>
-                ) : (
-                    FormContent
-                )}
-            </FormProvider>
-
-            <View style={styles.signUp}>
+    }
+    return (<View style={styles.container}>
+        <BackButton  onPress={()=> router.replace('/')}/>
+        <SignInForm onSave={handleOnSave}/>
+        <View style={styles.questions}>
+            <View style={styles.questionsRow}>
                 <Text>{getLocalizedText('sign-up-question')}</Text>
                 <Link href='/sign-up'>
-                    <Text style={styles.signUpText}>{getLocalizedText('sign-up')}</Text>
+                    <Text style={styles.questionsText}>{getLocalizedText('sign-up')}</Text>
+                </Link>
+            </View>
+            <View style={styles.questionsRow}>
+                <Text>{getLocalizedText('password_forgot')}</Text>
+                <Link href='/forgot'>
+                    <Text style={styles.questionsText}>{getLocalizedText('password_reset')}</Text>
                 </Link>
             </View>
         </View>
-    </>);
+    </View>);
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        width: '100%',
-        alignItems: 'center',
-        justifyContent: 'space-evenly',
+        paddingVertical: 10,
     },
-    title: {
-        fontSize: 56,
-        fontWeight: 'bold',
+    questions: {
+        gap: 10,
     },
-    signUp: {
-        display: 'flex',
+    questionsRow: {
         flexDirection: 'row',
-        gap: 3,
+        justifyContent: 'center',
+        gap: 5,
     },
-    signUpText: {
+    questionsText: {
         fontWeight: 'bold',
     }
 });

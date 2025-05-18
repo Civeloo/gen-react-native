@@ -27,7 +27,7 @@ if (storybookEnabled) {
 // Styles for the app.
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#fff',
+        // backgroundColor: '#fff',
         flex: 1,
     },
 });

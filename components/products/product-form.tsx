@@ -29,9 +29,9 @@ export const ProductForm: React.FC<NewProductFormProps> = ({product, onSave, onR
         resolver: yupResolver(schema),
         defaultValues: {
             // id: product.id,
-            productName: product.productName || '',
-            quantity: product.quantity || '',
-            price: product.price || '',
+            productName: product?.productName || '',
+            quantity: product?.quantity || '',
+            price: product?.price || '',
         }
     });
 

@@ -1,5 +1,6 @@
 import { Redirect, Stack } from 'expo-router'
 import { useAuth } from '@clerk/clerk-expo'
+import {getLocalizedText} from "@/languages/languages";
 
 export default function AuthRoutesLayout() {
     const { isSignedIn } = useAuth();
@@ -10,6 +11,8 @@ export default function AuthRoutesLayout() {
 
     return (<Stack>
         <Stack.Screen name='sign-in' options={{headerShown: false}}/>
-        <Stack.Screen name='sign-up' options={{headerShown: false}}/>
+        <Stack.Screen name='sign-up' options={{
+            title: getLocalizedText('sign-up'),
+            headerShown: true}}/>
     </Stack>);
 }

@@ -5,20 +5,15 @@
   "scripts": {
     "start": "expo start -c",
     "android": "expo run:android",
-    "android:release": "expo run:android --variant release",
-    "ios": "expo run:ios",
+    "android-release": "expo run:android --variant release",
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint",
     "build": "expo prebuild --clean",
-    "build:android": "expo prebuild -p android --clean",
-    "build:ios": "expo prebuild -p ios --clean",
-    "build:storybook": "storybook build",
+    "build-android": "expo prebuild -p android --clean",
     "storybook": "cross-env EXPO_PUBLIC_STORYBOOK_ENABLED='true' expo start",
-    "storybook:web": "storybook dev -p 6006",
-    "storybook:generate": "sb-rn-get-stories",
-    "storybook:ios": "cross-env EXPO_PUBLIC_STORYBOOK_ENABLED='true' expo start --ios",
-    "storybook:android": "cross-env EXPO_PUBLIC_STORYBOOK_ENABLED='true' expo start --android"
+    "storybook-generate": "sb-rn-get-stories",
+    "storybook-android": "cross-env EXPO_PUBLIC_STORYBOOK_ENABLED='true' expo start --android"
   },
   "jest": {
     "preset": "jest-expo",
