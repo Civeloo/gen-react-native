@@ -30,6 +30,7 @@
     "search-orders": "Search orders",
     "search-products": "Search products",
     "sign-in": "Sign In",
+    "sign_password_error": "Email or Password is incorrect. Try again, or use another method.",
     "sign-up": "Sign Up",
     "sign-up-question": "Don't have an account?",
     "sign-out": "Sign Out",

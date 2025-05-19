@@ -19,12 +19,12 @@ interface SignInFormProps {
     onSave: () => Promise<void>
 }
 
-export const SignInForm: React.FC<SignInFormProps> = (onSave) => {
+export const SignInForm: React.FC<SignInFormProps> = ({onSave}) => {
     const {...methods} = useForm<FormValues>({resolver: yupResolver(schema)});
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
-        methods.reset();
         onSave(data);
+        methods.reset();
     };
 
     const FormContent = (
@@ -39,7 +39,6 @@ export const SignInForm: React.FC<SignInFormProps> = (onSave) => {
                 name='password'
                 label={getLocalizedText('password')}
                 placeholder={getLocalizedText('password_placeholder')}
-                keyboardType='visible-password'
                 secureTextEntry
             />
             <Button title={getLocalizedText('sign-in')} onPress={methods.handleSubmit(onSubmit)}/>
@@ -65,10 +64,12 @@ export const SignInForm: React.FC<SignInFormProps> = (onSave) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         width: '100%',
         alignItems: 'center',
         justifyContent: 'space-evenly',
+        gap: 50,
+        paddingTop: 50,
+        paddingBottom: 10,
     },
     title: {
         fontSize: 56,

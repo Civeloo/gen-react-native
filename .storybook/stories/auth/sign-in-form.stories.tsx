@@ -1,6 +1,6 @@
 import {Meta, StoryObj} from '@storybook/react';
 import {StyleSheet, View} from 'react-native';
-import {SignInForm} from "@/components/sign-in/sign-in-form";
+import {SignInForm} from "@/components/auth/sign-in-form";
 
 const meta = {
     title: 'Sign In Form',
