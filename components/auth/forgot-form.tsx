@@ -3,33 +3,23 @@ import {getLocalizedText} from '@/languages/languages';
 import {yupResolver} from '@hookform/resolvers/yup';
 import React from 'react';
 import {FormProvider, SubmitHandler, useForm} from 'react-hook-form';
-import {Button, Platform, StyleSheet, Text, View} from 'react-native';
+import {Button, Platform, StyleSheet, View} from 'react-native';
 import * as yup from 'yup';
 
 const schema = yup
     .object({
-        code: yup.number().required(),
-        password: yup
-            .string()
-            .min(8)
-            .max(16)
-            .when('$forgot', {
-                is: true,
-                then: schema => schema.required(),
-                otherwise: schema => schema.notRequired(),
-            }),
+        email: yup.string().email().required()
     })
     .required();
 
 type FormValues = yup.InferType<typeof schema>
 
-interface VerificationFormProps {
+interface ForgotFormProps {
     onSave: () => Promise<void>
-    forgot?: boolean;
 }
 
-export const VerificationForm: React.FC<VerificationFormProps> = ({onSave, forgot}) => {
-    const {...methods} = useForm<FormValues>({resolver: yupResolver(schema, {context: {forgot: forgot}})});
+export const ForgotForm: React.FC<ForgotFormProps> = ({onSave}) => {
+    const {...methods} = useForm<FormValues>({resolver: yupResolver(schema)});
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
         onSave(data);
@@ -39,24 +29,17 @@ export const VerificationForm: React.FC<VerificationFormProps> = ({onSave, forgo
     const FormContent = (
         <View>
             <TextInputController
-                name='code'
-                label={getLocalizedText('verification_email')}
-                placeholder={getLocalizedText('verification_placeholder')}
-                keyboardType='numeric'
+                name='email'
+                label={getLocalizedText('email')}
+                placeholder={getLocalizedText('email_placeholder')}
+                keyboardType='email-address'
             />
-            {forgot && <TextInputController
-                name='password'
-                label={getLocalizedText('password_new')}
-                placeholder={getLocalizedText('password_placeholder')}
-                secureTextEntry
-            />}
-            <Button title={getLocalizedText('verification')} onPress={methods.handleSubmit(onSubmit)}/>
+            <Button title={getLocalizedText('forgot')} onPress={methods.handleSubmit(onSubmit)}/>
         </View>
     );
 
     return (<>
         <View style={styles.container}>
-            <Text style={styles.title}>{getLocalizedText('verification')}</Text>
             <FormProvider {...methods}>
                 {Platform.OS == 'web' ? (
                     <form onSubmit={methods.handleSubmit(onSubmit)}>

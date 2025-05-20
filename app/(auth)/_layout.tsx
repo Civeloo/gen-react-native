@@ -14,5 +14,8 @@ export default function AuthRoutesLayout() {
         <Stack.Screen name='sign-up' options={{
             title: getLocalizedText('sign-up'),
             headerShown: true}}/>
+        <Stack.Screen name='forgot' options={{
+            title: getLocalizedText('forgot'),
+            headerShown: true}}/>
     </Stack>);
 }
