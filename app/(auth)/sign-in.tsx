@@ -2,19 +2,22 @@ import React, {useState} from 'react';
 import {SignInForm} from "@/components/auth/sign-in-form";
 import {Link, useRouter} from "expo-router";
 import {isClerkAPIResponseError, useSignIn} from "@clerk/clerk-expo";
-import {StyleSheet, Text, View} from "react-native";
+import {ActivityIndicator, StyleSheet, Text, View} from "react-native";
 import {getLocalizedText} from "@/languages/languages";
 import {BackButton} from "@/components/back-button";
 
 const SignInPage: React.FC = () => {
-        const router = useRouter();
-        const {signIn, setActive, isLoaded} = useSignIn();
         const [errors, setErrors] = useState([]);
+        const [isLoading, setIsLoading] = useState(false);
+        const {signIn, setActive, isLoaded} = useSignIn();
+        const router = useRouter();
 
         const handleOnSave = async (data) => {
             const {email, password} = data;
 
             if (!isLoaded) return;
+
+            setIsLoading(true);
 
             setErrors([]);
 
@@ -48,7 +51,9 @@ const SignInPage: React.FC = () => {
                 }
                 // console.error(JSON.stringify(err, null, 2));
             }
+            setIsLoading(false);
         }
+
         return (<View style={styles.container}>
             <BackButton onPress={() => router.replace('/')}/>
             <View style={styles.form}>
@@ -58,6 +63,7 @@ const SignInPage: React.FC = () => {
                         {e?.longMessage}
                     </Text>
                 )}
+                {isLoading && <ActivityIndicator/>}
             </View>
             <View style={styles.questions}>
                 <View style={styles.questionsRow}>
