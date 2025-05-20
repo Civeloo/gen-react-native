@@ -2,7 +2,7 @@
   "expo": {
     "name": "gen",
     "slug": "gen-react-native",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "civeloogen",
@@ -10,6 +10,22 @@
     "newArchEnabled": true,
     "android": {
       "package": "com.civeloo.gen",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "gen.civeloo.com"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"

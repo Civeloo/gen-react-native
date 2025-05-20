@@ -29,6 +29,10 @@ Inside your Expo project directory, run the following `keytool` command to creat
 sudo keytool -genkey -v -keystore my-upload-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
 ```
 
+```bash
+sudo keytool -list -v -keystore my-upload-key.keystore -alias my-key-alias
+```
+
 After running this command, you will be prompted to enter a password for the keystore. This password will protect the upload key. Remember the password you enter here, as you'll need it in the next step.
 
 This command also generates the keystore file named **my-upload-key.keystore** in your project directory. Move it to the **android/app** directory.
