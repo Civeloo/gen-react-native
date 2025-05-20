@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
         minWidth: 200,
         height: "auto",
     },
-    label: {},
+    label: {marginBottom: 5},
     input: {
         // flex: 1,
         paddingHorizontal: 10,
