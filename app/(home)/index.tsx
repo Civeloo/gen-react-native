@@ -1,4 +1,3 @@
-import {SignedIn, SignedOut} from '@clerk/clerk-expo';
 import {Redirect, router, Stack} from 'expo-router';
 import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {getLocalizedText} from '@/languages/languages';
@@ -9,15 +8,11 @@ export default function Page() {
         <View style={styles.container}>
             <Text style={styles.title}>{getLocalizedText('CFBundleDisplayName')}</Text>
             <View style={styles.buttons}>
-                <SignedIn>
-                    <Redirect href={'(tabs)'}/>
-                </SignedIn>
-                <SignedOut>
+                    {/*<Redirect href={'(tabs)'}/>*/}
                     <Button title={getLocalizedText('sign-in')} onPress={() => router.push('/(auth)/sign-in')}/>
                     <TouchableOpacity onPress={() => router.push('(tabs)')}>
                         <Text style={styles.skip}>{getLocalizedText('skip')}</Text>
                     </TouchableOpacity>
-                </SignedOut>
             </View>
         </View>
     );

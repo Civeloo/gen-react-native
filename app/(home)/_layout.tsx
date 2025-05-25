@@ -2,11 +2,9 @@ import {Stack} from 'expo-router/stack';
 import {useEffect, useRef} from 'react';
 import {Provider, useCreateMergeableStore} from 'tinybase/ui-react';
 import {customSynchronizer, db, useCustomPersister} from '@/services/database/database';
-import {useUser} from '@clerk/clerk-expo';
 
 export default function Layout() {
-    const {user} = useUser();
-    const userId = user?.id;
+    const userId = 'user?.id';
 
     const store = useCreateMergeableStore(() => db);
     useCustomPersister(store);
