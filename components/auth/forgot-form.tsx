@@ -14,8 +14,12 @@ const schema = yup
 
 type FormValues = yup.InferType<typeof schema>
 
+export interface ForgotFormDataProps {
+    email: string;
+}
+
 interface ForgotFormProps {
-    onSave: () => Promise<void>
+    onSave: (data: ForgotFormDataProps) => void
 }
 
 export const ForgotForm: React.FC<ForgotFormProps> = ({onSave}) => {

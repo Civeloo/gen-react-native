@@ -5,6 +5,7 @@ import React from 'react';
 import {FormProvider, SubmitHandler, useForm} from 'react-hook-form';
 import {Button, Platform, StyleSheet, View} from 'react-native';
 import * as yup from 'yup';
+import {SignDataProps} from '@/types/sign-data-props';
 
 const schema = yup
     .object({
@@ -17,8 +18,10 @@ const schema = yup
 
 type FormValues = yup.InferType<typeof schema>
 
+export interface SignUpFormDataProps extends SignDataProps {}
+
 interface SignUpFormProps {
-    onSave: () => Promise<void>
+    onSave: (data:{ email: string, password: string }) => Promise<void>
 }
 
 export const SignUpForm: React.FC<SignUpFormProps> = ({onSave}) => {

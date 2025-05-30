@@ -2,9 +2,12 @@ import {Stack} from 'expo-router/stack';
 import {useEffect, useRef} from 'react';
 import {Provider, useCreateMergeableStore} from 'tinybase/ui-react';
 import {customSynchronizer, db, useCustomPersister} from '@/services/database/database';
+import {useSession} from "@/services/session/ctx";
+import {ActivityIndicator} from "react-native";
 
 export default function Layout() {
-    const userId = 'user?.id';
+    const {authState, session, isLoading} = useSession();
+    const userId = session;
 
     const store = useCreateMergeableStore(() => db);
     useCustomPersister(store);
@@ -29,12 +32,22 @@ export default function Layout() {
         };
     }, [userId]);
 
+    useEffect(() => {
+        authState();
+    }, []);
+
     return (
-        <Provider store={store}>
-            <Stack>
-                <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
-                <Stack.Screen name="index" options={{headerShown: false}}/>
-            </Stack>
-        </Provider>
+        isLoading ? <ActivityIndicator/>
+            :
+            <Provider store={store}>
+                <Stack>
+                    {/*<Stack.Protected guard={!session}>*/}
+                    <Stack.Screen name="index" options={{headerShown: false}}/>
+                    {/*</Stack.Protected>*/}
+                    {/*<Stack.Protected guard={!!session}>*/}
+                        <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
+                    {/*</Stack.Protected>*/}
+                </Stack>
+            </Provider>
     );
 }

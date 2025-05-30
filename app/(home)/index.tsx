@@ -1,18 +1,24 @@
-import {Redirect, router, Stack} from 'expo-router';
+import {Redirect, router} from 'expo-router';
 import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {getLocalizedText} from '@/languages/languages';
+import {useSession} from "@/services/session/ctx";
 
-export default function Page() {
+export default function HomePage() {
+    const {session} = useSession();
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>{getLocalizedText('CFBundleDisplayName')}</Text>
             <View style={styles.buttons}>
-                    {/*<Redirect href={'(tabs)'}/>*/}
-                    <Button title={getLocalizedText('sign-in')} onPress={() => router.push('/(auth)/sign-in')}/>
-                    <TouchableOpacity onPress={() => router.push('(tabs)')}>
-                        <Text style={styles.skip}>{getLocalizedText('skip')}</Text>
-                    </TouchableOpacity>
+                {session ? <Redirect href={'(tabs)'}/>
+                    :
+                    <>
+                        <Button title={getLocalizedText('sign-in')} onPress={() => router.push('/(auth)/sign-in')}/>
+                        <TouchableOpacity onPress={() => router.push('/(home)/(tabs)')}>
+                            <Text style={styles.skip}>{getLocalizedText('skip')}</Text>
+                        </TouchableOpacity>
+                    </>
+                }
             </View>
         </View>
     );

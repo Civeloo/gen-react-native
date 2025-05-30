@@ -5,6 +5,7 @@ import {FormProvider, SubmitHandler, useForm} from 'react-hook-form';
 import {Button, Platform, StyleSheet, Text, View} from 'react-native';
 import * as yup from "yup";
 import {TextInputController} from '../text-input-controller';
+import {Company} from "@/types/types";
 
 const schema = yup
     .object({
