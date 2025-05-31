@@ -52,13 +52,13 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({onSave}) => {
                 placeholder={getLocalizedText('confirm_placeholder')}
                 secureTextEntry
             />
-            <Button title={getLocalizedText('sign-up')} onPress={methods.handleSubmit(onSubmit)}/>
+            <Button title={getLocalizedText('sign_up')} onPress={methods.handleSubmit(onSubmit)}/>
         </View>
     );
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>{getLocalizedText('sign-up')}</Text>
+            <Text style={styles.title}>{getLocalizedText('sign_up')}</Text>
             <FormProvider {...methods}>
                 {Platform.OS == 'web' ? (
                     <form onSubmit={methods.handleSubmit(onSubmit)}>

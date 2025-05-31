@@ -41,13 +41,13 @@ export const SignInForm: React.FC<SignInFormProps> = ({onSave}) => {
                 placeholder={getLocalizedText('password_placeholder')}
                 secureTextEntry
             />
-            <Button title={getLocalizedText('sign-in')} onPress={methods.handleSubmit(onSubmit)}/>
+            <Button title={getLocalizedText('sign_in')} onPress={methods.handleSubmit(onSubmit)}/>
         </View>
     );
 
     return (<>
         <View style={styles.container}>
-            <Text style={styles.title}>{getLocalizedText('sign-in')}</Text>
+            <Text style={styles.title}>{getLocalizedText('sign_in')}</Text>
             <FormProvider {...methods}>
                 {Platform.OS == 'web' ? (
                     <form onSubmit={methods.handleSubmit(onSubmit)}>

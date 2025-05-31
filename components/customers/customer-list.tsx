@@ -31,7 +31,7 @@ export const CustomerList: FC<Props> = ({data, onEdit, onRefresh}) => {
                 data={data}
                 selected={selected}
                 elementKey="customerName"
-                placeholder={getLocalizedText('search-customers')}
+                placeholder={getLocalizedText('search_customers')}
                 renderItem={renderItem}
                 onRefresh={() => onRefresh()}
             />

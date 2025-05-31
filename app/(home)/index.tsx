@@ -16,7 +16,7 @@ export default function HomePage() {
         <View style={styles.container}>
             <Text style={styles.title}>{getLocalizedText('CFBundleDisplayName')}</Text>
             <View style={styles.buttons}>
-                <Button title={getLocalizedText('sign-in')} onPress={() => router.push('/(auth)/sign-in')}/>
+                <Button title={getLocalizedText('sign_in')} onPress={() => router.push('/(auth)/sign-in')}/>
                 <TouchableOpacity onPress={() => router.push('/(home)/(tabs)')}>
                     <Text style={styles.skip}>{getLocalizedText('skip')}</Text>
                 </TouchableOpacity>

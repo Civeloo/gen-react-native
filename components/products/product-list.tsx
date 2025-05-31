@@ -31,7 +31,7 @@ export const ProductList: React.FC<Props> = ({data, onEdit, onRefresh}) => {
                 data={data}
                 selected={selected}
                 elementKey="productName"
-                placeholder={getLocalizedText('search-products')}
+                placeholder={getLocalizedText('search_products')}
                 renderItem={renderItem}
                 onRefresh={() => onRefresh()}
             />

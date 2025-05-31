@@ -54,28 +54,28 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
                 <Text style={styles.label}>✏</Text>
                 <TextInputController
                     name="companyName"
-                    placeholder={getLocalizedText('company-name-placeholder')}
+                    placeholder={getLocalizedText('company_name_placeholder')}
                     keyboardType="default"
                 /></View>
             {/*<View style={styles.input}>
                 <Text style={styles.label}>📞</Text>
                 <TextInputController
                     name="contact"
-                    placeholder={getLocalizedText('contact-placeholder')}
+                    placeholder={getLocalizedText('contact_placeholder')}
                     keyboardType="default"
                 /></View>*/}
             {/*<View style={styles.input}>
                 <Text style={styles.label}>🎫</Text>
                 <TextInputController
                     name="tin"
-                    placeholder={getLocalizedText('tin-placeholder')}
+                    placeholder={getLocalizedText('tin_placeholder')}
                     keyboardType="default"
                 /></View>*/}
             <View style={styles.input}>
                 <Text style={styles.label}>🌎</Text>
                 <TextInputController
                     name="companyType"
-                    placeholder={getLocalizedText('region-code-placeholder')}
+                    placeholder={getLocalizedText('region_code_placeholder')}
                 /></View>
             <View style={styles.okButton}>
                 <Button title={getLocalizedText('ok')} onPress={methods.handleSubmit(onSubmit)}/>

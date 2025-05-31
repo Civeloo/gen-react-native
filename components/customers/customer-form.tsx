@@ -55,21 +55,21 @@ export const CustomerForm: React.FC<NewCustomerFormProps> = ({customer, onSave, 
                 <Text style={styles.label}>✏</Text>
                 <TextInputController
                 name="customerName"
-                placeholder={getLocalizedText('customer-name-placeholder')}
+                placeholder={getLocalizedText('customer_name_placeholder')}
                 keyboardType="default"
             /></View>
             <View style={styles.input}>
                 <Text style={styles.label}>📞</Text>
                 <TextInputController
                     name="contact"
-                    placeholder={getLocalizedText('contact-placeholder')}
+                    placeholder={getLocalizedText('contact_placeholder')}
                     keyboardType="default"
                 /></View>
             <View style={styles.input}>
                 <Text style={styles.label}>🎫</Text>
                 <TextInputController
                     name="tin"
-                    placeholder={getLocalizedText('tin-placeholder')}
+                    placeholder={getLocalizedText('tin_placeholder')}
                     keyboardType="default"
                 /></View>
             <View style={styles.buttons}>

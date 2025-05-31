@@ -8,7 +8,7 @@ export const SignOutButton = ({signOut, onSignOut}:{signOut:boolean, onSignOut:(
 
     return (
         <Button color={signOut ? 'red' : 'blue'}
-                title={getLocalizedText(signOut ? 'sign-out' : 'sign-in')}
+                title={getLocalizedText(signOut ? 'sign_out' : 'sign_in')}
                 onPress={handleSignOut}/>
     );
 }

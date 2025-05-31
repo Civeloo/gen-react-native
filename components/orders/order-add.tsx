@@ -121,7 +121,7 @@ export const OrderAdd: React.FC<Props> = (props) => {
                     data={availableCustomers}
                     selected={selectedCustomer}
                     elementKey="customerName"
-                    placeholder={getLocalizedText('search-customers')}
+                    placeholder={getLocalizedText('search_customers')}
                     renderItem={renderCustomerItem}
                     onRefresh={() => refreshCustomers()}
                 />
@@ -129,7 +129,7 @@ export const OrderAdd: React.FC<Props> = (props) => {
                     data={availableProducts}
                     selected={selectedProducts}
                     elementKey="productName"
-                    placeholder={getLocalizedText('search-products')}
+                    placeholder={getLocalizedText('search_products')}
                     renderItem={renderProductItem}
                     onRefresh={() => refreshProducts()}
                 />

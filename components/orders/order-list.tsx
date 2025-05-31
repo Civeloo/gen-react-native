@@ -39,7 +39,7 @@ export const OrderList: FC<Props> = ({data, selected, onRemove, onRefresh}) => {
         const order = item;
         const orderDetails = Orders.inner(order?.id, 'orderWithDetails') as OrderDetail[];
         const customer = Customers.byId(order?.customerID);
-        const customerName = customer?.customerName || getLocalizedText('cash-customer');
+        const customerName = customer?.customerName || getLocalizedText('cash_customer');
         const total = orderDetails.reduce((acc, orderDetail) => acc + orderDetail.price * orderDetail.quantity, 0);
         const orderCode = order?.orderCode;
         const orderDate = order?.orderDate;
@@ -90,7 +90,7 @@ export const OrderList: FC<Props> = ({data, selected, onRemove, onRefresh}) => {
                 data={data}
                 selected={selectedOrder}
                 elementKey="orderCode"
-                placeholder={getLocalizedText('search-orders')}
+                placeholder={getLocalizedText('search_orders')}
                 renderItem={renderItem}
                 onRefresh={() => onRefresh()}
             />

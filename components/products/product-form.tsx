@@ -47,21 +47,21 @@ export const ProductForm: React.FC<NewProductFormProps> = ({product, onSave, onR
                 <Text style={styles.label}>✏</Text>
                 <TextInputController
                     name="productName"
-                    placeholder={getLocalizedText('product-name-placeholder')}
+                    placeholder={getLocalizedText('product_name_placeholder')}
                     keyboardType="default"
                 /></View>
             <View style={styles.input}>
                 <Text style={styles.label}>✖</Text>
                 <TextInputController
                     name="quantity"
-                    placeholder={getLocalizedText('quantity-placeholder')}
+                    placeholder={getLocalizedText('quantity_placeholder')}
                     keyboardType="numeric"
                 /></View>
             <View style={styles.input}>
                 <Text style={styles.label}>💲</Text>
                 <TextInputController
                     name="price"
-                    placeholder={getLocalizedText('price-placeholder')}
+                    placeholder={getLocalizedText('price_placeholder')}
                     keyboardType="numeric"
                 />
             </View>

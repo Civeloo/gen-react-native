@@ -60,9 +60,9 @@ export default function SignInPage() {
         </View>
         <View style={styles.questions}>
             <View style={styles.questionsRow}>
-                <Text>{getLocalizedText('sign-up-question')}</Text>
+                <Text>{getLocalizedText('sign_up_question')}</Text>
                 <Link href='/sign-up'>
-                    <Text style={styles.questionsText}>{getLocalizedText('sign-up')}</Text>
+                    <Text style={styles.questionsText}>{getLocalizedText('sign_up')}</Text>
                 </Link>
             </View>
             <View style={styles.questionsRow}>
