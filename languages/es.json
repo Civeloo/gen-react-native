@@ -21,6 +21,7 @@
   "password_placeholder": "91939Dc#31",
   "password_forgot": "¿Has olvidado tu contraseña?",
   "password_reset": "Restablecer contraseña",
+  "password_reset_sent": "Se ha enviado el correo electrónico de restablecimiento de contraseña. Por favor, revise su bandeja de entrada.",
   "password_new": "Introduzca su nueva contraseña",
   "price-placeholder": "Precio",
   "process": "Procesar",

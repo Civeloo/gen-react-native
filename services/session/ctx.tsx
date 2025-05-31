@@ -23,7 +23,7 @@ type AuthContextProps = {
     errors: {
         code?: string;
         message?: string;
-    }|null;
+    } | null;
 };
 
 const AuthContext = createContext<AuthContextProps>({
@@ -91,7 +91,12 @@ export function SessionProvider({children}: PropsWithChildren) {
                     setSession(null);
                 },
                 reset: (email) => {
-                    firebaseReset(email).then();
+                    firebaseReset(email).then((res) => {
+                        setSession(null);
+                        setErrors(res);
+                    }).catch((err) => {
+                        setErrors(err);
+                    });
                 },
                 session,
                 errors,

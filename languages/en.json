@@ -22,6 +22,7 @@
   "password_placeholder": "91939Dc#31",
   "password_forgot": "Forgot password?",
   "password_reset": "Reset password",
+  "password_reset_sent": "Password reset email sent. Please check your inbox",
   "password_new": "Enter your new password",
   "price-placeholder": "Price",
   "process": "Process",

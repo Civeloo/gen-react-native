@@ -7,14 +7,15 @@ import {useSession} from "@/services/session/ctx";
 export default function ForgotPage() {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
-    const {errors, session, reset} = useSession();
+    const {errors, reset} = useSession();
 
     const handleOnSave = async (data: ForgotFormDataProps) => {
         const {email} = data;
         setIsLoading(true);
         reset(email);
-        if (session) router.replace('/');
         setIsLoading(false);
+        if (!errors)
+            router.back();
     }
 
     return (<View style={styles.container}>

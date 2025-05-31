@@ -16,6 +16,12 @@ interface FirebaseSignProps {
     (email: string, password: string): Promise<User | any>;
 }
 
+const firebaseSignOut = () => {
+    auth.signOut();
+    GoogleSignin.revokeAccess().then();
+    GoogleSignin.signOut().then();
+}
+
 const firebaseSignIn: FirebaseSignProps = (email, password) =>
     signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
@@ -65,15 +71,14 @@ const firebaseAuthState = () =>
         );
     });
 
-const firebaseSignOut = () => {
-    auth.signOut();
-    GoogleSignin.revokeAccess().then();
-    GoogleSignin.signOut().then();
-}
-
-const firebaseReset = async (email: string) => {
-    await sendPasswordResetEmail(auth, email)
-}
+const firebaseReset = async (email: string) =>
+    sendPasswordResetEmail(auth, email).then(() => {
+        firebaseSignOut();
+        return {
+            code: "auth/password-reset-sent",
+            message: getLocalizedText("password_reset_sent")
+        };
+    });
 
 export {
     firebaseAuthState,
