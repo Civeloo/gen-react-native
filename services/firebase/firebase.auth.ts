@@ -3,25 +3,47 @@ import {
     createUserWithEmailAndPassword,
     GoogleAuthProvider,
     onAuthStateChanged,
+    sendEmailVerification,
     sendPasswordResetEmail,
     signInWithCredential,
     signInWithEmailAndPassword
 } from "firebase/auth";
 import {auth} from "@/services/firebase/firebase-config";
 import {User} from "@firebase/auth-types";
+import {getLocalizedText} from "@/languages/languages";
 
 interface FirebaseSignProps {
     (email: string, password: string): Promise<User | any>;
 }
 
-const firebaseSignUp: FirebaseSignProps = async (email, password) => {
-    return await createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => userCredential.user)
-}
-
 const firebaseSignIn: FirebaseSignProps = (email, password) =>
     signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => userCredential.user);
+        .then((userCredential) => {
+            const user = userCredential.user;
+            if (!user.emailVerified) {
+                sendEmailVerification(user).then();
+                firebaseSignOut();
+                throw {
+                    code: "auth/email-not-verified",
+                    message: getLocalizedText("verify_email_error"),
+                };
+            }
+            return user;
+        });
+
+const firebaseSignUp: FirebaseSignProps = async (email, password) => {
+    return await createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+                const user = userCredential.user;
+                return sendEmailVerification(user).then(() => {
+                    return {
+                        code: "auth/email-verification-sent",
+                        message: getLocalizedText("verify_email_sent")
+                    }
+                });
+            }
+        )
+}
 
 const firebaseGoogleSignIn = (token: string) =>
     signInWithCredential(auth, GoogleAuthProvider.credential(token))
@@ -33,7 +55,8 @@ const firebaseAuthState = () =>
             auth,
             (user) => {
                 unsubscribe();
-                resolve(user);
+                if (user?.emailVerified) resolve(user);
+                else resolve(null);
             },
             (error) => {
                 unsubscribe();
@@ -52,4 +75,11 @@ const firebaseReset = async (email: string) => {
     await sendPasswordResetEmail(auth, email)
 }
 
-export {firebaseAuthState, firebaseGoogleSignIn, firebaseSignIn, firebaseSignOut, firebaseSignUp, firebaseReset};
+export {
+    firebaseAuthState,
+    firebaseSignIn,
+    firebaseGoogleSignIn,
+    firebaseSignOut,
+    firebaseSignUp,
+    firebaseReset
+};

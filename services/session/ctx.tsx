@@ -23,7 +23,7 @@ type AuthContextProps = {
     errors: {
         code?: string;
         message?: string;
-    };
+    }|null;
 };
 
 const AuthContext = createContext<AuthContextProps>({
@@ -35,7 +35,7 @@ const AuthContext = createContext<AuthContextProps>({
     reset: () => null,
     session: null,
     isLoading: false,
-    errors: {}
+    errors: null
 });
 
 // This hook can be used to access the user info.
@@ -51,7 +51,7 @@ export function useSession() {
 
 export function SessionProvider({children}: PropsWithChildren) {
     const [[isLoading, session], setSession] = useStorageState('session');
-    const [errors, setErrors] = useState({});
+    const [errors, setErrors] = useState(null);
 
     return (
         <AuthContext.Provider
@@ -64,19 +64,21 @@ export function SessionProvider({children}: PropsWithChildren) {
                 signIn: (email, password) => {
                     firebaseSignIn(email, password)
                         .then((user) => {
+                            setErrors(null);
                             setSession(user ? user.uid : null);
-                            setErrors({});
                         }).catch((err) => {
-                        err['message'] = getLocalizedText('sign_password_error');
+                        if (err.code != "auth/email-not-verified")
+                            err['message'] = getLocalizedText('sign_password_error');
                         setErrors(err);
                     });
                 },
                 signUp: (email, password) => {
                     firebaseSignUp(email, password)
-                        .then((user) => {
-                            setSession(user ? user.uid : null);
-                            setErrors({});
-                        });
+                        .then((res) => {
+                            setErrors(res);
+                        }).catch((err) => {
+                        setErrors(err);
+                    });
                 },
                 googleSignIn: (token) => {
                     firebaseGoogleSignIn(token)

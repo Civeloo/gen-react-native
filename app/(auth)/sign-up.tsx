@@ -3,21 +3,24 @@ import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
 import {useRouter} from 'expo-router';
 import {SignUpForm, SignUpFormDataProps} from "@/components/auth/sign-up-form";
 import {useSession} from '@/services/session/ctx';
+import {BackButton} from "@/components/back-button";
 
 export default function SignUpPage() {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
-    const {errors, session, signUp} = useSession();
+    const {errors, signUp} = useSession();
 
     const handleOnSave = async (data: SignUpFormDataProps) => {
         const {email, password} = data;
         setIsLoading(true);
         signUp(email, password);
         setIsLoading(false);
-        if (session) router.replace('/');
+        if (!errors)
+            router.back();
     }
 
     return (<View style={styles.container}>
+        <BackButton onPress={() => router.back()}/>
         <SignUpForm onSave={handleOnSave}/>
         {errors &&
             <Text key={errors?.code} style={styles.errorText}>

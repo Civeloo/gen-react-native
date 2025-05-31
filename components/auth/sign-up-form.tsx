@@ -3,7 +3,7 @@ import {getLocalizedText} from '@/languages/languages';
 import {yupResolver} from '@hookform/resolvers/yup';
 import React from 'react';
 import {FormProvider, SubmitHandler, useForm} from 'react-hook-form';
-import {Button, Platform, StyleSheet, View} from 'react-native';
+import {Button, Platform, StyleSheet, Text, View} from 'react-native';
 import * as yup from 'yup';
 import {SignDataProps} from '@/types/sign-data-props';
 
@@ -58,7 +58,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({onSave}) => {
 
     return (
         <View style={styles.container}>
-            {/*<Text style={styles.title}>{getLocalizedText('sign-up')}</Text>*/}
+            <Text style={styles.title}>{getLocalizedText('sign-up')}</Text>
             <FormProvider {...methods}>
                 {Platform.OS == 'web' ? (
                     <form onSubmit={methods.handleSubmit(onSubmit)}>

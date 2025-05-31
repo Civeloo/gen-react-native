@@ -10,12 +10,7 @@ export default function AuthLayout() {
 
     return (<Stack>
         <Stack.Screen name='sign-in' options={{headerShown: false}}/>
-        <Stack.Screen
-            name='sign-up'
-            options={{
-                title: getLocalizedText('sign-up'),
-                headerShown: true
-            }}/>
+        <Stack.Screen name='sign-up' options={{headerShown: false}}/>
         <Stack.Screen
             name='forgot'
             options={{

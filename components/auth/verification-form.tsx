@@ -40,8 +40,8 @@ export const VerificationForm: React.FC<VerificationFormProps> = ({onSave, forgo
         <View>
             <TextInputController
                 name='code'
-                label={getLocalizedText('verification_email')}
-                placeholder={getLocalizedText('verification_placeholder')}
+                label={getLocalizedText('verify_email')}
+                placeholder={getLocalizedText('verify_placeholder')}
                 keyboardType='numeric'
             />
             {forgot && <TextInputController
@@ -50,13 +50,13 @@ export const VerificationForm: React.FC<VerificationFormProps> = ({onSave, forgo
                 placeholder={getLocalizedText('password_placeholder')}
                 secureTextEntry
             />}
-            <Button title={getLocalizedText('verification')} onPress={methods.handleSubmit(onSubmit)}/>
+            <Button title={getLocalizedText('verify')} onPress={methods.handleSubmit(onSubmit)}/>
         </View>
     );
 
     return (<>
         <View style={styles.container}>
-            <Text style={styles.title}>{getLocalizedText('verification')}</Text>
+            <Text style={styles.title}>{getLocalizedText('verify')}</Text>
             <FormProvider {...methods}>
                 {Platform.OS == 'web' ? (
                     <form onSubmit={methods.handleSubmit(onSubmit)}>
