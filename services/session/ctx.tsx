@@ -84,7 +84,10 @@ export function SessionProvider({children}: PropsWithChildren) {
                     firebaseGoogleSignIn(token)
                         .then((user) => {
                             setSession(user ? user.uid : null);
-                        });
+                            setErrors(null);
+                        }).catch((err) => {
+                        setErrors(err);
+                    });
                 },
                 signOut: () => {
                     firebaseSignOut();
