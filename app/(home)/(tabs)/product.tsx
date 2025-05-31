@@ -1,9 +1,10 @@
-import { ListProduct } from '@/components/products/list-product';
+import { ProductList } from '@/components/products/product-list';
 import { ProductForm } from '@/components/products/product-form';
 import { getLocalizedText } from '@/languages/languages';
 import Products from '@/services/database/products.model';
 import { useEffect, useState } from 'react';
 import { Button, StyleSheet, ScrollView } from 'react-native';
+import {Product} from "@/types/types";
 
 export default function ProductPage(props) {
     const getData = () => Products.all();
@@ -42,7 +43,7 @@ export default function ProductPage(props) {
                 color={product ? 'red' : '#2196F3'} />
             {product
                 ? <ProductForm product={product} onSave={handleSave} onRemove={handleRemove}/>
-                : <ListProduct 
+                : <ProductList
                     data={data} 
                     onEdit={handleEdit}
                     onRefresh={()=>refreshData()} />

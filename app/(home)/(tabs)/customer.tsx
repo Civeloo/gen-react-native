@@ -1,9 +1,10 @@
-import {ListCustomer} from '@/components/customers/list-customer';
+import {CustomerList} from '@/components/customers/customer-list';
 import {CustomerForm} from '@/components/customers/customer-form';
 import {getLocalizedText} from '@/languages/languages';
 import Customers from '@/services/database/customers.model';
 import {useEffect, useState} from 'react';
-import {Button, StyleSheet, ScrollView} from 'react-native';
+import {Button, ScrollView, StyleSheet} from 'react-native';
+import {Customer} from "@/types/types";
 
 export default function CustomerPage(props) {
     const getData = () => Customers.all();
@@ -44,7 +45,7 @@ export default function CustomerPage(props) {
                 color={customer ? 'red' : '#2196F3'}/>
             {customer
                 ? <CustomerForm customer={customer} onSave={handleSave} onRemove={handleRemove}/>
-                : <ListCustomer
+                : <CustomerList
                     data={data}
                     onEdit={handleEdit}
                     onRefresh={() => refreshData()}/>

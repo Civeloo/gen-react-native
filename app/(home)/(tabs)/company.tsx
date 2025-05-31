@@ -3,19 +3,20 @@ import {useEffect, useState} from 'react';
 import {Button, ScrollView, StyleSheet} from 'react-native';
 import {getLocalizedText} from "@/languages/languages";
 import {router} from "expo-router";
-import {Company as CompanyService} from "@/services/database/models";
+import {Companies} from "@/services/database/models";
 import {Company} from "@/types/types";
 
 export default function CompanyPage(props: object) {
-    const getData = () => CompanyService.all();
-    const refreshData = () => {
-        setData(getData()[0]);
-    }
+    const getData = () => Companies.all()?.at(-1);
 
     const [data, setData] = useState<Company>();
 
-    const handleSave = (values: {companyName: string; companyType: string;}, id?: string | undefined) => {
-        CompanyService.add(values, id);
+    const refreshData = () => {
+        setData(getData() || {});
+    }
+
+    const handleSave = (values: { companyName: string; companyType: string; }, id?: string | undefined) => {
+        Companies.add(values, id);
         refreshData();
         router.back();
     };

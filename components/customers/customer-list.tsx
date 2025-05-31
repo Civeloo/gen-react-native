@@ -2,6 +2,7 @@ import {FC, useEffect, useState} from "react";
 import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {SearchList} from "../search-list";
 import {getLocalizedText} from "@/languages/languages";
+import {Customer} from "@/types/types";
 
 type Props = {
     data: Customer[];
@@ -9,7 +10,7 @@ type Props = {
     onRefresh: () => void;
 };
 
-export const ListCustomer: FC<Props> = ({data, onEdit, onRefresh}) => {
+export const CustomerList: FC<Props> = ({data, onEdit, onRefresh}) => {
 
     const [selected, setSelected] = useState({});
 

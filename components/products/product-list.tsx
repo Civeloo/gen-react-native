@@ -2,6 +2,7 @@ import {getLocalizedText} from "@/languages/languages";
 import {useEffect, useState} from "react";
 import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {SearchList} from "../search-list";
+import {Product} from "@/types/types";
 
 type Props = {
     data: Product[];
@@ -9,7 +10,7 @@ type Props = {
     onRefresh: () => void;
 };
 
-export const ListProduct: React.FC<Props> = ({data, onEdit, onRefresh}) => {
+export const ProductList: React.FC<Props> = ({data, onEdit, onRefresh}) => {
 
     const [selected, setSelected] = useState({});
 

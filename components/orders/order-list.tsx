@@ -7,20 +7,21 @@ import {SearchList} from "../search-list";
 import Products from "@/services/database/products.model";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {sendWhatsapp} from "@/utils";
-import {Company} from "@/services/database/models";
+import {Companies} from "@/services/database/models";
+import {Order, Product, OrderDetail, Company} from "@/types/types";
 
 type Props = {
     data: Order[];
-    selected: string;
+    selected: {};
     onRemove: () => void;
     onRefresh: () => void;
 };
 
-export const ListOrder: FC<Props> = ({data, selected, onRemove, onRefresh}) => {
+export const OrderList: FC<Props> = ({data, selected, onRemove, onRefresh}) => {
     const [selectedOrder, setSelectedOrder] = useState({});
 
-    const handleRemove = (orderDetails: OrderDetails[]) => {
-        orderDetails.map((orderDetail: OrderDetails) => {
+    const handleRemove = (orderDetails: OrderDetail[]) => {
+        orderDetails.map((orderDetail: OrderDetail) => {
             const product = Products.byId(orderDetail.productID) as Product;
             Products.update(orderDetail.productID, {quantity: product.quantity + orderDetail.quantity});
         });
@@ -28,15 +29,15 @@ export const ListOrder: FC<Props> = ({data, selected, onRemove, onRefresh}) => {
         onRemove();
     };
 
-    const handleSendWsp = (orderCode, orderDate, total, details, customerName, customerContact) => {
-        const company = Company.byId('company0');
-        const message = `${company?.companyName}\n${customerName}\n${orderCode}\n${orderDate.split('T')[0]}\n${details.join('\n')}\n$ ${total.toFixed(2)}`;
-        sendWhatsapp(customerContact, message);
+    const handleSendWsp = (orderCode: string, orderDate: string, total: number, details: any[], customerName: string | number | boolean, customerContact: string | number | boolean) => {
+        const company = Companies.all()?.at(-1) as Company
+        const message = `${company?.companyName||''}\n${customerName}\n${orderCode}\n${orderDate.split('T')[0]}\n${details.join('\n')}\n$ ${total.toFixed(2)}`;
+        sendWhatsapp(Number(customerContact), message);
     };
 
     const renderItem = ({item}: { item: Order }) => {
         const order = item;
-        const orderDetails = Orders.inner(order?.id, 'orderWithDetails') as OrderDetails[];
+        const orderDetails = Orders.inner(order?.id, 'orderWithDetails') as OrderDetail[];
         const customer = Customers.byId(order?.customerID);
         const customerName = customer?.customerName || getLocalizedText('cash-customer');
         const total = orderDetails.reduce((acc, orderDetail) => acc + orderDetail.price * orderDetail.quantity, 0);
@@ -56,7 +57,7 @@ export const ListOrder: FC<Props> = ({data, selected, onRemove, onRefresh}) => {
                         onPress={() => handleRemove(orderDetails)}/>
                 </View>
                 <View style={styles.detailList}>
-                    {orderDetails.map((orderDetail: OrderDetails) => {
+                    {orderDetails.map((orderDetail: OrderDetail) => {
                         const detail = `${orderDetail.productName} x ${orderDetail.quantity} - $ ${(orderDetail.price * orderDetail.quantity).toFixed(2)}`;
                         details.push(detail);
                         return (

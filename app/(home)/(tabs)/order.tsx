@@ -1,9 +1,10 @@
-import {AddOrder} from '@/components/orders/add-order';
-import {ListOrder} from '@/components/orders/list-order';
+import {OrderAdd} from '@/components/orders/order-add';
+import {OrderList} from '@/components/orders/order-list';
 import {getLocalizedText} from '@/languages/languages';
 import Orders from '@/services/database/orders.model';
 import {useState} from 'react';
 import {Button, ScrollView, StyleSheet} from 'react-native';
+import {Order} from "@/types/types";
 
 export default function OrderPage() {
 
@@ -35,8 +36,8 @@ export default function OrderPage() {
                 onPress={() => setAddOrder(!addOrder)}
                 color={addOrder ? 'red' : '#2196F3'}/>
             {addOrder
-                ? <AddOrder onSave={handleSave}/>
-                : <ListOrder
+                ? <OrderAdd onSave={handleSave}/>
+                : <OrderList
                     data={data}
                     onRemove={handleRemove}
                     selected={selected}

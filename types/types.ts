@@ -1,4 +1,4 @@
-type Product = {
+export type Product = {
     id: string;
     productBarcode: string;
     productName: string;
@@ -9,20 +9,16 @@ type Product = {
     quantity: number;
 };
 
-type Products = {
-    [key: string]: Product;
-};
-
-type Order = {
+export type Order = {
     id: string;
     orderCode: string;
     customerID: string;
     employeeID?: string;
     orderDate: string;
-    shipperID?: string;    
+    shipperID?: string;
 };
 
-type OrderDetails = {
+export type OrderDetail = {
     id: string;
     orderID: string;
     productID: string;
@@ -31,13 +27,13 @@ type OrderDetails = {
     price: number;
 };
 
-type Category = {
+export type Category = {
     id: string;
     categoryName: string;
     description: string;
 };
 
-type Customer = {
+export type Customer = {
     id: string;
     customerName: string;
     address?: string;
@@ -49,7 +45,7 @@ type Customer = {
     customerType?: string;
 };
 
-type Company = {
+export type Company = {
     id: string;
     companyName: string;
     address?: string;
