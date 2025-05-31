@@ -8,10 +8,11 @@ import {useSession} from "@/services/session/ctx";
 export default function Index() {
     const router = useRouter();
     const {session, signOut} = useSession();
+
     const handleSignOut = () => {
         if (session) {
             signOut();
-            router.dismiss(1);
+            router.dismissAll();
         } else {
             router.replace('/(auth)/sign-in');
         }

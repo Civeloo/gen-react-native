@@ -1,9 +1,44 @@
 import {getLocalizedText} from '@/languages/languages';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {Tabs} from 'expo-router';
+import {useEffect, useRef} from "react";
+import {useSession} from "@/services/session/ctx";
+import {Provider, useCreateMergeableStore} from 'tinybase/ui-react';
+import {customSynchronizer, db, useCustomPersister} from '@/services/database/database';
 
 export default function TabLayout() {
+    const {session} = useSession();
+
+    const store = useCreateMergeableStore(() => db);
+    useCustomPersister(store);
+
+    const synchronizerRef = useRef<any>(null);
+
+    useEffect(() => {
+        const userId = session;
+
+        const stopSync = (sync: { stopSync: () => void; } | null) =>{
+            if (sync) {
+                sync.stopSync();
+                sync = null;
+                console.log('🛑 Synchronizer stop');
+            }
+        }
+
+        if (!userId) {
+            stopSync(synchronizerRef.current);
+            return;
+        }
+
+        customSynchronizer(store, synchronizerRef, userId);
+
+        return () => {
+            stopSync(synchronizerRef.current);
+        };
+    }, [session]);
+
     return (
+        <Provider store={store}>
         <Tabs>
             <Tabs.Screen
                 name="index"
@@ -53,5 +88,6 @@ export default function TabLayout() {
                 }}
             />
         </Tabs>
+        </Provider>
     );
 }

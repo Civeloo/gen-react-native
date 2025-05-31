@@ -9,10 +9,11 @@ import {
     ValuesSchema
 } from 'tinybase';
 import {tablesSchema} from "./schema";
-import {INITIAL_COMPANY, INITIAL_CUSTOMERS, INITIAL_ORDER_CODES, INITIAL_PRODUCTS} from "./data";
+import {INITIAL_CUSTOMERS, INITIAL_ORDER_CODES, INITIAL_PRODUCTS} from "./data";
 import {createWsSynchronizer} from 'tinybase/synchronizers/synchronizer-ws-client';
 import {useCreatePersister,} from 'tinybase/ui-react';
 import ReconnectingWebSocket from "reconnecting-websocket";
+import { RefObject } from "react";
 
 const valuesSchema: ValuesSchema = {
     title: {type: 'string'},
@@ -39,7 +40,7 @@ if (!SYNC_SERVER) {
     );
 }
 
-const customSynchronizer = (store, synchronizerRef, userId) => {
+const customSynchronizer = (store: MergeableStore, synchronizerRef: RefObject<any>, userId: string) => {
     const ws = new ReconnectingWebSocket(SYNC_SERVER + '/' + DB_NAME + userId);
     createWsSynchronizer(store, ws, 1)
         .then((synchronizer) =>
@@ -66,7 +67,7 @@ const db = store
         // orders: INITIAL_ORDERS,
         // orderDetails: INITIAL_ORDER_DETAILS,
         orderCodes: INITIAL_ORDER_CODES,
-        company: INITIAL_COMPANY,
+        // company: INITIAL_COMPANY,
     });
 
 const indexes = createIndexes(db);

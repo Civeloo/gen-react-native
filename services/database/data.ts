@@ -1,8 +1,7 @@
 import {getRegionCode} from "@/utils";
 
 export const INITIAL_PRODUCTS = {
-    product0: { productBarcode: '123456789012', productName: 'T-Shirt', price: 29.99, quantity: 98 },
-    product1: { productBarcode: '987654321098', productName: 'Jeans', price: 70.01, quantity: 99 },
+    product0: { productBarcode: '123456789012', productName: 'Article', price: 1, quantity: 100 },
 };
 
 export const INITIAL_CUSTOMERS = {
