@@ -3,7 +3,7 @@ import {getLocalizedText} from '@/languages/languages';
 import {yupResolver} from '@hookform/resolvers/yup';
 import React from 'react';
 import {FormProvider, SubmitHandler, useForm} from 'react-hook-form';
-import {Button, Platform, StyleSheet, View} from 'react-native';
+import {Button, Platform, StyleSheet, Text, View} from 'react-native';
 import * as yup from 'yup';
 
 const schema = yup
@@ -38,12 +38,13 @@ export const ForgotForm: React.FC<ForgotFormProps> = ({onSave}) => {
                 placeholder={getLocalizedText('email_placeholder')}
                 keyboardType='email-address'
             />
-            <Button title={getLocalizedText('forgot')} onPress={methods.handleSubmit(onSubmit)}/>
+            <Button title={getLocalizedText('password_reset')} onPress={methods.handleSubmit(onSubmit)}/>
         </View>
     );
 
-    return (<>
+    return (
         <View style={styles.container}>
+            <Text style={styles.title}>{getLocalizedText('password_forgot')}</Text>
             <FormProvider {...methods}>
                 {Platform.OS == 'web' ? (
                     <form onSubmit={methods.handleSubmit(onSubmit)}>
@@ -53,9 +54,8 @@ export const ForgotForm: React.FC<ForgotFormProps> = ({onSave}) => {
                     FormContent
                 )}
             </FormProvider>
-
         </View>
-    </>);
+    );
 };
 
 const styles = StyleSheet.create({
@@ -68,6 +68,8 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
     },
     title: {
+        paddingHorizontal: 20,
+        textAlign: 'center',
         fontSize: 56,
         fontWeight: 'bold',
     }

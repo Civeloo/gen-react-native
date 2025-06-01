@@ -3,6 +3,7 @@ import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
 import {useRouter} from 'expo-router'
 import {ForgotForm, ForgotFormDataProps} from "@/components/auth/forgot-form";
 import {useSession} from "@/services/session/ctx";
+import {BackButton} from "@/components/back-button";
 
 export default function ForgotPage() {
     const [isLoading, setIsLoading] = useState(false);
@@ -19,6 +20,7 @@ export default function ForgotPage() {
     }
 
     return (<View style={styles.container}>
+        <BackButton onPress={() => router.back()}/>
         <ForgotForm onSave={handleOnSave}/>
         {errors &&
             <Text key={errors?.code} style={styles.errorText}>

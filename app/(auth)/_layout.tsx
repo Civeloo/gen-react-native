@@ -1,5 +1,4 @@
 import {Redirect, Stack} from 'expo-router';
-import {getLocalizedText} from "@/languages/languages";
 import {useSession} from "@/services/session/ctx";
 
 export default function AuthLayout() {
@@ -11,11 +10,6 @@ export default function AuthLayout() {
     return (<Stack>
         <Stack.Screen name='sign-in' options={{headerShown: false}}/>
         <Stack.Screen name='sign-up' options={{headerShown: false}}/>
-        <Stack.Screen
-            name='forgot'
-            options={{
-                title: getLocalizedText('forgot'),
-                headerShown: true
-            }}/>
+        <Stack.Screen name='forgot' options={{headerShown: false}}/>
     </Stack>);
 }
