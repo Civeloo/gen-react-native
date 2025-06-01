@@ -6,7 +6,8 @@ import {Button, Platform, StyleSheet, Text, View} from 'react-native';
 import * as yup from "yup";
 import {TextInputController} from '../text-input-controller';
 import {cleanPhoneNumber, getCustomerCode} from "@/utils";
-import {Company} from "@/services/database/models";
+import {Companies} from "@/services/database/models";
+import {Company, Customer} from "@/types/types";
 
 const schema = yup
     .object({
@@ -43,7 +44,7 @@ export const CustomerForm: React.FC<NewCustomerFormProps> = ({customer, onSave, 
 
     const onSubmit: SubmitHandler<FormValues> = (values) => {
         values.contact = cleanPhoneNumber(values.contact);
-        const company = Company.all()[0] as Company;
+        const company = Companies.all()[0] as Company;
         values.customerType = getCustomerCode(company?.companyType);
         onSave(values, customer?.id);
         methods.reset();
