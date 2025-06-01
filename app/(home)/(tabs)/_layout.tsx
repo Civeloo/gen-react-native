@@ -17,7 +17,7 @@ export default function TabLayout() {
     useEffect(() => {
         const userId = session;
 
-        const stopSync = (sync: { stopSync: () => void; } | null) =>{
+        const stopSync = (sync: { stopSync: () => void; } | null) => {
             if (sync) {
                 sync.stopSync();
                 sync = null;
@@ -39,55 +39,63 @@ export default function TabLayout() {
 
     return (
         <Provider store={store}>
-        <Tabs>
-            <Tabs.Screen
-                name="index"
-                options={{
-                    title: getLocalizedText('index'),
-                    headerShown: false,
-                    tabBarIcon: ({color, focused}) => (
-                        <Ionicons name={focused ? 'home-sharp' : 'home-outline'} color={color} size={24}/>
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="order"
-                options={{
-                    title: getLocalizedText('orders'),
-                    tabBarIcon: ({color, focused}) => (
-                        <Ionicons name={focused ? 'apps' : 'apps-outline'} color={color} size={24}/>
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="product"
-                options={{
-                    title: getLocalizedText('products'),
-                    href: "/product?refresh=true",
-                    tabBarIcon: ({color, focused}) => (
-                        <Ionicons name={focused ? 'add-circle' : 'add-circle-outline'} color={color} size={24}/>
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="customer"
-                options={{
-                    title: getLocalizedText('customers'),
-                    tabBarIcon: ({color, focused}) => (
-                        <Ionicons name={focused ? 'person' : 'person-outline'} color={color} size={24}/>
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="company"
-                options={{
-                    title: getLocalizedText('company'),
-                    tabBarIcon: ({color, focused}) => (
-                        <Ionicons name={focused ? 'settings' : 'settings-outline'} color={color} size={24}/>
-                    ),
-                }}
-            />
-        </Tabs>
+            <Tabs
+                screenOptions={{
+                    headerStyle: {
+                        height: 50,
+                    },
+                    headerStatusBarHeight: 0,
+                    headerTitleStyle: {
+                        fontWeight: 'bold',
+                    },
+                }}>
+                <Tabs.Screen
+                    name="index"
+                    options={{
+                        title: getLocalizedText('index'),
+                        tabBarIcon: ({color, focused}) => (
+                            <Ionicons name={focused ? 'home-sharp' : 'home-outline'} color={color} size={24}/>
+                        ),
+                    }}
+                />
+                <Tabs.Screen
+                    name="order"
+                    options={{
+                        title: getLocalizedText('orders'),
+                        tabBarIcon: ({color, focused}) => (
+                            <Ionicons name={focused ? 'apps' : 'apps-outline'} color={color} size={24}/>
+                        ),
+                    }}
+                />
+                <Tabs.Screen
+                    name="product"
+                    options={{
+                        title: getLocalizedText('products'),
+                        href: "/product?refresh=true",
+                        tabBarIcon: ({color, focused}) => (
+                            <Ionicons name={focused ? 'add-circle' : 'add-circle-outline'} color={color} size={24}/>
+                        ),
+                    }}
+                />
+                <Tabs.Screen
+                    name="customer"
+                    options={{
+                        title: getLocalizedText('customers'),
+                        tabBarIcon: ({color, focused}) => (
+                            <Ionicons name={focused ? 'person' : 'person-outline'} color={color} size={24}/>
+                        ),
+                    }}
+                />
+                <Tabs.Screen
+                    name="company"
+                    options={{
+                        title: getLocalizedText('company'),
+                        tabBarIcon: ({color, focused}) => (
+                            <Ionicons name={focused ? 'settings' : 'settings-outline'} color={color} size={24}/>
+                        ),
+                    }}
+                />
+            </Tabs>
         </Provider>
     );
 }
