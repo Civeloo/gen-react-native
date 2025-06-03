@@ -21,7 +21,7 @@ export default function TabLayout() {
             if (sync) {
                 sync.stopSync();
                 sync = null;
-                console.log('🛑 Synchronizer stop');
+                // console.info('🛑 Synchronizer stop');
             }
         }
 
@@ -30,7 +30,7 @@ export default function TabLayout() {
             return;
         }
 
-        customSynchronizer(store, synchronizerRef, userId);
+        customSynchronizer(store, synchronizerRef, userId).then();
 
         return () => {
             stopSync(synchronizerRef.current);

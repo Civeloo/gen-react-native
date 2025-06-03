@@ -1,5 +1,4 @@
 import {Platform} from "react-native";
-// import ReconnectingWebSocket from 'reconnecting-websocket';
 import {
     createIndexes,
     createMergeableStore,
@@ -13,7 +12,8 @@ import {INITIAL_CUSTOMERS, INITIAL_ORDER_CODES, INITIAL_PRODUCTS} from "./data";
 import {createWsSynchronizer} from 'tinybase/synchronizers/synchronizer-ws-client';
 import {useCreatePersister,} from 'tinybase/ui-react';
 import ReconnectingWebSocket from "reconnecting-websocket";
-import { RefObject } from "react";
+import {RefObject} from "react";
+import {firebaseGetUserIdToken} from "@/services/firebase/firebase.auth";
 
 const valuesSchema: ValuesSchema = {
     title: {type: 'string'},
@@ -40,8 +40,11 @@ if (!SYNC_SERVER) {
     );
 }
 
-const customSynchronizer = (store: MergeableStore, synchronizerRef: RefObject<any>, userId: string) => {
-    const ws = new ReconnectingWebSocket(SYNC_SERVER + '/' + DB_NAME + userId);
+const customSynchronizer = async (store: MergeableStore, synchronizerRef: RefObject<any>, userId: string) => {
+    const token = await firebaseGetUserIdToken();
+    const encodedToken = encodeURIComponent(token || '');
+    const wsUrl = `${SYNC_SERVER}/${DB_NAME}${userId}?token=${encodedToken}`;
+    const ws = new ReconnectingWebSocket(wsUrl);
     createWsSynchronizer(store, ws, 1)
         .then((synchronizer) =>
             synchronizer.startSync()
@@ -50,14 +53,13 @@ const customSynchronizer = (store: MergeableStore, synchronizerRef: RefObject<an
                             synchronizer.load().then(() => synchronizer.save());
                         });
                         synchronizerRef.current = synchronizer;
-                        console.log('🔄 Synchronizer started');
+                        // console.info('🔄 Synchronizer started');
                     }
                 )
         )
+    // .catch(reason => console.error('createWsSynchronizer',reason));
 };
 
-// Initialize the (memoized) TinyBase store and persist it.
-// const store = createStore();
 const store = createMergeableStore(DB_NAME);
 const db = store
     .setSchema(tablesSchema, valuesSchema)

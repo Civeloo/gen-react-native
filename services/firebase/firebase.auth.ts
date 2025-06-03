@@ -16,13 +16,13 @@ interface FirebaseSignProps {
     (email: string, password: string): Promise<User | any>;
 }
 
-const firebaseSignOut = () => {
+export const firebaseSignOut = () => {
     auth.signOut();
     GoogleSignin.revokeAccess().then();
     GoogleSignin.signOut().then();
 }
 
-const firebaseSignIn: FirebaseSignProps = (email, password) =>
+export const firebaseSignIn: FirebaseSignProps = (email, password) =>
     signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             const user = userCredential.user;
@@ -37,7 +37,7 @@ const firebaseSignIn: FirebaseSignProps = (email, password) =>
             return user;
         });
 
-const firebaseSignUp: FirebaseSignProps = async (email, password) => {
+export const firebaseSignUp: FirebaseSignProps = async (email, password) => {
     return await createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
                 const user = userCredential.user;
@@ -51,11 +51,11 @@ const firebaseSignUp: FirebaseSignProps = async (email, password) => {
         )
 }
 
-const firebaseGoogleSignIn = (token: string) =>
+export const firebaseGoogleSignIn = (token: string) =>
     signInWithCredential(auth, GoogleAuthProvider.credential(token))
         .then((result) => result.user);
 
-const firebaseAuthState = () =>
+export const firebaseAuthState = () =>
     new Promise((resolve, reject) => {
         const unsubscribe = onAuthStateChanged(
             auth,
@@ -71,7 +71,7 @@ const firebaseAuthState = () =>
         );
     });
 
-const firebaseReset = async (email: string) =>
+export const firebaseReset = async (email: string) =>
     sendPasswordResetEmail(auth, email).then(() => {
         firebaseSignOut();
         return {
@@ -80,11 +80,7 @@ const firebaseReset = async (email: string) =>
         };
     });
 
-export {
-    firebaseAuthState,
-    firebaseSignIn,
-    firebaseGoogleSignIn,
-    firebaseSignOut,
-    firebaseSignUp,
-    firebaseReset
-};
+export const firebaseGetUserIdToken = async() => {
+    const user = auth.currentUser;
+    return user?.getIdToken();
+}
