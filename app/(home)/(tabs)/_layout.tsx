@@ -48,6 +48,9 @@ export default function TabLayout() {
                     headerTitleStyle: {
                         fontWeight: 'bold',
                     },
+                    tabBarIconStyle: {
+                        marginTop: 10,
+                    },
                 }}>
                 <Tabs.Screen
                     name="index"
