@@ -94,7 +94,7 @@ export default function TabLayout() {
                     options={{
                         title: getLocalizedText('company'),
                         tabBarIcon: ({color, focused}) => (
-                            <Ionicons name={focused ? 'settings' : 'settings-outline'} color={color} size={24}/>
+                            <Ionicons name={focused ? 'business' : 'business-outline'} color={color} size={24}/>
                         ),
                     }}
                 />

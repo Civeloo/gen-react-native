@@ -1,22 +1,26 @@
 import {getLocalizedText} from '@/languages/languages';
 import {yupResolver} from "@hookform/resolvers/yup";
 import React from 'react';
-import {FormProvider, SubmitHandler, useForm} from 'react-hook-form';
+import {FormProvider, SubmitHandler, useForm, Controller} from 'react-hook-form';
 import {Button, Platform, StyleSheet, Text, View} from 'react-native';
 import * as yup from "yup";
 import {TextInputController} from '../text-input-controller';
 import {Company} from "@/types/types";
+import {DropDownPicker} from "@/components/drop-down-picker";
+import COUNTRIES from '@/languages/countries.json';
 
 const schema = yup
     .object({
-        companyName: yup.string().max(50).required(),
-        // address: yup.string().max(50).required(),
-        // city: yup.string().max(50).required(),
-        // postalCode: yup.string().max(50).required(),
-        // country: yup.string().max(50).required(),
-        // contact: yup.string().max(50).required(),
-        // tin: yup.string().max(50).required(),
-        companyType: yup.string().max(50).required(),
+        name: yup.string().max(50).required(),
+        contact: yup.string().max(50),
+        address: yup.string().max(100),
+        city: yup.string().max(50),
+        state: yup.string().max(50),
+        postalCode: yup.string().max(50),
+        country: yup.string().max(50),
+        phone: yup.string().max(50),
+        tin: yup.string().max(50),
+        type: yup.string().max(50)
     })
     .required();
 
@@ -31,19 +35,21 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
     const {...methods} = useForm<FormValues>({
         resolver: yupResolver(schema),
         defaultValues: {
-            companyName: company?.companyName || '',
-            // address: company?.address || '',
-            // city: company?.city || '',
-            // postalCode: company?.postalCode || '',
-            // country: company?.country || '',
-            // contact: company?.contact || '',
-            // tin: company?.tin || '',
-            companyType: company?.companyType || '',
+            name: company?.name || '',
+            contact: company?.contact || '',
+            address: company?.address || '',
+            city: company?.city || '',
+            state: company?.state || '',
+            postalCode: company?.postalCode || '',
+            country: company?.country || '',
+            phone: company?.phone || '',
+            tin: company?.tin || '',
+            type: company?.type || '',
         }
     });
 
     const onSubmit: SubmitHandler<FormValues> = (values) => {
-        values.companyType = values?.companyType?.toUpperCase() || 'USA';
+        values.type = values?.type?.toUpperCase() || 'USA';
         onSave(values, company?.id);
         // methods.reset();
     };
@@ -53,30 +59,78 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
             <View style={styles.input}>
                 <Text style={styles.label}>✏</Text>
                 <TextInputController
-                    name="companyName"
+                    name="name"
                     placeholder={getLocalizedText('company_name_placeholder')}
                     keyboardType="default"
                 /></View>
-            {/*<View style={styles.input}>
-                <Text style={styles.label}>📞</Text>
+            <View style={styles.input}>
+                <Text style={styles.label}>🤵</Text>
                 <TextInputController
                     name="contact"
                     placeholder={getLocalizedText('contact_placeholder')}
                     keyboardType="default"
-                /></View>*/}
-            {/*<View style={styles.input}>
+                /></View>
+            <View style={styles.input}>
+                <Text style={styles.label}>📍</Text>
+                <TextInputController
+                    name="address"
+                    placeholder={getLocalizedText('address_placeholder')}
+                /></View>
+            <View style={styles.input}>
+                <Text style={styles.label}>🏙</Text>
+                <TextInputController
+                    name="city"
+                    placeholder={getLocalizedText('city_placeholder')}
+                /></View>
+            <View style={styles.input}>
+                <Text style={styles.label}>🏞</Text>
+                <TextInputController
+                    name="state"
+                    placeholder={getLocalizedText('state_placeholder')}
+                /></View>
+            <View style={styles.input}>
+                <Text style={styles.label}>📮</Text>
+                <TextInputController
+                    name="postalCode"
+                    placeholder={getLocalizedText('postal_code_placeholder')}
+                /></View>
+            <View style={styles.dropDownPicker}>
+                <Text style={styles.label}>🌎</Text>
+                <Controller
+                    control={methods.control}
+                    rules={{ required: true }}
+                    render={({ field: { onChange, value } }) => (
+                        <DropDownPicker
+                            data={COUNTRIES}
+                            placeholder={getLocalizedText('country_placeholder')}
+                            onChange={onChange}
+                            value={value}
+                        />
+                    )}
+                    name="country"
+                />
+            </View>
+            <View style={styles.input}>
+                <Text style={styles.label}>📞</Text>
+                <TextInputController
+                    name="phone"
+                    placeholder={getLocalizedText('phone_placeholder')}
+                    keyboardType="default"
+                /></View>
+            <View style={styles.input}>
                 <Text style={styles.label}>🎫</Text>
                 <TextInputController
                     name="tin"
                     placeholder={getLocalizedText('tin_placeholder')}
                     keyboardType="default"
-                /></View>*/}
-            <View style={styles.input}>
-                <Text style={styles.label}>🌎</Text>
-                <TextInputController
-                    name="companyType"
-                    placeholder={getLocalizedText('region_code_placeholder')}
                 /></View>
+            <View style={styles.input}>
+                <Text style={styles.label}>🏢</Text>
+                <TextInputController
+                    name="type"
+                    placeholder={getLocalizedText('type_placeholder')}
+                /></View>
+
             <View style={styles.okButton}>
                 <Button title={getLocalizedText('ok')} onPress={methods.handleSubmit(onSubmit)}/>
             </View>
@@ -107,14 +161,26 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'stretch',
         gap: 10,
+        // height:50
     },
     label: {
-        fontSize: 20,
+        fontSize: 28,
         fontWeight: 'bold',
-        width: 30,
+        width: 40,
         textAlign: "center",
+        // alignSelf: "center",
+        // backgroundColor: 'yellow'
     },
-    okButton: {flex: 1}
+    dropDownPicker: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 10,
+        marginBottom: 20,
+    },
+    okButton: {
+        flex: 1,
+        marginBottom: 40
+    }
 });

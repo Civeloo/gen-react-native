@@ -47,12 +47,14 @@ export type Customer = {
 
 export type Company = {
     id: string;
-    companyName: string;
+    name: string;
+    contact?: string;
     address?: string;
     city?: string;
+    state?: string;
     postalCode?: string;
     country?: string;
-    contact?: string;
+    phone?: string;
     tin?: string;
-    companyType?: string;
+    type?: string;
 };

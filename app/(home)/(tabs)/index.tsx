@@ -47,7 +47,7 @@ export default function Index() {
         <Link style={styles.link}
               href="/company" asChild>
             <TouchableOpacity style={styles.button}>
-                <Ionicons name={'settings'} size={24} color={'white'}/>
+                <Ionicons name={'business'} size={24} color={'white'}/>
                 <Text style={styles.buttonText}>{getLocalizedText('company')}</Text>
             </TouchableOpacity>
         </Link>

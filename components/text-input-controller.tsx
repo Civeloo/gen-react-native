@@ -51,20 +51,18 @@ export const TextInputController: FC<Props> = (props) => {
 
 const styles = StyleSheet.create({
     container: {
-        // flex: 1,
         minWidth: 200,
-        height: "auto",
+        width: '100%',
+        paddingRight: 50
     },
     label: {marginBottom: 5},
     input: {
-        // flex: 1,
         paddingHorizontal: 10,
-        height: 50,
         borderRadius: 5,
         backgroundColor: 'silver',
+        height: 40
     },
     textInput: {
-        height: '100%',
         fontSize: 16,
     },
     error: {
