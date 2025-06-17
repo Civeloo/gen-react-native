@@ -19,6 +19,7 @@ type AuthContextProps = {
     signOut: () => void;
     reset: (email: string) => void;
     session?: string | null;
+    user?: User | null;
     isLoading: boolean;
     errors: {
         code?: string;
@@ -34,6 +35,7 @@ const AuthContext = createContext<AuthContextProps>({
     signOut: () => null,
     reset: () => null,
     session: null,
+    user: null,
     isLoading: false,
     errors: null
 });
@@ -52,6 +54,7 @@ export function useSession() {
 export function SessionProvider({children}: PropsWithChildren) {
     const [[isLoading, session], setSession] = useStorageState('session');
     const [errors, setErrors] = useState(null);
+    const [user, setUser] = useState(null);
 
     return (
         <AuthContext.Provider
@@ -59,6 +62,7 @@ export function SessionProvider({children}: PropsWithChildren) {
                 authState: () => {
                     firebaseAuthState().then((user: User | any) => {
                         setSession(user ? user.uid : null);
+                        setUser(user);
                     });
                 },
                 signIn: (email, password) => {
@@ -66,6 +70,7 @@ export function SessionProvider({children}: PropsWithChildren) {
                         .then((user) => {
                             setErrors(null);
                             setSession(user ? user.uid : null);
+                            setUser(user);
                         }).catch((err) => {
                         if (err.code != "auth/email-not-verified")
                             err['message'] = getLocalizedText('sign_password_error');
@@ -84,6 +89,7 @@ export function SessionProvider({children}: PropsWithChildren) {
                     firebaseGoogleSignIn(token)
                         .then((user) => {
                             setSession(user ? user.uid : null);
+                            setUser(user);
                             setErrors(null);
                         }).catch((err) => {
                         setErrors(err);
@@ -96,12 +102,14 @@ export function SessionProvider({children}: PropsWithChildren) {
                 reset: (email) => {
                     firebaseReset(email).then((res) => {
                         setSession(null);
+                        setUser(null);
                         setErrors(res);
                     }).catch((err) => {
                         setErrors(err);
                     });
                 },
                 session,
+                user,
                 errors,
                 isLoading,
             }}>

@@ -51,6 +51,13 @@ export default function Index() {
                 <Text style={styles.buttonText}>{getLocalizedText('company')}</Text>
             </TouchableOpacity>
         </Link>
+        <Link style={styles.link}
+              href="/taxes" asChild>
+            <TouchableOpacity style={styles.button}>
+                <Ionicons name={'library'} size={24} color={'white'}/>
+                <Text style={styles.buttonText}>{getLocalizedText('taxes')}</Text>
+            </TouchableOpacity>
+        </Link>
 
     </View>);
 }

@@ -11,7 +11,7 @@ import COUNTRIES from '@/languages/countries.json';
 
 const schema = yup
     .object({
-        name: yup.string().max(50).required(),
+        companyName: yup.string().max(50).required(),
         contact: yup.string().max(50),
         address: yup.string().max(100),
         city: yup.string().max(50),
@@ -35,7 +35,7 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
     const {...methods} = useForm<FormValues>({
         resolver: yupResolver(schema),
         defaultValues: {
-            name: company?.name || '',
+            companyName: company?.companyName || '',
             contact: company?.contact || '',
             address: company?.address || '',
             city: company?.city || '',
@@ -59,7 +59,7 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
             <View style={styles.input}>
                 <Text style={styles.label}>✏</Text>
                 <TextInputController
-                    name="name"
+                    name="companyName"
                     placeholder={getLocalizedText('company_name_placeholder')}
                     keyboardType="default"
                 /></View>

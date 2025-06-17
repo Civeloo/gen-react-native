@@ -47,7 +47,7 @@ export type Customer = {
 
 export type Company = {
     id: string;
-    name: string;
+    companyName: string;
     contact?: string;
     address?: string;
     city?: string;

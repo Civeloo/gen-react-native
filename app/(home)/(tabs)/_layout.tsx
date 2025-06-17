@@ -98,6 +98,10 @@ export default function TabLayout() {
                         ),
                     }}
                 />
+                <Tabs.Screen
+                    name="taxes"
+                    options={{href: null}}
+                />
             </Tabs>
         </Provider>
     );
