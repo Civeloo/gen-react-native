@@ -1,0 +1,8 @@
+appId: com.civeloo.gen
+---
+- launchApp
+- tapOn: 'SIGN IN'
+- tapOn: 'Sign in with Google'
+- tapOn: 'Diego Ezequiel Guillén'
+- tapOn: 'Continue'
+- assertVisible: 'SIGN OUT'
