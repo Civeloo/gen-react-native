@@ -15,7 +15,7 @@
     "storybook-generate": "sb-rn-get-stories",
     "storybook-android": "cross-env EXPO_PUBLIC_STORYBOOK_ENABLED='true' expo start --android",
     "ios": "expo run:ios",
-    "e2e": "maestro test .maestro/"
+    "e2e": "maestro test .maestro/flow.yml"
   },
   "jest": {
     "preset": "jest-expo",

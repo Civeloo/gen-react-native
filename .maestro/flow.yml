@@ -1,0 +1,7 @@
+appId: com.civeloo.gen
+---
+- launchApp:
+    clearState: true
+- runFlow: 'home/index.yml'
+- runFlow: 'auth/sign-in.yml'
+- runFlow: 'home/tabs/index.yml'
