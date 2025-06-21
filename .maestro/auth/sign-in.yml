@@ -1,3 +1,4 @@
 appId: com.civeloo.gen
 ---
+- tapOn: 'Sign in with Google'
 - runFlow: 'login-with-google.yml'

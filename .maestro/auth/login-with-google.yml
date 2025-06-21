@@ -1,5 +1,4 @@
 appId: com.civeloo.gen
 ---
-- tapOn: 'Sign in with Google'
-- tapOn: 'Diego Ezequiel Guillén'
+- tapOn: ${MAESTRO_EMAIL}
 - tapOn: 'Continue'
