@@ -1,3 +1,5 @@
 appId: com.civeloo.gen
 ---
 - assertVisible: 'SIGN OUT'
+- tapOn: 'Taxes'
+- runFlow: 'taxes.yml'

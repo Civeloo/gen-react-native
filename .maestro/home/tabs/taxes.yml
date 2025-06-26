@@ -1,0 +1,22 @@
+appId: com.civeloo.gen
+---
+- assertVisible: 'taxes'
+# CSR
+- tapOn: 'GENERATE CSR'
+- runFlow:
+    when:
+      notVisible: 'arca'
+    commands:
+      - tapOn: 'CREATE NEW FOLDER'
+      - inputText: 'arca'
+      - tapOn: 'OK'
+      - tapOn: 'USE THIS FOLDER'
+      - tapOn: 'ALLOW'
+- assertVisible: 'GENERATE CSR'
+# CRT
+- tapOn: 'USE CERTIFICATE'
+- back
+- tapOn: 'arca.crt'
+- tapOn: 'Select'
+- assertVisible: 'USE CERTIFICATE'
+- back
