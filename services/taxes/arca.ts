@@ -1,19 +1,18 @@
 import {getValueForSecureStore, MimeTypes, pickDocuments, saveFile, saveSecureStore} from "@/utils";
 import * as FileSystem from "expo-file-system";
 
-const ARCA_KEY = 'arcaToken'
-const ARCA_URL = process.env.EXPO_PUBLIC_ARCA_API;
-const ARCA_REGISTER_URL = ARCA_URL + '/auth/register'
-const ARCA_LOGIN_URL = ARCA_URL + '/auth/login'
-const ARCA_CSR_URL = ARCA_URL + '/services/csr'
+const ARCA_KEY = String(process.env.EXPO_PUBLIC_ARCA_KEY);
+const ARCA_URL = String(process.env.EXPO_PUBLIC_ARCA_API);
+const ARCA_REGISTER_URL = ARCA_URL + String(process.env.EXPO_PUBLIC_ARCA_REGISTER);
+const ARCA_LOGIN_URL = ARCA_URL + String(process.env.EXPO_PUBLIC_ARCA_LOGIN);
+const ARCA_CSR_URL = ARCA_URL + String(process.env.EXPO_PUBLIC_ARCA_CSR);
 const ARCA_CSR_FILE_NAME = 'arca.csr'
-const ARCA_CRT_URL = ARCA_URL + '/services/crt'
+const ARCA_CRT_URL = ARCA_URL + String(process.env.EXPO_PUBLIC_ARCA_CRT);
 
 export const arcaGetToken = async () => await getValueForSecureStore(ARCA_KEY);
 
 export const arcaRegister = async (email: string, password: string) => {
     try {
-        console.log('api', fetch('http://localhost:8787/api').then((res) => res.status))
         await fetch(ARCA_REGISTER_URL, {
             method: 'POST',
             headers: {
@@ -60,7 +59,7 @@ export const arcaGetCSR = async (email: string, password: string, tin: string, o
             await saveFile(blob, ARCA_CSR_FILE_NAME, MimeTypes.csr);
         })
         .catch((error) => {
-            // console.error("arcaGetCSR", error)
+            console.error("arcaGetCSR", error)
         });
 }
 
@@ -69,7 +68,7 @@ export const arcaSendCRT = async (email: string) => {
         const assets = await pickDocuments(MimeTypes.crt);
         if (assets && assets?.length > 0) {
             const fileUri = assets[0].uri;
-            const response = await FileSystem.uploadAsync(ARCA_CRT_URL, fileUri, {
+            await FileSystem.uploadAsync(ARCA_CRT_URL, fileUri, {
                 headers: {
                     'Authorization': 'Bearer ' + await arcaGetToken(),
                 },
@@ -80,7 +79,6 @@ export const arcaSendCRT = async (email: string) => {
                     email: email
                 },
             });
-            console.log('arcaSendCRT', response);
         }
     } catch (error) {
         // console.log("arcaSendCRT", error);

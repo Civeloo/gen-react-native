@@ -1,25 +1,26 @@
-import {useEffect, useState} from 'react';
-import {Button, ScrollView, StyleSheet} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Button, View, StyleSheet} from 'react-native';
 import {getLocalizedText} from "@/languages/languages";
 import {router} from "expo-router";
 import {Companies} from "@/services/database/models";
 import {Company} from "@/types/types";
 import {arcaGetCSR, arcaGetToken, arcaRegister, arcaSendCRT} from "@/services/taxes/arca";
 import {useSession} from "@/services/session/ctx";
+import {BackButton} from "@/components/back-button";
 
 export default function TaxesPage(props: object) {
     const [company, setCompany] = useState<Company>();
     const [token, setToken] = useState<boolean>();
 
     const {user} = useSession();
-    const email = user?.email;
-    const password = user?.uid;
+    const email = String(user?.email);
+    const password = String(user?.uid);
     if (!email || !password) {
-        alert("Please signup");
+        alert(getLocalizedText('sign_in_please'));
         router.back();
     }
 
-    const getData = () => Companies.all()?.at(-1);
+    const getData = () => Companies.all()?.at(-1) as Company;
 
     const refreshData = () => {
         setCompany(getData());
@@ -34,13 +35,13 @@ export default function TaxesPage(props: object) {
         const companyName = company?.companyName;
         const companyContact = company?.contact;
         const companyCountry = company?.country;
-        if (!companyTin || !companyName || !companyContact || !companyCountry) return alert('Please complete all company values');
+        if (!companyTin || !companyName || !companyContact || !companyCountry) return alert(getLocalizedText('company_complete'));
         if (!token) await arcaRegister(email, password);
         await arcaGetCSR(email, password, companyTin, companyContact, companyName, companyCountry);
     }
 
     const handleCertificate = async () => {
-        if (!token) return alert('Generate CSR before');
+        if (!token) return alert(getLocalizedText('csr_please'));
         await arcaSendCRT(email);
     }
 
@@ -50,20 +51,19 @@ export default function TaxesPage(props: object) {
     }, [props]);
 
     return (
-        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            <Button
-                title={getLocalizedText("cancel")}
-                onPress={() => router.back()}
-                color={'red'}/>
-            <Button
-                title={"generate csr"}
-                onPress={handleGenerate}
-            />
-            {token && <Button
-                title={"use certificate"}
-                onPress={handleCertificate}
-            />}
-        </ScrollView>
+        <View style={styles.container}>
+            <BackButton onPress={() => router.back()}/>
+            <View style={styles.buttons}>
+                <Button
+                    title={getLocalizedText('csr_generate')}
+                    onPress={handleGenerate}
+                />
+                {token && <Button
+                    title={getLocalizedText('crt_use')}
+                    onPress={handleCertificate}
+                />}
+            </View>
+        </View>
     );
 };
 
@@ -72,4 +72,8 @@ const styles = StyleSheet.create({
         padding: 16,
         flex: 1,
     },
+    buttons: {
+        alignSelf: 'center',
+        gap: 10
+    }
 });
