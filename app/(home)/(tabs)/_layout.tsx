@@ -1,13 +1,25 @@
 import {getLocalizedText} from '@/languages/languages';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import {Tabs} from 'expo-router';
-import {useEffect, useRef} from "react";
+import {router, Tabs} from 'expo-router';
+import React, {useEffect, useRef} from "react";
 import {useSession} from "@/services/session/ctx";
 import {Provider, useCreateMergeableStore} from 'tinybase/ui-react';
 import {customSynchronizer, db, useCustomPersister} from '@/services/database/database';
+import {BackButton} from "@/components/back-button";
+import {SignOutButton} from "@/components/sign-out-button";
+import {StyleSheet, View} from "react-native";
 
 export default function TabLayout() {
-    const {session} = useSession();
+    const {session, signOut} = useSession();
+
+    const handleSignOut = () => {
+        if (session) {
+            signOut();
+            router.dismissAll();
+        } else {
+            router.replace('/(auth)/sign-in');
+        }
+    }
 
     const store = useCreateMergeableStore(() => db);
     useCustomPersister(store);
@@ -59,6 +71,9 @@ export default function TabLayout() {
                         tabBarIcon: ({color, focused}) => (
                             <Ionicons name={focused ? 'home-sharp' : 'home-outline'} color={color} size={24}/>
                         ),
+                        headerRight: () => (<View style={styles.headerRight}>
+                            <SignOutButton signOut={!!session} onSignOut={handleSignOut}/>
+                        </View>),
                     }}
                 />
                 <Tabs.Screen
@@ -67,6 +82,9 @@ export default function TabLayout() {
                         title: getLocalizedText('orders'),
                         tabBarIcon: ({color, focused}) => (
                             <Ionicons name={focused ? 'apps' : 'apps-outline'} color={color} size={24}/>
+                        ),
+                        headerLeft: () => (
+                            <BackButton onPress={() => router.back()}/>
                         ),
                     }}
                 />
@@ -78,6 +96,9 @@ export default function TabLayout() {
                         tabBarIcon: ({color, focused}) => (
                             <Ionicons name={focused ? 'add-circle' : 'add-circle-outline'} color={color} size={24}/>
                         ),
+                        headerLeft: () => (
+                            <BackButton onPress={() => router.back()}/>
+                        ),
                     }}
                 />
                 <Tabs.Screen
@@ -86,6 +107,9 @@ export default function TabLayout() {
                         title: getLocalizedText('customers'),
                         tabBarIcon: ({color, focused}) => (
                             <Ionicons name={focused ? 'person' : 'person-outline'} color={color} size={24}/>
+                        ),
+                        headerLeft: () => (
+                            <BackButton onPress={() => router.back()}/>
                         ),
                     }}
                 />
@@ -96,13 +120,28 @@ export default function TabLayout() {
                         tabBarIcon: ({color, focused}) => (
                             <Ionicons name={focused ? 'business' : 'business-outline'} color={color} size={24}/>
                         ),
+                        headerLeft: () => (
+                            <BackButton onPress={() => router.back()}/>
+                        ),
                     }}
                 />
                 <Tabs.Screen
                     name="taxes"
-                    options={{href: null}}
+                    options={{
+                        title: getLocalizedText('taxes'),
+                        headerLeft: () => (
+                            <BackButton onPress={() => router.back()}/>
+                        ),
+                        href: null
+                    }}
                 />
             </Tabs>
         </Provider>
     );
 }
+
+const styles = StyleSheet.create({
+    headerRight: {
+        paddingRight: 10
+    }
+});

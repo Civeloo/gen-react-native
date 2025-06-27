@@ -1,28 +1,11 @@
-import {Link, useRouter} from "expo-router";
+import {Link} from "expo-router";
 import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {getLocalizedText} from "@/languages/languages";
-import {SignOutButton} from "@/components/sign-out-button";
-import {useSession} from "@/services/session/ctx";
 
 export default function Index() {
-    const router = useRouter();
-    const {session, signOut} = useSession();
-
-    const handleSignOut = () => {
-        if (session) {
-            signOut();
-            router.dismissAll();
-        } else {
-            router.replace('/(auth)/sign-in');
-        }
-    }
 
     return (<View style={styles.container}>
-        <View style={styles.link}>
-            <SignOutButton signOut={!!session} onSignOut={handleSignOut}/>
-        </View>
-
         <Link style={styles.link}
               href="/customer" asChild>
             <TouchableOpacity style={styles.button}>

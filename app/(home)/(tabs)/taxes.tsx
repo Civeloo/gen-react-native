@@ -1,12 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {Button, View, StyleSheet} from 'react-native';
+import {Button, StyleSheet, View} from 'react-native';
 import {getLocalizedText} from "@/languages/languages";
 import {router} from "expo-router";
 import {Companies} from "@/services/database/models";
 import {Company} from "@/types/types";
 import {arcaGetCSR, arcaGetToken, arcaRegister, arcaSendCRT} from "@/services/taxes/arca";
 import {useSession} from "@/services/session/ctx";
-import {BackButton} from "@/components/back-button";
 
 export default function TaxesPage(props: object) {
     const [company, setCompany] = useState<Company>();
@@ -52,7 +51,6 @@ export default function TaxesPage(props: object) {
 
     return (
         <View style={styles.container}>
-            <BackButton onPress={() => router.back()}/>
             <View style={styles.buttons}>
                 <Button
                     title={getLocalizedText('csr_generate')}

@@ -28,7 +28,7 @@ type FormValues = yup.InferType<typeof schema>
 
 type CompanyFormProps = {
     company: Company;
-    onSave: (values: FormValues, id?: string) => void;
+    onSave: (values: Company, id?: string) => void;
 };
 
 export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
@@ -50,7 +50,8 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
 
     const onSubmit: SubmitHandler<FormValues> = (values) => {
         values.type = values?.type?.toUpperCase() || 'USA';
-        onSave(values, company?.id);
+        const companyValues = values as Company;
+        onSave(companyValues, company?.id);
         // methods.reset();
     };
 

@@ -1,7 +1,7 @@
 import {Button} from 'react-native'
 import {getLocalizedText} from "@/languages/languages";
 
-export const SignOutButton = ({signOut, onSignOut}:{signOut:boolean, onSignOut:()=>{}}) => {
+export const SignOutButton = ({signOut, onSignOut}:{signOut:boolean, onSignOut:()=>void}) => {
     const handleSignOut = async () => {
         onSignOut();
     }
