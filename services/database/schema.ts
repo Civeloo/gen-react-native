@@ -3,13 +3,17 @@ import { TablesSchema } from "tinybase/store";
 const tablesSchema: TablesSchema = {
     company: {
         companyName: { type: 'string' },
+        contact: { type: 'string' },
         address: { type: 'string' },
         city: { type: 'string' },
+        state: { type: 'string' },
         postalCode: { type: 'string' },
         country: { type: 'string' },
-        contact: { type: 'string' },
+        concept: { type: 'string' },
+        phone: { type: 'string' },
         tin: { type: 'string' },
-        companyType: { type: 'string' },
+        type: { type: 'string' },
+        ptoVta: { type: 'string' },
     },
     categories: {
         categoryName: { type: 'string' },
@@ -60,6 +64,8 @@ const tablesSchema: TablesSchema = {
         orderDate: { type: 'string' },
         shipperID: { type: 'string' },
         status: { type: 'string', default: 'pending' },
+        signature: { type: 'string' },
+        expiration: { type: 'string' },
     },
     orderDetails: {
         orderID: { type: 'string' },

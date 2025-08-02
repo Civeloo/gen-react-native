@@ -1,0 +1,10 @@
+appId: com.civeloo.gen
+---
+- tapOn: 'Orders'
+- assertVisible: 'Orders'
+- tapOn:
+    id: 'refresh'
+- tapOn: 'Search orders'
+- inputText: '#1'
+- tapOn:
+    id: 'invoice'

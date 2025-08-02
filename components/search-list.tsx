@@ -39,7 +39,7 @@ export const SearchList = (props) => {
                     value={searchQuery}
                     onChangeText={setSearchQuery}
                 />
-                {onRefresh && <Button title="⚡" onPress={handleRefresh} />}
+                {onRefresh && <Button title="⚡" testID='refresh' onPress={handleRefresh} />}
             </View>
             <FlatList
                 data={filtered}

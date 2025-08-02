@@ -5,6 +5,8 @@ import Orders from '@/services/database/orders.model';
 import {useState} from 'react';
 import {Button, ScrollView, StyleSheet} from 'react-native';
 import {Order} from "@/types/types";
+import {arcaInvoice, ArcaInvoiceProps} from "@/services/taxes/arca";
+import {OrderCodes} from "@/services/database/models";
 
 export default function OrderPage() {
 
@@ -23,6 +25,37 @@ export default function OrderPage() {
         refreshData();
     };
 
+    const handleInvoice = async (invoice: ArcaInvoiceProps) => {
+        const order = invoice.order;
+        if (order.status === 'pending') {
+            const signature = JSON.parse(await arcaInvoice(invoice));
+            //TODO: si esta caido el server de afip alertar para reitentar
+            if (signature === 'error') {
+               console.error(signature)
+                alert('SERVIDOR ARCA CAIDO REINTENTAR POR FAVOR')
+                return;
+            }
+            const customerCodeKey = 'C';
+            const orderNumber = signature.nro;
+            const orderCode = customerCodeKey + orderNumber.toString();
+            const orderCodeLast = Number(OrderCodes.byId(customerCodeKey).orderNumber) || 0;
+            if (orderNumber > orderCodeLast) OrderCodes.update(customerCodeKey, {orderNumber});
+            order.orderCode = orderCode;
+            order.signature = signature.cae.toString();
+            order.expiration = signature.vto.toString();
+            order.status = 'invoiced';
+            Orders.update(order.id, {
+                orderCode: order.orderCode,
+                status: order.status,
+                signature: order.signature,
+                expiration: order.expiration
+            });
+        }
+        //TODO: mostrar reporte
+        refreshData();
+    }
+
+
     const handleSave = (orderCode: string) => {
         setAddOrder(false);
         refreshData();
@@ -40,6 +73,7 @@ export default function OrderPage() {
                 : <OrderList
                     data={data}
                     onRemove={handleRemove}
+                    onInvoice={handleInvoice}
                     selected={selected}
                     onRefresh={() => refreshData()}/>
             }
