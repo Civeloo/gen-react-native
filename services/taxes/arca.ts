@@ -54,13 +54,12 @@ export const arcaLogin = async (user: ArcaLogin) => {
     }
 }
 
-export const arcaGetCSR = async (email: string, password: string, tin: string, org: string, cname: string, country: string) => {
-    //TODO: add concept, ptoVta values
+export const arcaGetCSR = async (email: string, password: string, tin: string, org: string, cname: string, country: string, concept:string, ptoVta:string) => {
     let token = await arcaGetToken(email);
     token = !token ? await arcaLogin({email, password}) : token;
     fetch(ARCA_CSR_URL, {
         method: 'POST',
-        body: JSON.stringify({email: email, id: tin, password: password, org: org, cn: cname, ctry: country}),
+        body: JSON.stringify({email: email, id: tin, password: password, org: org, cn: cname, ctry: country, cpt: concept, ptoVta: ptoVta}),
         headers: new Headers({
             'Authorization': 'Bearer ' + token,
             'Content-Type': 'application/json'
@@ -68,7 +67,7 @@ export const arcaGetCSR = async (email: string, password: string, tin: string, o
     })
         .then((response) => {
             if (!response.ok) {
-                throw new Error('...');
+                throw new Error(JSON.stringify(response));
             }
             return response.blob();
         })

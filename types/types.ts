@@ -16,6 +16,9 @@ export type Order = {
     employeeID?: string;
     orderDate: string;
     shipperID?: string;
+    status?: string;
+    signature?: string;
+    expiration?: string;
 };
 
 export type OrderDetail = {
@@ -54,7 +57,9 @@ export type Company = {
     state?: string;
     postalCode?: string;
     country?: string;
+    concept?: string;
     phone?: string;
     tin?: string;
     type?: string;
+    ptoVta?: string;
 };

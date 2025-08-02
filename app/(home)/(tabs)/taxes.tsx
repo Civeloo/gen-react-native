@@ -9,7 +9,7 @@ import {useSession} from "@/services/session/ctx";
 
 export default function TaxesPage(props: object) {
     const [company, setCompany] = useState<Company>();
-    const [token, setToken] = useState<boolean>();
+    const [token, setToken] = useState<string|null>();
 
     const {user} = useSession();
     const email = String(user?.email);
@@ -25,8 +25,8 @@ export default function TaxesPage(props: object) {
         setCompany(getData());
     }
 
-    const refreshToken = () => {
-        setToken(!!arcaGetToken());
+    const refreshToken = async() => {
+        setToken(await arcaGetToken(email));
     }
 
     const handleGenerate = async () => {
@@ -34,9 +34,11 @@ export default function TaxesPage(props: object) {
         const companyName = company?.companyName;
         const companyContact = company?.contact;
         const companyCountry = company?.country;
-        if (!companyTin || !companyName || !companyContact || !companyCountry) return alert(getLocalizedText('company_complete'));
+        const companyConcept = company?.concept || '';
+        const companyPtoVta = company?.ptoVta || '';
+        if (!companyTin || !companyName || !companyContact || !companyCountry || companyConcept || companyPtoVta) return alert(getLocalizedText('company_complete'));
         if (!token) await arcaRegister(email, password);
-        await arcaGetCSR(email, password, companyTin, companyContact, companyName, companyCountry);
+        await arcaGetCSR(email, password, companyTin, companyContact, companyName, companyCountry, companyConcept, companyPtoVta);
     }
 
     const handleCertificate = async () => {
