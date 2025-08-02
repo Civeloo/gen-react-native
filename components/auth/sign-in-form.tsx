@@ -33,12 +33,14 @@ export const SignInForm: React.FC<SignInFormProps> = ({onSave}) => {
                 name='email'
                 label={getLocalizedText('email')}
                 placeholder={getLocalizedText('email_placeholder')}
+                testID='email_text_input'
                 keyboardType='email-address'
             />
             <TextInputController
                 name='password'
                 label={getLocalizedText('password')}
                 placeholder={getLocalizedText('password_placeholder')}
+                testID='password_text_input'
                 secureTextEntry
             />
             <Button title={getLocalizedText('sign_in')} onPress={methods.handleSubmit(onSubmit)}/>

@@ -1,0 +1,9 @@
+appId: com.civeloo.gen
+---
+- tapOn:
+    id: 'email_text_input'
+- inputText: ${MAESTRO_EMAIL}
+- tapOn:
+    id: 'password_text_input'
+- inputText: ${MAESTRO_PASS}
+- tapOn: 'SIGN IN'
