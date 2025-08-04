@@ -10,7 +10,7 @@ export type Product = {
 };
 
 export type Order = {
-    id: string;
+    id?: string;
     orderCode: string;
     customerID: string;
     employeeID?: string;
@@ -63,3 +63,11 @@ export type Company = {
     type?: string;
     ptoVta?: string;
 };
+
+export type Invoice = {
+    order: Order;
+    orderDetails: OrderDetail[];
+    customer: Customer;
+    company: Company;
+    total: number;
+}

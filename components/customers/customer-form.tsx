@@ -5,7 +5,7 @@ import {FormProvider, SubmitHandler, useForm} from 'react-hook-form';
 import {Button, Platform, StyleSheet, Text, View} from 'react-native';
 import * as yup from "yup";
 import {TextInputController} from '../text-input-controller';
-import {cleanPhoneNumber, getCustomerCode} from "@/utils";
+import {cleanPhoneNumber, getCustomerCode} from "@/utils/utils";
 import {Companies} from "@/services/database/models";
 import {Company, Customer} from "@/types/types";
 

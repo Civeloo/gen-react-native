@@ -1,4 +1,4 @@
-import { getUUIDv4 } from '@/utils';
+import { getUUIDv4 } from '@/utils/utils';
 import { db, relations } from './database';
 
 

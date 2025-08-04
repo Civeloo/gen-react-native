@@ -6,24 +6,21 @@ import {Button, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {SearchList} from "../search-list";
 import Products from "@/services/database/products.model";
 import Ionicons from '@expo/vector-icons/Ionicons';
-import {sendWhatsapp} from "@/utils";
 import {Companies} from "@/services/database/models";
-import {Company, Order, OrderDetail, Product} from "@/types/types";
-import {arcaGetToken, ArcaInvoiceProps} from "@/services/taxes/arca";
-import {useSession} from "@/services/session/ctx";
+import {Company, Customer, Invoice, Order, OrderDetail, Product} from "@/types/types";
 
 type Props = {
     data: Order[];
     selected: {};
     onRemove: () => void;
-    onInvoice: (invoice: ArcaInvoiceProps) => void;
+    onWsp: (invoice: Invoice) => void;
+    onPrint: (invoice: Invoice) => void;
+    onFile: (invoice: Invoice) => void;
     onRefresh: () => void;
 };
 
-export const OrderList: FC<Props> = ({data, selected, onRemove, onInvoice, onRefresh}) => {
+export const OrderList: FC<Props> = ({data, selected, onRemove, onWsp, onPrint, onFile, onRefresh}) => {
     const [selectedOrder, setSelectedOrder] = useState({});
-
-    const {user} = useSession();
 
     const handleRemove = (orderDetails: OrderDetail[]) => {
         orderDetails.map((orderDetail: OrderDetail) => {
@@ -34,28 +31,18 @@ export const OrderList: FC<Props> = ({data, selected, onRemove, onInvoice, onRef
         onRemove();
     };
 
-    const handleSendWsp = (orderCode: string, orderDate: string, total: number, details: any[], customerName: string | number | boolean, customerContact: string | number | boolean) => {
-        const company = Companies.all()?.at(-1) as Company
-        const message = `${company?.companyName || ''}\n${customerName}\n${orderCode}\n${orderDate.split('T')[0]}\n${details.join('\n')}\n$ ${total.toFixed(2)}`;
-        sendWhatsapp(Number(customerContact), message);
-    };
-
     const renderItem = ({item}: { item: Order }) => {
         const order = item;
         const orderDetails = Orders.inner(order?.id, 'orderWithDetails') as OrderDetail[];
-        const customer = Customers.byId(order?.customerID);
+        const customer = Customers.byId(order?.customerID) as Customer;
         const customerName = String(customer?.customerName || getLocalizedText('cash_customer'));
-        const customerTin = String(customer?.customerTin || '');
         const total = orderDetails.reduce((acc, orderDetail) => acc + orderDetail.price * orderDetail.quantity, 0);
         const orderCode = order?.orderCode;
         const orderDate = order?.orderDate;
         const customerContact = customer?.contact || '';
         const details: string[] = [];
-
-        const handleInvoice = () => {
-            if (user) onInvoice({user, order, customerTin, total});
-        };
-
+        const company = Companies.all()?.at(-1) as Company;
+        const invoice: Invoice = {order, orderDetails, customer, company, total};
         return (
             <View style={styles.order}>
                 <View style={styles.header}>
@@ -80,13 +67,17 @@ export const OrderList: FC<Props> = ({data, selected, onRemove, onInvoice, onRef
                 </View>
                 <View style={styles.cardFooter}>
                     {customerContact && <TouchableOpacity
-                        onPress={() => handleSendWsp(orderCode, orderDate, total, details, customerName, customerContact)}>
+                        onPress={() => onWsp(invoice)}>
                         <Ionicons name="logo-whatsapp" size={32} color="green"/>
                     </TouchableOpacity>}
-                    {user && !!arcaGetToken(user.email || '') &&
-                        <TouchableOpacity testID='invoice' onPress={handleInvoice}>
-                            <Ionicons name='document-text' size={32}/>
-                        </TouchableOpacity>}
+                    {/*{user && !!arcaGetToken(user.email || '') &&*/}
+                    <TouchableOpacity testID='print' onPress={() => onPrint(invoice)}>
+                        <Ionicons name='print' size={32}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity testID='file' onPress={() => onFile(invoice)}>
+                        <Ionicons name='document-text' size={32}/>
+                    </TouchableOpacity>
+                    {/*}*/}
                     <Text style={styles.total}>Total: ${total.toFixed(2)}</Text>
                 </View>
             </View>);

@@ -1,4 +1,4 @@
-import {getValueForSecureStore, MimeTypes, pickDocuments, saveFile, saveSecureStore} from "@/utils";
+import {getValueForSecureStore, MimeTypes, pickDocuments, saveFile, saveSecureStore} from "@/utils/utils";
 import * as FileSystem from "expo-file-system";
 import {User} from "@firebase/auth-types";
 import {Order} from "@/types/types";
@@ -54,12 +54,21 @@ export const arcaLogin = async (user: ArcaLogin) => {
     }
 }
 
-export const arcaGetCSR = async (email: string, password: string, tin: string, org: string, cname: string, country: string, concept:string, ptoVta:string) => {
+export const arcaGetCSR = async (email: string, password: string, tin: string, org: string, cname: string, country: string, concept: string, ptoVta: string) => {
     let token = await arcaGetToken(email);
     token = !token ? await arcaLogin({email, password}) : token;
     fetch(ARCA_CSR_URL, {
         method: 'POST',
-        body: JSON.stringify({email: email, id: tin, password: password, org: org, cn: cname, ctry: country, cpt: concept, ptoVta: ptoVta}),
+        body: JSON.stringify({
+            email: email,
+            id: tin,
+            password: password,
+            org: org,
+            cn: cname,
+            ctry: country,
+            cpt: concept,
+            ptoVta: ptoVta
+        }),
         headers: new Headers({
             'Authorization': 'Bearer ' + token,
             'Content-Type': 'application/json'
@@ -140,5 +149,6 @@ export const arcaInvoice = async (
     })
         .catch((error) => {
             console.error("arcaGetCSR", error)
+            return;
         });
 }

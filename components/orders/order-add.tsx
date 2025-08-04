@@ -4,11 +4,11 @@ import {OrderCodes} from '@/services/database/models';
 import OrderDetails from '@/services/database/orderDetail.model';
 import Orders from '@/services/database/orders.model';
 import Products from '@/services/database/products.model';
-import {getDate, getUUIDv4} from '@/utils';
+import {getDate, getUUIDv4} from '@/utils/utils';
 import React, {useState} from 'react';
 import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {SearchList} from '../search-list';
-import {Customer, Product} from "@/types/types";
+import {Customer, Order, Product} from "@/types/types";
 
 type Props = {
     onSave: (orderCode: string) => void;
@@ -36,10 +36,11 @@ export const OrderAdd: React.FC<Props> = (props) => {
         const orderNumber = orderCodeLast + 1;
         const orderCode = customerCodeKey + orderNumber.toString();
         OrderCodes.update(customerCodeKey, {orderNumber});
-        const order = {
+        const order: Order = {
             orderCode: orderCode,
             customerID: Object.keys(selectedCustomer)[0],
             orderDate: getDate(),
+            status: 'pending',
         };
         Orders.add(order, orderID);
         Object.entries(selectedProducts).forEach(([productId, quantity]) => {

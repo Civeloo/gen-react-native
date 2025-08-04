@@ -71,7 +71,7 @@ export const saveFile = async (blob: Blob, fileName: string, mimeType: string, d
                     await FileSystem.writeAsStringAsync(uri, data, {encoding: FileSystem.EncodingType.Base64});
                 })
                 .catch((e) => {
-                    // console.error(e)
+                    console.error(e)
                 });
         }
     } catch (error) {
@@ -91,9 +91,9 @@ export const pickDocuments = async (mimeType = MimeTypes.all, multiple = false) 
             const successResult = result as DocumentPicker.DocumentPickerSuccessResult;
             return successResult.assets;
         } else {
-            console.log("Document selection cancelled.");
+            alert("Document selection cancelled.");
         }
     } catch (error) {
-        console.log("Error picking documents:", error);
+        console.error("Error picking documents:", error);
     }
 };

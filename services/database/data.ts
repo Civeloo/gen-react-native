@@ -1,4 +1,4 @@
-import {getRegionCode} from "@/utils";
+import {getRegionCode} from "@/utils/utils";
 
 export const INITIAL_PRODUCTS = {
     product0: { productBarcode: '123456789012', productName: 'Article', price: 1, quantity: 100 },
