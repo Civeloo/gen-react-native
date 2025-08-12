@@ -9,35 +9,42 @@ import {Product} from "@/types/types";
 
 const schema = yup
     .object({
-        // id: yup.string(),
+        productID: yup.string().defined(),
         productName: yup.string().max(50).required(),
-        // unit: yup.string().max(50).required(),
-        quantity: yup.number().required(),
-        price: yup.number().required(),
+        // productUnit: yup.string().max(50).required(),
+        productPrice: yup.string().required(),
+        productQuantity: yup.string().required(),
     })
     .required();
 
 type FormValues = yup.InferType<typeof schema>
 
-type NewProductFormProps = {
+type ProductFormProps = {
     product: Product;
     onSave: (values: Product) => void;
-    onRemove?: (id: string) => void;
+    onRemove?: (productID: string) => void;
 };
 
-export const ProductForm: React.FC<NewProductFormProps> = ({product, onSave, onRemove}) => {
+export const ProductForm: React.FC<ProductFormProps> = ({product, onSave, onRemove}) => {
     const {...methods} = useForm<FormValues>({
         resolver: yupResolver(schema),
         defaultValues: {
-            // id: product.id,
+            productID: product.productID || '',
             productName: product?.productName || '',
-            quantity: product?.quantity || '',
-            price: product?.price || '',
+            // productUnit: product?.productUnit || '',
+            productPrice: String(product?.productPrice || 0),
+            productQuantity: String(product?.productQuantity || 0),
         }
     });
 
-    const onSubmit: SubmitHandler<FormValues> = (values) => {
-        onSave(values, product?.id);
+    const onSubmit: SubmitHandler<FormValues> = (values:FormValues) => {
+        const productValues = {
+            productID: values.productID,
+            productName: values.productName,
+            productPrice: Number(values.productPrice),
+            productQuantity: Number(values.productQuantity),
+        };
+        onSave(productValues);
         methods.reset();
     };
 
@@ -53,14 +60,14 @@ export const ProductForm: React.FC<NewProductFormProps> = ({product, onSave, onR
             <View style={styles.input}>
                 <Text style={styles.label}>✖</Text>
                 <TextInputController
-                    name="quantity"
+                    name="productQuantity"
                     placeholder={getLocalizedText('quantity_placeholder')}
                     keyboardType="numeric"
                 /></View>
             <View style={styles.input}>
                 <Text style={styles.label}>💲</Text>
                 <TextInputController
-                    name="price"
+                    name="productPrice"
                     placeholder={getLocalizedText('price_placeholder')}
                     keyboardType="numeric"
                 />
@@ -69,10 +76,10 @@ export const ProductForm: React.FC<NewProductFormProps> = ({product, onSave, onR
                 <View style={styles.okButton}>
                     <Button title={getLocalizedText('ok')} onPress={methods.handleSubmit(onSubmit)}/>
                 </View>
-                {onRemove && product?.id && <Button
+                {onRemove && product?.productID && <Button
                     color="red"
                     title="  -  "
-                    onPress={() => onRemove(product?.id)}/>}
+                    onPress={() => onRemove(product?.productID)}/>}
             </View>
         </View>
     );

@@ -1,8 +1,8 @@
-import {getLocalizedText} from "@/languages/languages";
-import {useEffect, useState} from "react";
-import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {SearchList} from "../search-list";
-import {Product} from "@/types/types";
+import {getLocalizedText} from '@/languages/languages';
+import {useEffect, useState} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {SearchList} from '../search-list';
+import {Product} from '@/types/types';
 
 type Props = {
     data: Product[];
@@ -16,9 +16,9 @@ export const ProductList: React.FC<Props> = ({data, onEdit, onRefresh}) => {
 
     const renderItem = ({item}: { item: Product }) =>
         <TouchableOpacity style={styles.item} onPress={() => onEdit(item)}>
-            <Text style={styles.text}>{item.quantity}</Text>
+            <Text style={styles.text}>{item.productQuantity}</Text>
             <Text style={styles.text}>{item.productName}</Text>
-            <Text style={styles.text}>${item.price}</Text>
+            <Text style={styles.text}>${item.productPrice}</Text>
         </TouchableOpacity>;
 
     useEffect(() => {
@@ -28,9 +28,10 @@ export const ProductList: React.FC<Props> = ({data, onEdit, onRefresh}) => {
     return (
         <View style={styles.container}>
             <SearchList
+                id='productID'
                 data={data}
                 selected={selected}
-                elementKey="productName"
+                elementKey='productName'
                 placeholder={getLocalizedText('search_products')}
                 renderItem={renderItem}
                 onRefresh={() => onRefresh()}

@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS suppliers (
         supplierPhone TEXT
     );
 CREATE TABLE IF NOT EXISTS products (
-        ProductID TEXT PRIMARY KEY NOT NULL,
+        productID TEXT PRIMARY KEY NOT NULL,
         productName TEXT,
         productBarcode TEXT,
         supplierID TEXT,
