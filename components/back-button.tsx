@@ -3,7 +3,10 @@ import {router} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React from "react";
 
-export const BackButton = ({onPress}) => {
+interface Props {
+    onPress?: () => void;
+}
+export const BackButton = ({onPress}: Props) => {
     const handleOnPress = () => {
         onPress ? onPress() : router.back();
     }

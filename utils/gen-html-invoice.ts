@@ -263,11 +263,11 @@ export function genHtmlInvoice(invoice: Invoice) {
 ` + (invoice.orderDetails.map((orderDetail: OrderDetail) => {
         return (`<tr>
                         <td>
-                            <small>${orderDetail.productName}</small>
+                            <small>${orderDetail.orderDetailName}</small>
                         </td>
-                        <td class="text-center">${orderDetail.quantity}</td>
-                            <td class="text-right">${orderDetail.price}</td>
-                        <td class="text-right">${(orderDetail.price * orderDetail.quantity).toFixed(2)}</td>
+                        <td class="text-center">${orderDetail.orderDetailQuantity}</td>
+                            <td class="text-right">${orderDetail.orderDetailPrice}</td>
+                        <td class="text-right">${(orderDetail.orderDetailPrice * orderDetail.orderDetailQuantity).toFixed(2)}</td>
                         </tr>`)
     })) + `                
             </tbody>
@@ -301,7 +301,7 @@ export function genHtmlInvoice(invoice: Invoice) {
 
         <!-- Invoice Footer -->
         <div class="invoice-footer">
-        ` + (`<p><strong>${getLocalizedText('invoice-signature')}: </strong>${invoice.order.signature}</p>`) + `
+        ` + (`<p><strong>${getLocalizedText('invoice_signature')}: </strong>${invoice.order.orderSignature}</p>`) + `
 <!--            <p>Thank you for your business!</p>-->
 <!--            <p>If you have any questions about this invoice, please contact us at (555) 123-4567</p>-->
         </div>

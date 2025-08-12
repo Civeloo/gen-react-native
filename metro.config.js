@@ -6,6 +6,16 @@ const withStorybook = require('@storybook/react-native/metro/withStorybook');
 const defaultConfig = getDefaultConfig(__dirname);
 defaultConfig.resolver.sourceExts.push('cjs');
 defaultConfig.resolver.unstable_enablePackageExports = false;
+// defaultConfig.resolver.assetExts.push('wasm');
+
+// Add COEP and COOP headers to support SharedArrayBuffer
+// defaultConfig.server.enhanceMiddleware = (middleware) => {
+//   return (req, res, next) => {
+//     res.setHeader('Cross-Origin-Embedder-Policy', 'credentialless');
+//     res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+//     middleware(req, res, next);
+//   };
+// };
 
 module.exports = withStorybook(defaultConfig, {
   // Set to false to remove storybook specific options

@@ -31,7 +31,7 @@ export const sendWhatsapp = (phoneNumber: number, message: string) => {
 
 export const getRegionCode = () => ExpoLocalization.getLocales()[0].regionCode || 'US';
 
-export const getCustomerCode = (regionCode) => regionCode == 'AR' ? 'C' : '0';
+export const getCustomerCode = (regionCode?: string) => regionCode == 'AR' ? 'C' : '#';
 
 export const saveSecureStore = async (key: string, value: string) => {
     await SecureStore.setItemAsync(key, value);
@@ -97,3 +97,17 @@ export const pickDocuments = async (mimeType = MimeTypes.all, multiple = false) 
         console.error("Error picking documents:", error);
     }
 };
+
+export const getFieldKey = (table:string) => {
+    return table.slice(0, -1);
+}
+
+// export const mapTable = (table: string, values: { [x: string]: any; } | undefined) => {
+//     if (!values) return null;
+//     return Object.keys(values).map((key) => {
+//         const k = key.toString().replace(table, '').toLowerCase();
+//         return {
+//             [k]: values[key]
+//         };
+//     }) as unknown;
+// }

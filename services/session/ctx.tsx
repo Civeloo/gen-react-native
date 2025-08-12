@@ -11,6 +11,10 @@ import {getLocalizedText} from "@/languages/languages";
 import {User} from "@firebase/auth-types";
 
 type Sign = (email: string, password: string) => void;
+type Errors = {
+    code?: string;
+    message?: string;
+} | null;
 type AuthContextProps = {
     authState: () => void;
     signIn: Sign;
@@ -21,10 +25,7 @@ type AuthContextProps = {
     session?: string | null;
     user?: User | null;
     isLoading: boolean;
-    errors: {
-        code?: string;
-        message?: string;
-    } | null;
+    errors: Errors;
 };
 
 const AuthContext = createContext<AuthContextProps>({
@@ -53,8 +54,8 @@ export function useSession() {
 
 export function SessionProvider({children}: PropsWithChildren) {
     const [[isLoading, session], setSession] = useStorageState('session');
-    const [errors, setErrors] = useState(null);
-    const [user, setUser] = useState(null);
+    const [errors, setErrors] = useState<Errors>(null);
+    const [user, setUser] = useState<User | null | any>(null);
 
     return (
         <AuthContext.Provider

@@ -1,86 +1,131 @@
-import {Platform} from "react-native";
-import {
-    createIndexes,
-    createMergeableStore,
-    createQueries,
-    createRelationships,
-    MergeableStore,
-    ValuesSchema
-} from 'tinybase';
-import {tablesSchema} from "./schema";
 import {INITIAL_CUSTOMERS, INITIAL_ORDER_CODES, INITIAL_PRODUCTS} from "./data";
-import {createWsSynchronizer} from 'tinybase/synchronizers/synchronizer-ws-client';
-import {useCreatePersister,} from 'tinybase/ui-react';
-import ReconnectingWebSocket from "reconnecting-websocket";
-import {RefObject} from "react";
-import {firebaseGetUserIdToken} from "@/services/firebase/firebase.auth";
+import {type SQLiteDatabase} from 'expo-sqlite';
 
-const valuesSchema: ValuesSchema = {
-    title: {type: 'string'},
-} as const; // NB the `as const` modifier
-const TITLE_VALUES = Object.keys(valuesSchema)[0];
 const DB_NAME = 'GeN';
 
-const useCustomPersister = (store: MergeableStore, dbName = DB_NAME) =>
-    // Persist store to Expo SQLite or local storage; load once, then auto-save.
-    useCreatePersister(
-        store,
-        (store) =>
-            Platform.OS === 'web'
-                ? require('tinybase/persisters/persister-indexed-db').createIndexedDbPersister(store, dbName)
-                : require('tinybase/persisters/persister-expo-sqlite').createExpoSqlitePersister(store, require('expo-sqlite').openDatabaseSync(dbName + '.db')),
-        [],
-        (persister) => persister.load().then(persister.startAutoSave)
+async function migrateDbIfNeeded(db: SQLiteDatabase) {
+    const DATABASE_VERSION = 1;
+    let {user_version: currentDbVersion} = await db.getFirstAsync<{ user_version: number }>(
+        'PRAGMA user_version'
     );
+    if (currentDbVersion >= DATABASE_VERSION) {
+        return;
+    }
 
-const SYNC_SERVER = process.env.EXPO_PUBLIC_SYNC_SERVER;
-if (!SYNC_SERVER) {
-    throw new Error(
-        "Please set EXPO_PUBLIC_SYNC_SERVER in .env to the URL of the sync server"
+    const createTables = `
+    CREATE TABLE IF NOT EXISTS company (
+        companyID TEXT PRIMARY KEY NOT NULL,
+        companyName TEXT,
+        companyContact TEXT,
+        companyAddress TEXT,
+        companyCity TEXT,
+        companyState TEXT,
+        companyPostalCode TEXT,
+        companyCountry TEXT,
+        companyConcept TEXT,
+        companyPhone TEXT,
+        companyTin TEXT,
+        companyType TEXT,
+        companyPtoVta TEXT
+     );
+CREATE TABLE IF NOT EXISTS categories (
+        categoryID TEXT PRIMARY KEY NOT NULL,
+        categoryName TEXT,
+        parentCategoryID TEXT
     );
+CREATE TABLE IF NOT EXISTS customers (
+        customerID TEXT PRIMARY KEY NOT NULL,
+        customerName TEXT,
+        customerAddress TEXT,
+        customerCity TEXT,
+        customerPostalCode TEXT,
+        customerCountry TEXT,
+        customerContact TEXT,
+        customerTin TEXT,
+        customerType TEXT
+    );
+CREATE TABLE IF NOT EXISTS employees (
+        employeeID TEXT PRIMARY KEY NOT NULL,
+        employeeLastName TEXT,
+        employeeFirstName TEXT,
+        employeeBirthDate TEXT,
+        employeePhoto TEXT,
+        employeeNotes TEXT
+    );
+CREATE TABLE IF NOT EXISTS shippers (
+        shipperID TEXT PRIMARY KEY NOT NULL,
+        shipperName TEXT,
+        shipperContact TEXT
+    );
+CREATE TABLE IF NOT EXISTS suppliers (
+        supplierID TEXT PRIMARY KEY NOT NULL,
+        supplierName TEXT,
+        supplierContactName TEXT,
+        supplierAddress TEXT,
+        supplierCity TEXT,
+        supplierPostalCode TEXT,
+        supplierCountry TEXT,
+        supplierPhone TEXT
+    );
+CREATE TABLE IF NOT EXISTS products (
+        ProductID TEXT PRIMARY KEY NOT NULL,
+        productName TEXT,
+        productBarcode TEXT,
+        supplierID TEXT,
+        categoryID TEXT,
+        productUnit TEXT,
+        productPrice NUMERIC,
+        productQuantity NUMERIC
+    );
+CREATE TABLE IF NOT EXISTS orders (
+        orderID TEXT PRIMARY KEY NOT NULL,
+        orderCode TEXT,
+        customerID TEXT,
+        employeeID TEXT,
+        orderDate TEXT,
+        shipperID TEXT,
+        orderStatus TEXT,
+        orderSignature TEXT,
+        orderExpiration TEXT
+    );
+CREATE TABLE IF NOT EXISTS orderDetails (
+        orderDetailID TEXT PRIMARY KEY NOT NULL,
+        orderID TEXT,
+        productID TEXT,
+        orderDetailName TEXT,
+        orderDetailPrice NUMERIC,
+        orderDetailQuantity NUMERIC
+    );
+CREATE TABLE IF NOT EXISTS orderCodes (
+        orderCodeID TEXT PRIMARY KEY NOT NULL,
+        orderCodeNumber NUMERIC
+    );`;
+
+    const genSqlInsert = (data: { [x: string]: any; }, table: string) =>
+        Object.keys(data).map(id => {
+            const value = data[id] //as object;
+            const fields = Object.keys(value);
+            const values = fields.map(key => `"${value[key]}"`).join(',');
+            return `INSERT INTO ${table}s (${table}ID,${fields})
+                    VALUES ("${id}", ${values});`;
+        }).join('');
+
+    const insertProducts = genSqlInsert(INITIAL_PRODUCTS, 'product');
+    const insertCustomers = genSqlInsert(INITIAL_CUSTOMERS, 'customer');
+    const insertOrderCodes = genSqlInsert(INITIAL_ORDER_CODES, 'orderCode');
+
+    if (currentDbVersion === 0) {
+        const sql = `
+PRAGMA journal_mode = WAL;
+${createTables}
+`;
+        await db.execAsync(sql);
+        await db.runAsync(insertProducts);
+        await db.runAsync(insertCustomers);
+        await db.runAsync(insertOrderCodes);
+        currentDbVersion = 1;
+    }
+    await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
 }
 
-const customSynchronizer = async (store: MergeableStore, synchronizerRef: RefObject<any>, userId: string) => {
-    const token = await firebaseGetUserIdToken();
-    const encodedToken = encodeURIComponent(token || '');
-    const wsUrl = `${SYNC_SERVER}/${DB_NAME}${userId}?token=${encodedToken}`;
-    const ws = new ReconnectingWebSocket(wsUrl);
-    createWsSynchronizer(store, ws, 1)
-        .then((synchronizer) =>
-            synchronizer.startSync()
-                .then(() => {
-                        ws.addEventListener('open', () => {
-                            synchronizer.load().then(() => synchronizer.save());
-                        });
-                        synchronizerRef.current = synchronizer;
-                        // console.info('🔄 Synchronizer started');
-                    }
-                )
-        )
-    // .catch(reason => console.error('createWsSynchronizer',reason));
-};
-
-const store = createMergeableStore(DB_NAME);
-const db = store
-    .setSchema(tablesSchema, valuesSchema)
-    .setTables({
-        products: INITIAL_PRODUCTS,
-        customers: INITIAL_CUSTOMERS,
-        // orders: INITIAL_ORDERS,
-        // orderDetails: INITIAL_ORDER_DETAILS,
-        orderCodes: INITIAL_ORDER_CODES,
-        // company: INITIAL_COMPANY,
-    });
-
-const indexes = createIndexes(db);
-const relations = createRelationships(db);
-relations
-    .setRelationshipDefinition(
-        'orderWithDetails', // relationshipId
-        'orderDetails', // localTableId to link from
-        'orders', // remoteTableId to link to
-        'orderID', // cellId containing remote key
-    );
-const queries = createQueries(db);
-
-export {TITLE_VALUES, db, indexes, relations, queries, useCustomPersister, customSynchronizer};
+export {DB_NAME, migrateDbIfNeeded};

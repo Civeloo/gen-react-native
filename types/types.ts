@@ -1,67 +1,98 @@
+export type Company = {
+    companyID: string;
+    companyName: string;
+    companyContact: string;
+    companyAddress: string;
+    companyCity: string;
+    companyState: string;
+    companyPostalCode: string;
+    companyCountry: string;
+    companyConcept: string;
+    companyPhone: string;
+    companyTin: string;
+    companyType: string;
+    companyPtoVta: string;
+};
+
+export type Category = {
+    categoryID: string;
+    categoryName: string;
+    parentCategoryID: string;
+};
+
+export type Customer = {
+    customerID: string;
+    customerName: string;
+    customerAddress?: string;
+    customerCity?: string;
+    customerPostalCode?: string;
+    customerCountry?: string;
+    customerContact: string;
+    customerTin: string;
+    customerType: string;
+};
+
+export type Employee = {
+    employeeID: string;
+    employeeLastName: string;
+    employeeFirstName: string;
+    employeeBirthDate: string;
+    employeePhoto: string;
+    employeeNotes: string;
+};
+
+export type Shipper = {
+    shipperID: string;
+    shipperName: string;
+    shipperContact: string;
+};
+
+export type Supplier = {
+    supplierID: string;
+    supplierName: string;
+    supplierContactName: string;
+    supplierAddress: string;
+    supplierCity: string;
+    supplierPostalCode: string;
+    supplierCountry: string;
+    supplierPhone: string;
+}
+
 export type Product = {
-    id: string;
-    productBarcode: string;
+    productID: string;
     productName: string;
+    productBarcode?: string;
     supplierID?: string;
     categoryID?: string;
-    unit?: string;
-    price: number;
-    quantity: number;
+    productUnit?: string;
+    productPrice: number;
+    productQuantity: number;
 };
 
 export type Order = {
-    id?: string;
+    orderID: string;
     orderCode: string;
     customerID: string;
     employeeID?: string;
     orderDate: string;
     shipperID?: string;
-    status?: string;
-    signature?: string;
-    expiration?: string;
+    orderStatus: string;
+    orderSignature?: string;
+    orderExpiration?: string;
 };
 
 export type OrderDetail = {
-    id: string;
+    orderDetailID: string;
     orderID: string;
     productID: string;
-    productName: string;
-    quantity: number;
-    price: number;
+    orderDetailName: string;
+    orderDetailPrice: number;
+    orderDetailQuantity: number;
 };
 
-export type Category = {
-    id: string;
-    categoryName: string;
-    description: string;
-};
-
-export type Customer = {
-    id: string;
-    customerName: string;
-    address?: string;
-    city?: string;
-    postalCode?: string;
-    country?: string;
-    contact?: string;
-    tin?: string;
-    customerType?: string;
-};
-
-export type Company = {
-    id: string;
-    companyName: string;
-    contact?: string;
-    address?: string;
-    city?: string;
-    state?: string;
-    postalCode?: string;
-    country?: string;
-    concept?: string;
-    phone?: string;
-    tin?: string;
-    type?: string;
-    ptoVta?: string;
+export type OrderCode = {
+    orderCodeID: string;
+    orderCodeNumber: number;
 };
 
 export type Invoice = {
@@ -70,4 +101,4 @@ export type Invoice = {
     customer: Customer;
     company: Company;
     total: number;
-}
+};
