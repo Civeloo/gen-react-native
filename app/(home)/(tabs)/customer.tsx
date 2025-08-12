@@ -4,28 +4,32 @@ import {getLocalizedText} from '@/languages/languages';
 import Customers from '@/services/database/customers.model';
 import {useEffect, useState} from 'react';
 import {Button, ScrollView, StyleSheet} from 'react-native';
-import {Customer} from "@/types/types";
+import {Company, Customer} from "@/types/types";
+import {useSQLiteContext} from "expo-sqlite";
+import {cleanPhoneNumber, getCustomerCode} from "@/utils/utils";
+import {Companies} from "@/services/database/models";
 
-export default function CustomerPage(props) {
-    const getData = () => Customers.all();
+export default function CustomerPage(props: object) {
+    const db = useSQLiteContext();
+    const getData = () => Customers.all(db) as Customer[];
     const refreshData = () => setData(getData());
 
+    const newCustomer = {} as Customer;
     const [data, setData] = useState<Customer[]>([]);
-    const [customer, setCustomer] = useState(false);
+    const [customer, setCustomer] = useState<Customer|null>();
 
-    const handleSave = (values: Customer, id: string) => {
-        if (id) {
-            Customers.add(values, id);
-        } else {
-            Customers.add(values);
-        }
-        setCustomer(false);
+    const handleSave = (values: Customer) => {
+        values.customerContact = cleanPhoneNumber(values.customerContact);
+        const company = Companies.all(db).at(0) as Company;
+        values.customerType = getCustomerCode(company?.companyType);
+        Customers.save(db, values);
+        setCustomer(null);
         refreshData();
     };
 
     const handleRemove = (id: string) => {
-        Customers.remove(id);
-        setCustomer(false);
+        Customers.remove(db, id);
+        setCustomer(null);
         refreshData();
     };
 
@@ -41,7 +45,7 @@ export default function CustomerPage(props) {
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
             <Button
                 title={customer ? getLocalizedText("cancel") : getLocalizedText("create")}
-                onPress={() => setCustomer(!customer)}
+                onPress={() => setCustomer(customer ? null : newCustomer)}
                 color={customer ? 'red' : '#2196F3'}/>
             {customer
                 ? <CustomerForm customer={customer} onSave={handleSave} onRemove={handleRemove}/>

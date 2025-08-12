@@ -5,49 +5,46 @@ import {FormProvider, SubmitHandler, useForm} from 'react-hook-form';
 import {Button, Platform, StyleSheet, Text, View} from 'react-native';
 import * as yup from "yup";
 import {TextInputController} from '../text-input-controller';
-import {cleanPhoneNumber, getCustomerCode} from "@/utils/utils";
-import {Companies} from "@/services/database/models";
-import {Company, Customer} from "@/types/types";
+import {Customer} from "@/types/types";
 
 const schema = yup
     .object({
+        customerID: yup.string().defined(),
         customerName: yup.string().max(50).required(),
-        // contactName: yup.string().max(50).required(),
-        // address: yup.string().max(50).required(),
-        // city: yup.string().max(50).required(),
-        // postalCode: yup.string().max(50).required(),
-        // country: yup.string().max(50).required(),
-        contact: yup.string().max(50).required(),
-        tin: yup.string().max(50).required(),
-        customerType: yup.string().max(50),
+        // customerContactName: yup.string().max(50).required(),
+        // companyAddress: yup.string().max(50).required(),
+        // companyCity: yup.string().max(50).required(),
+        // companyPostalCode: yup.string().max(50).required(),
+        // companyCountry: yup.string().max(50).required(),
+        customerContact: yup.string().max(50).required(),
+        customerTin: yup.string().max(50).required(),
+        customerType: yup.string().max(50).defined(),
     })
     .required();
 
 type FormValues = yup.InferType<typeof schema>
 
-type NewCustomerFormProps = {
+type CustomerFormProps = {
     customer: Customer;
-    onSave: (values: FormValues, id?: string) => void;
-    onRemove?: (id: string) => void;
+    onSave: (values: Customer) => void;
+    onRemove?: (customerID: string) => void;
 };
 
-export const CustomerForm: React.FC<NewCustomerFormProps> = ({customer, onSave, onRemove}) => {
+export const CustomerForm: React.FC<CustomerFormProps> = ({customer, onSave, onRemove}) => {
     const {...methods} = useForm<FormValues>({
         resolver: yupResolver(schema),
         defaultValues: {
+            customerID: customer?.customerID || '',
             customerName: customer?.customerName || '',
-            contact: customer?.contact || '',
-            tin: customer?.tin || '',
+            customerContact: customer?.customerContact || '',
+            customerTin: customer?.customerTin || '',
             customerType: customer?.customerType || '',
         }
     });
 
     const onSubmit: SubmitHandler<FormValues> = (values) => {
-        values.contact = cleanPhoneNumber(values.contact);
-        const company = Companies.all()[0] as Company;
-        values.customerType = getCustomerCode(company?.companyType);
-        onSave(values, customer?.id);
         methods.reset();
+        onSave(values);
     };
 
     const FormContent = (
@@ -55,21 +52,21 @@ export const CustomerForm: React.FC<NewCustomerFormProps> = ({customer, onSave, 
             <View style={styles.input}>
                 <Text style={styles.label}>✏</Text>
                 <TextInputController
-                name="customerName"
-                placeholder={getLocalizedText('customer_name_placeholder')}
-                keyboardType="default"
-            /></View>
+                    name="customerName"
+                    placeholder={getLocalizedText('customer_name_placeholder')}
+                    keyboardType="default"
+                /></View>
             <View style={styles.input}>
                 <Text style={styles.label}>📞</Text>
                 <TextInputController
-                    name="contact"
+                    name="customerContact"
                     placeholder={getLocalizedText('contact_placeholder')}
                     keyboardType="default"
                 /></View>
             <View style={styles.input}>
                 <Text style={styles.label}>🎫</Text>
                 <TextInputController
-                    name="tin"
+                    name="customerTin"
                     placeholder={getLocalizedText('tin_placeholder')}
                     keyboardType="default"
                 /></View>
@@ -77,10 +74,10 @@ export const CustomerForm: React.FC<NewCustomerFormProps> = ({customer, onSave, 
                 <View style={styles.okButton}>
                     <Button title={getLocalizedText('ok')} onPress={methods.handleSubmit(onSubmit)}/>
                 </View>
-                {onRemove && customer?.id && <Button
+                {onRemove && customer?.customerID && <Button
                     color="red"
                     title="  -  "
-                    onPress={() => onRemove(customer?.id)}/>}
+                    onPress={() => onRemove(customer?.customerID)}/>}
             </View>
         </View>
     );

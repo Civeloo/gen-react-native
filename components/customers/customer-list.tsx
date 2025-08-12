@@ -1,8 +1,8 @@
-import {FC, useEffect, useState} from "react";
-import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {SearchList} from "../search-list";
-import {getLocalizedText} from "@/languages/languages";
-import {Customer} from "@/types/types";
+import {FC, useEffect, useState} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {SearchList} from '../search-list';
+import {getLocalizedText} from '@/languages/languages';
+import {Customer} from '@/types/types';
 
 type Props = {
     data: Customer[];
@@ -14,12 +14,13 @@ export const CustomerList: FC<Props> = ({data, onEdit, onRefresh}) => {
 
     const [selected, setSelected] = useState({});
 
-    const renderItem = ({item}: { item: Customer }) =>
-        <TouchableOpacity style={styles.item} onPress={() => onEdit(item)}>
+    const renderItem = ({item}: { item: Customer }) => {
+        return (<TouchableOpacity style={styles.item} onPress={() => onEdit(item)}>
             <Text style={styles.text}>{item.customerName}</Text>
-            <Text style={styles.text}>{item.contact}</Text>
-            <Text style={styles.text}>{item.tin}</Text>
-        </TouchableOpacity>;
+            <Text style={styles.text}>{item.customerContact}</Text>
+            <Text style={styles.text}>{item.customerTin}</Text>
+        </TouchableOpacity>)
+    };
 
     useEffect(() => {
         setSelected({});
@@ -28,9 +29,10 @@ export const CustomerList: FC<Props> = ({data, onEdit, onRefresh}) => {
     return (
         <View style={styles.container}>
             <SearchList
+                id='customerID'
                 data={data}
                 selected={selected}
-                elementKey="customerName"
+                elementKey='customerName'
                 placeholder={getLocalizedText('search_customers')}
                 renderItem={renderItem}
                 onRefresh={() => onRefresh()}
