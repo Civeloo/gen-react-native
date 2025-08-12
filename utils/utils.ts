@@ -99,7 +99,7 @@ export const pickDocuments = async (mimeType = MimeTypes.all, multiple = false) 
 };
 
 export const getFieldKey = (table:string) => {
-    return table.slice(0, -1);
+    return (table.at(-1) === 'y') ? table : table.slice(0, -1);
 }
 
 // export const mapTable = (table: string, values: { [x: string]: any; } | undefined) => {

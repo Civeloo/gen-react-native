@@ -18,12 +18,16 @@ export const INITIAL_ORDER_CODES = {
 export const INITIAL_COMPANY = {
     company0: {
         companyName: 'Company Name',
-        address: '',
-        city: '',
-        postalCode: '',
-        country: '',
-        contact: '',
-        tin: '',
+        companyContact: '',
+        companyAddress: '',
+        companyCity: '',
+        companyState: '',
+        companyPostalCode: '',
+        companyCountry: '',
+        companyConcept: '',
+        companyPhone: '',
+        companyTin: '',
         companyType: getRegionCode(),
+        companyPtoVta: ''
     },
 }

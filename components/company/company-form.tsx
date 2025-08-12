@@ -37,18 +37,19 @@ const getPtoVtas = () => {
 
 const schema = yup
     .object({
+        companyID: yup.string().defined(),
         companyName: yup.string().max(50).required(),
-        contact: yup.string().max(50).defined(),
-        address: yup.string().max(100).defined(),
-        city: yup.string().max(50).defined(),
-        state: yup.string().max(50).defined(),
-        postalCode: yup.string().max(50).defined(),
-        country: yup.string().max(50).defined(),
-        concept: yup.string().max(50).defined(),
-        phone: yup.string().max(50).defined(),
-        tin: yup.string().max(50).defined(),
-        type: yup.string().max(50).defined(),
-        ptoVta: yup.string().max(50).defined(),
+        companyContact: yup.string().max(50).defined(),
+        companyAddress: yup.string().max(100).defined(),
+        companyCity: yup.string().max(50).defined(),
+        companyState: yup.string().max(50).defined(),
+        companyPostalCode: yup.string().max(50).defined(),
+        companyCountry: yup.string().max(50).defined(),
+        companyConcept: yup.string().max(50).defined(),
+        companyPhone: yup.string().max(50).defined(),
+        companyTin: yup.string().max(50).defined(),
+        companyType: yup.string().max(50).defined(),
+        companyPtoVta: yup.string().max(50).defined(),
     })
     .required();
 
@@ -56,34 +57,37 @@ type FormValues = yup.InferType<typeof schema>
 
 type CompanyFormProps = {
     company: Company;
-    onSave: (values: Company, id?: string) => void;
+    onSave: (values: Company) => void;
 };
 
 export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
     const {...methods} = useForm<FormValues>({
         resolver: yupResolver(schema),
         defaultValues: {
+            companyID: company?.companyID || '',
             companyName: company?.companyName || '',
-            contact: company?.contact || '',
-            address: company?.address || '',
-            city: company?.city || '',
-            state: company?.state || '',
-            postalCode: company?.postalCode || '',
-            country: company?.country || '',
-            concept: company?.concept || '3',
-            phone: company?.phone || '',
-            tin: company?.tin || '',
-            type: company?.type || '',
-            ptoVta: company?.ptoVta || '',
+            companyContact: company?.companyContact || '',
+            companyAddress: company?.companyAddress || '',
+            companyCity: company?.companyCity || '',
+            companyState: company?.companyState || '',
+            companyPostalCode: company?.companyPostalCode || '',
+            companyCountry: company?.companyCountry || '',
+            companyConcept: company?.companyConcept || '3',
+            companyPhone: company?.companyPhone || '',
+            companyTin: company?.companyTin || '',
+            companyType: company?.companyType || '',
+            companyPtoVta: company?.companyPtoVta || '',
         }
     });
 
-    const country = methods.watch('country');
+    const companyCountry = methods.watch('companyCountry');
 
     const onSubmit: SubmitHandler<FormValues> = (values) => {
-        values.type = values?.type?.toUpperCase() || 'USA';
+        console.log('values',values);
+        values.companyType = values?.companyType?.toUpperCase() || 'USA';
         const companyValues = values as Company;
-        onSave(companyValues, company?.id);
+        console.log('companyValues',companyValues);
+        onSave(companyValues);
     };
 
     const FormContent = (
@@ -98,32 +102,32 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
             <View style={styles.input}>
                 <Text style={styles.label}>🤵</Text>
                 <TextInputController
-                    name='contact'
+                    name='companyContact'
                     placeholder={getLocalizedText('contact_placeholder')}
                     keyboardType='default'
                 /></View>
             <View style={styles.input}>
                 <Text style={styles.label}>📍</Text>
                 <TextInputController
-                    name='address'
+                    name='companyAddress'
                     placeholder={getLocalizedText('address_placeholder')}
                 /></View>
             <View style={styles.input}>
                 <Text style={styles.label}>🏙</Text>
                 <TextInputController
-                    name='city'
+                    name='companyCity'
                     placeholder={getLocalizedText('city_placeholder')}
                 /></View>
             <View style={styles.input}>
                 <Text style={styles.label}>🏞</Text>
                 <TextInputController
-                    name='state'
+                    name='companyState'
                     placeholder={getLocalizedText('state_placeholder')}
                 /></View>
             <View style={styles.input}>
                 <Text style={styles.label}>📮</Text>
                 <TextInputController
-                    name='postalCode'
+                    name='companyPostalCode'
                     placeholder={getLocalizedText('postal_code_placeholder')}
                 /></View>
             <View style={styles.dropDownPicker}>
@@ -139,30 +143,30 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
                             value={value}
                         />
                     )}
-                    name='country'
+                    name='companyCountry'
                 />
             </View>
             <View style={styles.input}>
                 <Text style={styles.label}>📞</Text>
                 <TextInputController
-                    name='phone'
+                    name='companyPhone'
                     placeholder={getLocalizedText('phone_placeholder')}
                     keyboardType='default'
                 /></View>
             <View style={styles.input}>
                 <Text style={styles.label}>🎫</Text>
                 <TextInputController
-                    name='tin'
+                    name='companyTin'
                     placeholder={getLocalizedText('tin_placeholder')}
                     keyboardType='default'
                 /></View>
             <View style={styles.input}>
                 <Text style={styles.label}>🏢</Text>
                 <TextInputController
-                    name='type'
+                    name='companyType'
                     placeholder={getLocalizedText('type_placeholder')}
                 /></View>
-            {country === 'AR' && <>
+            {companyCountry === 'AR' && <>
                 <View style={styles.dropDownPicker}>
                     <Text style={styles.label}>🧾</Text>
                     <Controller
@@ -176,7 +180,7 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
                                 value={value}
                             />
                         )}
-                        name='concept'
+                        name='companyConcept'
                     />
                 </View>
                 <View style={styles.dropDownPicker}>
@@ -192,7 +196,7 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
                                 value={value}
                             />
                         )}
-                        name='ptoVta'
+                        name='companyPtoVta'
                     />
                 </View>
             </>}

@@ -36,8 +36,7 @@ const getRow = (db: SQLiteDatabase, table: string, id: string) => {
 }
 
 const getTable = (db: SQLiteDatabase, table: string) => {
-    const sql = `SELECT *
-                 FROM ${table}`;
+    const sql = `SELECT * FROM ${table}`;
     return db.getAllSync(sql) as unknown[];
 }
 
@@ -70,7 +69,8 @@ const Model = (table: string) => {
     }
 
     const update = (db: SQLiteDatabase, values: { [x: string]: any; status?: string; }) => {
-        const {id} = values[table + 'ID'];
+        const tableID = getFieldKey(table) + 'ID';
+        const id = values[tableID];
         setPartialRow(db, table, id, values);
         return getRow(db, table, id);
     }
