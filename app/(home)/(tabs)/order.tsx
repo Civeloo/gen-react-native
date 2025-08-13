@@ -4,20 +4,24 @@ import {getLocalizedText} from '@/languages/languages';
 import Orders from '@/services/database/orders.model';
 import {useState} from 'react';
 import {Button, ScrollView, StyleSheet} from 'react-native';
-import {Invoice, Order, OrderDetail} from "@/types/types";
+import {Invoice, Order, OrderCode, OrderDetail, Product} from "@/types/types";
 import {arcaInvoice} from "@/services/taxes/arca";
 import {OrderCodes} from "@/services/database/models";
 import * as Print from 'expo-print';
 import {shareAsync} from 'expo-sharing';
 import {genHtmlInvoice} from "@/utils/gen-html-invoice";
-import {sendWhatsapp} from "@/utils/utils";
 import {useSession} from "@/services/session/ctx";
+import {sendWhatsapp} from "@/utils/utils";
+import {useSQLiteContext} from "expo-sqlite";
+import Products from "@/services/database/products.model";
 
 export default function OrderPage() {
 
+    const db = useSQLiteContext();
+
     const {user} = useSession();
 
-    const getData = () => Orders.getNotCancelledOrders() as Order[];
+    const getData = () => Orders.getNotCancelledOrders(db) as Order[];
 
     const refreshData = () => {
         setData(getData());
@@ -28,17 +32,25 @@ export default function OrderPage() {
     const [selected, setSelected] = useState({});
     const [addOrder, setAddOrder] = useState(false);
 
-    const handleRemove = () => {
+    const handleRemove = (orderDetails: OrderDetail[]) => {
+        orderDetails.map((orderDetail: OrderDetail) => {
+            const product = Products.byId(db, orderDetail.productID).at(0) as Product;
+            Products.update(db, {
+                productID: orderDetail.productID,
+                productQuantity: product.productQuantity + orderDetail.orderDetailQuantity
+            } as Product);
+        });
+        Orders.cancel(db, orderDetails[0]?.orderID);
         refreshData();
     };
 
     const signInvoice = async (invoice: Invoice) => {
         const {order, customer, total} = invoice;
-        if (user && order.status === 'pending') {
+        if (user && order.orderStatus === 'pending') {
             const arcaInvoiceProps = {
                 user,
                 order: invoice.order,
-                customerTin: customer?.tin || '',
+                customerTin: customer?.customerTin || '',
                 total
             };
             const res = await arcaInvoice(arcaInvoiceProps);
@@ -51,17 +63,21 @@ export default function OrderPage() {
             const customerCodeKey = 'C';
             const orderNumber = signature.nro;
             const orderCode = customerCodeKey + orderNumber.toString();
-            const orderCodeLast = Number(OrderCodes.byId(customerCodeKey).orderNumber) || 0;
-            if (orderNumber > orderCodeLast) OrderCodes.update(customerCodeKey, {orderNumber});
+            const orderCodeLast = Number((OrderCodes.byId(db, customerCodeKey)?.at(0) as OrderCode).orderCodeNumber) || 0;
+            if (orderNumber > orderCodeLast) OrderCodes.update(db, {
+                orderCodeID: customerCodeKey,
+                orderCodeNumber: orderNumber
+            });
             order.orderCode = orderCode;
-            order.signature = signature.cae.toString();
-            order.expiration = signature.vto.toString();
-            order.status = 'invoiced';
-            Orders.update(order.id, {
+            order.orderSignature = signature.cae.toString();
+            order.orderExpiration = signature.vto.toString();
+            order.orderStatus = 'invoiced';
+            Orders.update(db, {
+                orderID: order.orderID,
                 orderCode: order.orderCode,
-                status: order.status,
-                signature: order.signature,
-                expiration: order.expiration
+                orderStatus: order.orderStatus,
+                orderSignature: order.orderSignature,
+                orderExpiration: order.orderExpiration
             });
         }
         return order;
@@ -72,12 +88,12 @@ export default function OrderPage() {
         const order = await signInvoice(invoice);
         if (!order) return;
         const details = orderDetails.map((orderDetail: OrderDetail) => {
-            return `${orderDetail.productName} x ${orderDetail.quantity} - $ ${(orderDetail.price * orderDetail.quantity).toFixed(2)}`;
+            return `${orderDetail.orderDetailName} x ${orderDetail.orderDetailQuantity} - $ ${(orderDetail.orderDetailPrice * orderDetail.orderDetailQuantity).toFixed(2)}`;
         })
-        const customerContact = Number(customer.contact);
+        const customerContact = Number(customer.customerContact);
         if (customerContact) {
             const message = `${company?.companyName || ''}\n${order.orderCode}\n${order.orderDate.split('T')[0]}\n${details.join('\n')}\n$ ${total.toFixed(2)}
-            \n${invoice.order.signature}`;
+            \n${invoice.order.orderSignature}`;
             sendWhatsapp(customerContact, message);
         } else alert('NEED PHONE NUMBER');
         refreshData();
@@ -104,7 +120,6 @@ export default function OrderPage() {
         refreshData();
         setSelected(order.orderCode);
     };
-
 
     const handleSave = (orderCode: string) => {
         setAddOrder(false);

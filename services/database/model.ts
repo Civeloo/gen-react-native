@@ -15,7 +15,7 @@ const setRow = (db: SQLiteDatabase, table: string, data: Data) => {
 
 const setPartialRow = (db: SQLiteDatabase, table: string, id: string, data: Data) => {
     const tableID = getFieldKey(table) + 'ID';
-    const { [tableID]: _, ...newData } = data;
+    const {[tableID]: _, ...newData} = data;
     const fields = Object.keys(newData);
     const values = fields.map(key => `${key} = "${newData[key]}"`).join(', ');
     const sql = `
@@ -26,17 +26,21 @@ const setPartialRow = (db: SQLiteDatabase, table: string, id: string, data: Data
     db.execSync(sql);
 }
 
-const get = (db: SQLiteDatabase, table: string, key: string, value: string, condition = '') => {
-    const sql = 'SELECT * FROM ? WHERE ? ? ?;';
-    return db.getAllSync(sql, [table, condition, key, value])// as [{ [x: string]: any; }];
+const get = (db: SQLiteDatabase, table: string, key: string, value: string, condition = '=') => {
+    const sql = `SELECT *
+                 FROM ${table}
+                 WHERE ${key} ${condition} "${value}"`;
+    return db.getAllSync(sql)// as [{ [x: string]: any; }];
 }
 
 const getRow = (db: SQLiteDatabase, table: string, id: string) => {
-    return get(db, table, table + 'ID', id);
+    const tableID = getFieldKey(table) + 'ID';
+    return get(db, table, tableID, id);
 }
 
 const getTable = (db: SQLiteDatabase, table: string) => {
-    const sql = `SELECT * FROM ${table}`;
+    const sql = `SELECT *
+                 FROM ${table}`;
     return db.getAllSync(sql) as unknown[];
 }
 
@@ -68,14 +72,13 @@ const Model = (table: string) => {
         // return { [id]: values };
     }
 
-    const update = (db: SQLiteDatabase, values: { [x: string]: any; status?: string; }) => {
+    const update = (db: SQLiteDatabase, values: { [x: string]: any; }) => {
         const tableID = getFieldKey(table) + 'ID';
         const id = values[tableID];
         setPartialRow(db, table, id, values);
-        return getRow(db, table, id);
     }
 
-    const save = (db: SQLiteDatabase, values: { [x: string]: any; status?: string; }) => {
+    const save = (db: SQLiteDatabase, values: { [x: string]: any; }) => {
         const tableID = getFieldKey(table) + 'ID';
         const id = values[tableID];
         if (id)
@@ -84,7 +87,6 @@ const Model = (table: string) => {
             add(db, values);
     }
 
-    const cancel = (db: SQLiteDatabase, id: string) => setPartialRow(db, table, id, {status: 'cancelled'});
 
     const remove = (db: SQLiteDatabase, id: string) => delRow(db, table, id);
 
@@ -101,12 +103,19 @@ const Model = (table: string) => {
 
     const byId = (db: SQLiteDatabase, id: string) => getRow(db, table, id);
 
-    // const inner = (id: string, relationship: string) => {
-    //     const localTableId = relations.getLocalTableId(relationship);
-    //     if (!localTableId) return;
-    //     const localRowIds = relations.getLocalRowIds(relationship, id);
-    //     return localRowIds.map((localRowId) => db.getRow(localTableId, localRowId)) as unknown;
-    // };
+    const inner = (db: SQLiteDatabase, id: string, relation: string, relationID: string) => {
+        const tableID = getFieldKey(table) + 'ID';
+        const sql = `
+            SELECT *
+            FROM ${table}
+                     INNER JOIN ${relation} ON ${table}.${relationID} = ${table}.${relationID}
+            WHERE ${tableID} = "${id}"`;
+        return db.getAllSync(sql) as unknown[];
+        //     const localTableId = relations.getLocalTableId(relationship);
+        //     if (!localTableId) return;
+        //     const localRowIds = relations.getLocalRowIds(relationship, id);
+        //     return localRowIds.map((localRowId) => db.getRow(localTableId, localRowId)) as unknown;
+    };
 
     const all = (db: SQLiteDatabase) => {
         // return Object.entries(db.getTable(table))
@@ -117,17 +126,17 @@ const Model = (table: string) => {
         return getTable(db, table);
     };
 
-    const where = (db: SQLiteDatabase, key: string, value: string, condition = '=') => get(db, table, key, value, condition);
+    const where = (db: SQLiteDatabase, key: string, value: string, condition = '=') =>
+        get(db, table, key, value, condition);
 
     return {
         add,
         update,
         save,
-        cancel,
         remove,
         // removeWithRelationships,
         byId,
-        // inner,
+        inner,
         all,
         where
     }

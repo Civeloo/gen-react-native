@@ -1,18 +1,18 @@
 import {getLocalizedText} from "@/languages/languages";
 import Customers from "@/services/database/customers.model";
-import Orders from "@/services/database/orders.model";
 import {FC, useEffect, useState} from "react";
 import {Button, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {SearchList} from "../search-list";
-import Products from "@/services/database/products.model";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {Companies} from "@/services/database/models";
-import {Company, Customer, Invoice, Order, OrderDetail, Product} from "@/types/types";
+import {Company, Customer, Invoice, Order, OrderDetail} from "@/types/types";
+import {useSQLiteContext} from "expo-sqlite";
+import OrderDetails from "@/services/database/orderDetail.model";
 
 type Props = {
     data: Order[];
     selected: {};
-    onRemove: () => void;
+    onRemove: (orderDetails: OrderDetail[]) => void;
     onWsp: (invoice: Invoice) => void;
     onPrint: (invoice: Invoice) => void;
     onFile: (invoice: Invoice) => void;
@@ -22,26 +22,23 @@ type Props = {
 export const OrderList: FC<Props> = ({data, selected, onRemove, onWsp, onPrint, onFile, onRefresh}) => {
     const [selectedOrder, setSelectedOrder] = useState({});
 
+    const db = useSQLiteContext();
+
     const handleRemove = (orderDetails: OrderDetail[]) => {
-        orderDetails.map((orderDetail: OrderDetail) => {
-            const product = Products.byId(orderDetail.productID) as Product;
-            Products.update(orderDetail.productID, {quantity: product.quantity + orderDetail.quantity});
-        });
-        Orders.cancel(orderDetails[0]?.orderID);
-        onRemove();
+        onRemove(orderDetails);
     };
 
     const renderItem = ({item}: { item: Order }) => {
         const order = item;
-        const orderDetails = Orders.inner(order?.id, 'orderWithDetails') as OrderDetail[];
-        const customer = Customers.byId(order?.customerID) as Customer;
+        const orderDetails = OrderDetails.where(db, 'orderID', order.orderID) as OrderDetail[];
+        const customer = Customers.byId(db, order?.customerID).at(0) as Customer;
         const customerName = String(customer?.customerName || getLocalizedText('cash_customer'));
-        const total = orderDetails.reduce((acc, orderDetail) => acc + orderDetail.price * orderDetail.quantity, 0);
+        const total = orderDetails.reduce((acc, orderDetail) => acc + orderDetail.orderDetailPrice * orderDetail.orderDetailQuantity, 0);
         const orderCode = order?.orderCode;
         const orderDate = order?.orderDate;
-        const customerContact = customer?.contact || '';
+        const customerContact = customer?.customerContact || '';
         const details: string[] = [];
-        const company = Companies.all()?.at(-1) as Company;
+        const company = Companies.all(db)?.at(0) as Company;
         const invoice: Invoice = {order, orderDetails, customer, company, total};
         return (
             <View style={styles.order}>
@@ -56,10 +53,10 @@ export const OrderList: FC<Props> = ({data, selected, onRemove, onWsp, onPrint, 
                 </View>
                 <View style={styles.detailList}>
                     {orderDetails.map((orderDetail: OrderDetail) => {
-                        const detail = `${orderDetail.productName} x ${orderDetail.quantity} - $ ${(orderDetail.price * orderDetail.quantity).toFixed(2)}`;
+                        const detail = `${orderDetail.orderDetailName} x ${orderDetail.orderDetailQuantity} - $ ${(orderDetail.orderDetailPrice * orderDetail.orderDetailQuantity).toFixed(2)}`;
                         details.push(detail);
                         return (
-                            <Text key={orderDetail.productName + orderDetail.productID} style={styles.detail}>
+                            <Text key={orderDetail.orderDetailName + orderDetail.productID} style={styles.detail}>
                                 {detail}
                             </Text>
                         )
@@ -94,6 +91,7 @@ export const OrderList: FC<Props> = ({data, selected, onRemove, onWsp, onPrint, 
     return (
         <View style={styles.container}>
             <SearchList
+                id='orderID'
                 data={data}
                 selected={selectedOrder}
                 elementKey="orderCode"
