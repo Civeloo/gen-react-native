@@ -17,14 +17,14 @@ const schema = yup
                 is: true,
                 then: schema => schema.required(),
                 otherwise: schema => schema.notRequired(),
-            }),
+            }).defined(),
     })
     .required();
 
 type FormValues = yup.InferType<typeof schema>
 
 interface VerificationFormProps {
-    onSave: () => Promise<void>
+    onSave: (data:{ code: number, password: string }) => Promise<void>
     forgot?: boolean;
 }
 
@@ -32,7 +32,7 @@ export const VerificationForm: React.FC<VerificationFormProps> = ({onSave, forgo
     const {...methods} = useForm<FormValues>({resolver: yupResolver(schema, {context: {forgot: forgot}})});
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
-        onSave(data);
+        await onSave(data);
         methods.reset();
     };
 

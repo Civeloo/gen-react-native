@@ -6,7 +6,7 @@ import {getLocalizedText} from "@/languages/languages";
 import {BackButton} from "@/components/back-button";
 import {useSession} from '@/services/session/ctx';
 import {GOOGLE_SIGN_IN_WEB_CLIENT_ID} from "@/config";
-import {GoogleSignin, GoogleSigninButton} from '@react-native-google-signin/google-signin';
+import {GoogleSignin, GoogleSigninButton, SignInResponse} from '@react-native-google-signin/google-signin';
 
 export default function SignInPage() {
     const [isLoading, setIsLoading] = useState(false);
@@ -25,7 +25,7 @@ export default function SignInPage() {
         // Check if your device supports Google Play
         await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
         // Get the users ID token
-        const signInResult = await GoogleSignin.signIn();
+        const signInResult: SignInResponse | any = await GoogleSignin.signIn();
         // Try the new style of google-sign in result, from v13+ of that module
         let idToken = signInResult.data?.idToken;
         if (!idToken) {

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Button, StyleSheet, View} from 'react-native';
 import {getLocalizedText} from "@/languages/languages";
 import {router} from "expo-router";
-import {Companies} from "@/services/database/models";
+// import {Companies} from "@/services/database/models";
 import {Company} from "@/types/types";
 import {arcaGetCSR, arcaGetToken, arcaRegister, arcaSendCRT} from "@/services/taxes/arca";
 import {useSession} from "@/services/session/ctx";
@@ -19,7 +19,7 @@ export default function TaxesPage(props: object) {
         router.back();
     }
 
-    const getData = () => Companies.all()?.at(-1) as Company;
+    const getData = () => [][0]/*Companies.all()?.at(-1)*/ as Company;
 
     const refreshData = () => {
         setCompany(getData());
@@ -30,12 +30,12 @@ export default function TaxesPage(props: object) {
     }
 
     const handleGenerate = async () => {
-        const companyTin = company?.tin;
+        const companyTin = company?.companyID;
         const companyName = company?.companyName;
-        const companyContact = company?.contact;
-        const companyCountry = company?.country;
-        const companyConcept = company?.concept || '';
-        const companyPtoVta = company?.ptoVta || '';
+        const companyContact = company?.companyContact;
+        const companyCountry = company?.companyCountry;
+        const companyConcept = company?.companyConcept || '';
+        const companyPtoVta = company?.companyPtoVta || '';
         if (!companyTin || !companyName || !companyContact || !companyCountry || companyConcept || companyPtoVta) return alert(getLocalizedText('company_complete'));
         if (!token) await arcaRegister(email, password);
         await arcaGetCSR(email, password, companyTin, companyContact, companyName, companyCountry, companyConcept, companyPtoVta);

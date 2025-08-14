@@ -16,7 +16,7 @@ const schema = yup
 type FormValues = yup.InferType<typeof schema>
 
 interface SignInFormProps {
-    onSave: (data) => Promise<void>
+    onSave: (data:{ email: string, password: string }) => Promise<void>
 }
 
 export const SignInForm: React.FC<SignInFormProps> = ({onSave}) => {

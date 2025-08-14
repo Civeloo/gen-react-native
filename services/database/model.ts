@@ -101,7 +101,8 @@ const Model = (table: string) => {
     //         return db.delRow(remoteTableId, id);
     //     });
 
-    const byId = (db: SQLiteDatabase, id: string) => getRow(db, table, id);
+    const byId = (db: SQLiteDatabase, id: string) =>
+        getRow(db, table, id);
 
     const inner = (db: SQLiteDatabase, id: string, relation: string, relationID: string) => {
         const tableID = getFieldKey(table) + 'ID';

@@ -12,7 +12,7 @@ const schema = yup
         email: yup.string().email().required(),
         password: yup.string().min(8).max(16).required(),
         confirm: yup.string()
-            .oneOf([yup.ref('password')], 'Passwords must match')
+            .oneOf([yup.ref('password')], 'Passwords must match').defined()
     })
     .required();
 
@@ -28,7 +28,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({onSave}) => {
     const {...methods} = useForm<FormValues>({resolver: yupResolver(schema)});
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
-        onSave(data);
+        await onSave(data);
         methods.reset();
     };
 

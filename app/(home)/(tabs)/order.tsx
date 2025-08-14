@@ -63,22 +63,31 @@ export default function OrderPage() {
             const customerCodeKey = 'C';
             const orderNumber = signature.nro;
             const orderCode = customerCodeKey + orderNumber.toString();
-            const orderCodeLast = Number((OrderCodes.byId(db, customerCodeKey)?.at(0) as OrderCode).orderCodeNumber) || 0;
-            if (orderNumber > orderCodeLast) OrderCodes.update(db, {
+            const orderCodes = OrderCodes.byId(db, customerCodeKey) as OrderCode[];
+            const orderCodeLast = Number(orderCodes?.at(0)?.orderCodeNumber) || 0;
+            const newOrderCode = {
                 orderCodeID: customerCodeKey,
                 orderCodeNumber: orderNumber
-            });
+            } as OrderCode;
+            if (!orderCodeLast) {
+                OrderCodes.add(db, newOrderCode);
+            } else {
+                // if (orderNumber > orderCodeLast)
+                OrderCodes.save(db, newOrderCode);
+            }
             order.orderCode = orderCode;
             order.orderSignature = signature.cae.toString();
             order.orderExpiration = signature.vto.toString();
             order.orderStatus = 'invoiced';
-            Orders.update(db, {
+            const updateOrder = {
                 orderID: order.orderID,
                 orderCode: order.orderCode,
                 orderStatus: order.orderStatus,
                 orderSignature: order.orderSignature,
                 orderExpiration: order.orderExpiration
-            });
+            } as Order;
+            Orders.update(db, updateOrder);
+            return  {...order, ...updateOrder} as Order;
         }
         return order;
     }

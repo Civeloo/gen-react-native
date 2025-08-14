@@ -7,7 +7,7 @@ export function genHtmlInvoice(invoice: Invoice) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
-    <title>Invoice #INV-2024-001</title>
+    <title>Invoice ${invoice.order.orderCode}</title>
     <style>
         * {
             margin: 0;
