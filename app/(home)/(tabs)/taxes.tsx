@@ -1,13 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import {Button, StyleSheet, View} from 'react-native';
+import {ActivityIndicator, Button, StyleSheet, View} from 'react-native';
 import {getLocalizedText} from "@/languages/languages";
 import {router} from "expo-router";
-// import {Companies} from "@/services/database/models";
+import {Companies} from "@/services/database/models";
 import {Company} from "@/types/types";
 import {arcaGetCSR, arcaGetToken, arcaRegister, arcaSendCRT} from "@/services/taxes/arca";
 import {useSession} from "@/services/session/ctx";
+import {useSQLiteContext} from "expo-sqlite";
 
 export default function TaxesPage(props: object) {
+    const [isLoading, setIsLoading] = useState(false);
     const [company, setCompany] = useState<Company>();
     const [token, setToken] = useState<string|null>();
 
@@ -19,17 +21,22 @@ export default function TaxesPage(props: object) {
         router.back();
     }
 
-    const getData = () => [][0]/*Companies.all()?.at(-1)*/ as Company;
+    const db = useSQLiteContext();
+
+    const getData = () => Companies.all(db)?.at(0) as Company;
 
     const refreshData = () => {
         setCompany(getData());
     }
 
     const refreshToken = async() => {
+        setIsLoading(true);
         setToken(await arcaGetToken(email));
+        setIsLoading(false);
     }
 
     const handleGenerate = async () => {
+        setIsLoading(true);
         const companyTin = company?.companyID;
         const companyName = company?.companyName;
         const companyContact = company?.companyContact;
@@ -39,11 +46,14 @@ export default function TaxesPage(props: object) {
         if (!companyTin || !companyName || !companyContact || !companyCountry || companyConcept || companyPtoVta) return alert(getLocalizedText('company_complete'));
         if (!token) await arcaRegister(email, password);
         await arcaGetCSR(email, password, companyTin, companyContact, companyName, companyCountry, companyConcept, companyPtoVta);
+        setIsLoading(false);
     }
 
     const handleCertificate = async () => {
+        setIsLoading(true);
         if (!token) return alert(getLocalizedText('csr_please'));
         await arcaSendCRT(email);
+        setIsLoading(false);
     }
 
     useEffect(() => {
@@ -63,6 +73,7 @@ export default function TaxesPage(props: object) {
                     onPress={handleCertificate}
                 />}
             </View>
+            <ActivityIndicator size="large" animating={isLoading}/>
         </View>
     );
 };

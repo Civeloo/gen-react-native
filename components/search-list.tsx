@@ -1,5 +1,5 @@
-import {useEffect, useState} from "react";
-import {Button, FlatList, StyleSheet, TextInput, View} from "react-native";
+import React, {useEffect, useState} from "react";
+import {ActivityIndicator, Button, FlatList, StyleSheet, TextInput, View} from "react-native";
 
 type Data = { [x: string]: any; }[]
 
@@ -17,6 +17,8 @@ export const SearchList = (props: Props) => {
     const {id, data, selected, elementKey, placeholder, renderItem, onRefresh} = props;
     const [searchQuery, setSearchQuery] = useState("");
     const [filtered, setFiltered] = useState(data);
+    const [animating, setAnimating] = useState(false);
+
     const handleRefresh = () => {
         setSearchQuery('');
         onRefresh();
@@ -24,6 +26,7 @@ export const SearchList = (props: Props) => {
 
     useEffect(() => {
         if (data) {
+            setAnimating(true);
             const lowercasedQuery = searchQuery.toLowerCase()
             const newFiltered = data.filter((e) =>
                 lowercasedQuery
@@ -36,6 +39,7 @@ export const SearchList = (props: Props) => {
                 if (!aIncludes && bIncludes) return 1;
                 return 0;
             });
+            setAnimating(false);
             setFiltered(newFiltered);
         }
     }, [searchQuery]);
@@ -61,6 +65,7 @@ export const SearchList = (props: Props) => {
                 keyExtractor={(item) => item[id]}
                 scrollEnabled={false}
             />
+            <ActivityIndicator size="large" animating={animating}/>
         </View>
     );
 };

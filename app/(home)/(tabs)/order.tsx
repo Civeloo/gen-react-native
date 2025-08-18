@@ -2,8 +2,8 @@ import {OrderAdd} from '@/components/orders/order-add';
 import {OrderList} from '@/components/orders/order-list';
 import {getLocalizedText} from '@/languages/languages';
 import Orders from '@/services/database/orders.model';
-import {useState} from 'react';
-import {Button, ScrollView, StyleSheet} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {ActivityIndicator, Button, ScrollView, StyleSheet} from 'react-native';
 import {Invoice, Order, OrderCode, OrderDetail, Product} from "@/types/types";
 import {arcaInvoice} from "@/services/taxes/arca";
 import {OrderCodes} from "@/services/database/models";
@@ -15,7 +15,8 @@ import {sendWhatsapp} from "@/utils/utils";
 import {useSQLiteContext} from "expo-sqlite";
 import Products from "@/services/database/products.model";
 
-export default function OrderPage() {
+export default function OrderPage(props: object) {
+    const [isLoading, setIsLoading] = useState(false);
 
     const db = useSQLiteContext();
 
@@ -24,8 +25,10 @@ export default function OrderPage() {
     const getData = () => Orders.getNotCancelledOrders(db) as Order[];
 
     const refreshData = () => {
+        setIsLoading(true);
         setData(getData());
         setSelected({});
+        setIsLoading(false);
     }
 
     const [data, setData] = useState<Order[]>([]);
@@ -33,6 +36,7 @@ export default function OrderPage() {
     const [addOrder, setAddOrder] = useState(false);
 
     const handleRemove = (orderDetails: OrderDetail[]) => {
+        setIsLoading(true);
         orderDetails.map((orderDetail: OrderDetail) => {
             const product = Products.byId(db, orderDetail.productID).at(0) as Product;
             Products.update(db, {
@@ -41,6 +45,7 @@ export default function OrderPage() {
             } as Product);
         });
         Orders.cancel(db, orderDetails[0]?.orderID);
+        setIsLoading(false);
         refreshData();
     };
 
@@ -94,6 +99,7 @@ export default function OrderPage() {
 
     const handleWsp = async (invoice: Invoice) => {
         const {orderDetails, customer, company, total} = invoice;
+        setIsLoading(true);
         const order = await signInvoice(invoice);
         if (!order) return;
         const details = orderDetails.map((orderDetail: OrderDetail) => {
@@ -105,27 +111,32 @@ export default function OrderPage() {
             \n${invoice.order.orderSignature}`;
             sendWhatsapp(customerContact, message);
         } else alert('NEED PHONE NUMBER');
+        setIsLoading(false);
         refreshData();
         setSelected(order.orderCode);
     }
 
     const handlePrint = async (invoice: Invoice) => {
+        setIsLoading(true);
         const order = await signInvoice(invoice);
         if (!order) return;
         const inv = {...invoice, order};
         const html = genHtmlInvoice(inv);
         await Print.printAsync({html});
+        setIsLoading(false);
         refreshData();
         setSelected(order.orderCode);
     };
 
     const handleFile = async (invoice: Invoice) => {
+        setIsLoading(true);
         const order = await signInvoice(invoice);
         if (!order) return;
         const inv = {...invoice, order};
         const html = genHtmlInvoice(inv);
         const {uri} = await Print.printToFileAsync({html});
         await shareAsync(uri, {UTI: '.pdf', mimeType: 'application/pdf'});
+        setIsLoading(false);
         refreshData();
         setSelected(order.orderCode);
     };
@@ -135,6 +146,10 @@ export default function OrderPage() {
         refreshData();
         setSelected(orderCode);
     };
+
+    useEffect(() => {
+        refreshData();
+    }, [props]);
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -153,6 +168,7 @@ export default function OrderPage() {
                     selected={selected}
                     onRefresh={() => refreshData()}/>
             }
+            <ActivityIndicator size="large" animating={isLoading}/>
         </ScrollView>
     );
 };
