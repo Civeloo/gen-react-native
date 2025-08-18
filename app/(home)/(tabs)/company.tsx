@@ -7,13 +7,12 @@ import {Company} from "@/types/types";
 import {useSQLiteContext} from "expo-sqlite";
 import {getLocalizedText} from "@/languages/languages";
 
-export default function CompanyPage(props: object) {
+export default function CompanyPage() {
     const db = useSQLiteContext();
     const getData = () => Companies.all(db)?.at(0) as Company;
 
     const [data, setData] = useState<Company>();
 
-    console.info(data)
     const refreshData = () => {
         setData(getData());
     }
@@ -26,7 +25,7 @@ export default function CompanyPage(props: object) {
 
     useEffect(() => {
         refreshData();
-    }, [props]);
+    }, []);
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>

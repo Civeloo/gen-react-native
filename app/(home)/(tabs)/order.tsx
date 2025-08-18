@@ -15,7 +15,7 @@ import {sendWhatsapp} from "@/utils/utils";
 import {useSQLiteContext} from "expo-sqlite";
 import Products from "@/services/database/products.model";
 
-export default function OrderPage(props: object) {
+export default function OrderPage() {
     const [isLoading, setIsLoading] = useState(false);
 
     const db = useSQLiteContext();
@@ -149,7 +149,7 @@ export default function OrderPage(props: object) {
 
     useEffect(() => {
         refreshData();
-    }, [props]);
+    }, []);
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>

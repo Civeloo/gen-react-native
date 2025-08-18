@@ -9,7 +9,7 @@ import {useSQLiteContext} from "expo-sqlite";
 import {cleanPhoneNumber, getCustomerCode} from "@/utils/utils";
 import {Companies} from "@/services/database/models";
 
-export default function CustomerPage(props: object) {
+export default function CustomerPage() {
     const [isLoading, setIsLoading] = useState(false);
     const db = useSQLiteContext();
     const getData = () => Customers.all(db) as Customer[];
@@ -48,7 +48,7 @@ export default function CustomerPage(props: object) {
 
     useEffect(() => {
         refreshData();
-    }, [props]);
+    }, []);
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>

@@ -7,7 +7,7 @@ import {Button, StyleSheet, ScrollView, ActivityIndicator} from 'react-native';
 import {Product} from "@/types/types";
 import {useSQLiteContext} from "expo-sqlite";
 
-export default function ProductPage(props: object) {
+export default function ProductPage() {
     const [isLoading, setIsLoading] = useState(false);
     const db = useSQLiteContext();
     const getData = () => Products.all(db) as Product[];
@@ -43,7 +43,7 @@ export default function ProductPage(props: object) {
     useEffect(() => {
         refreshData()
         setIsLoading(false);
-    }, [props]);
+    }, []);
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>

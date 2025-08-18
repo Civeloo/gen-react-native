@@ -8,7 +8,7 @@ import {arcaGetCSR, arcaGetToken, arcaRegister, arcaSendCRT} from "@/services/ta
 import {useSession} from "@/services/session/ctx";
 import {useSQLiteContext} from "expo-sqlite";
 
-export default function TaxesPage(props: object) {
+export default function TaxesPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [company, setCompany] = useState<Company>();
     const [token, setToken] = useState<string|null>();
@@ -59,7 +59,7 @@ export default function TaxesPage(props: object) {
     useEffect(() => {
         refreshData();
         refreshToken();
-    }, [props]);
+    }, []);
 
     return (
         <View style={styles.container}>
