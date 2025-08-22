@@ -1,16 +1,18 @@
 import {CompanyForm} from '@/components/company/company-form';
-import {useEffect, useState} from 'react';
-import {Button, ScrollView, StyleSheet} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {ActivityIndicator, ScrollView, StyleSheet} from 'react-native';
 import {router} from "expo-router";
 import {Companies} from "@/services/database/models";
 import {Company} from "@/types/types";
 import {useSQLiteContext} from "expo-sqlite";
-import {getLocalizedText} from "@/languages/languages";
+import {TopButtons} from "@/components/top-buttons";
+import {csvToDb, dataToCsv, getVersion, loadTextFromFile, MimeTypes, saveTextToFile} from "@/utils/utils";
 
 export default function CompanyPage() {
     const db = useSQLiteContext();
-    const getData = () => Companies.all(db)?.at(0) as Company;
+    const getData = () => (Companies.all(db)?.at(0) || {}) as Company;
 
+    const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState<Company>();
 
     const refreshData = () => {
@@ -23,19 +25,35 @@ export default function CompanyPage() {
         router.back();
     };
 
+    const handleImport = async () => {
+        const csv = await loadTextFromFile(MimeTypes.csv);
+        setIsLoading(true);
+        if (csv) csvToDb(db, 'company', csv);
+        setIsLoading(false);
+        setData({} as Company);
+        refreshData();
+    }
+
+    const handleExport = async () => {
+        setIsLoading(true);
+        const content = dataToCsv([data]);
+        await saveTextToFile(content, `company${getVersion()}.csv`, MimeTypes.csv);
+        setIsLoading(false);
+    }
+
     useEffect(() => {
         refreshData();
     }, []);
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            {data ? <CompanyForm company={data} onSave={handleSave}/>
-                :
-                <Button
-                    title={getLocalizedText("create")}
-                    onPress={() => setData({} as Company)}
-                />
-            }
+            <TopButtons
+                create={false}
+                onImport={handleImport}
+                onExport={handleExport}
+            />
+            {data && <CompanyForm company={data} onSave={handleSave}/> }
+            <ActivityIndicator size="large" animating={isLoading}/>
         </ScrollView>
     );
 };

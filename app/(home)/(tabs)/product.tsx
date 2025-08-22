@@ -1,12 +1,12 @@
 import {ProductList} from '@/components/products/product-list';
 import {ProductForm} from '@/components/products/product-form';
-import {getLocalizedText} from '@/languages/languages';
 import Products from '@/services/database/products.model';
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Button, ScrollView, StyleSheet, View} from 'react-native';
+import {ActivityIndicator, ScrollView, StyleSheet} from 'react-native';
 import {Product} from "@/types/types";
 import {useSQLiteContext} from "expo-sqlite";
 import {csvToDb, dataToCsv, getVersion, loadTextFromFile, MimeTypes, saveTextToFile} from "@/utils/utils";
+import {TopButtons} from "@/components/top-buttons";
 
 export default function ProductPage() {
     const [isLoading, setIsLoading] = useState(false);
@@ -62,27 +62,19 @@ export default function ProductPage() {
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+            <TopButtons
+                create={!!product}
+                onCancel={() => setProduct(null)}
+                onCreate={() => setProduct({} as Product)}
+                onImport={handleImport}
+                onExport={handleExport}
+            />
             {product
-                ? <>
-                    <Button
-                        title={getLocalizedText("cancel")}
-                        onPress={() => setProduct(null)}
-                        color={'red'}/>
-                    <ProductForm product={product} onSave={handleSave} onRemove={handleRemove}/>
-                </>
-                : <>
-                    <View style={styles.buttons}>
-                        <Button
-                            title={getLocalizedText("create")}
-                            onPress={() => setProduct({} as Product)}/>
-                        <Button title={getLocalizedText('import')} onPress={handleImport} color={'green'}/>
-                        <Button title={getLocalizedText('export')} onPress={handleExport} color={'orange'}/>
-                    </View>
-                    <ProductList
+                ? <ProductForm product={product} onSave={handleSave} onRemove={handleRemove}/>
+                : <ProductList
                         data={data}
                         onEdit={handleEdit}
                         onRefresh={() => refreshData()}/>
-                </>
             }
             <ActivityIndicator size="large" animating={isLoading}/>
         </ScrollView>

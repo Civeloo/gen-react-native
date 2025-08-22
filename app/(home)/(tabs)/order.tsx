@@ -1,9 +1,8 @@
 import {OrderAdd} from '@/components/orders/order-add';
 import {OrderList} from '@/components/orders/order-list';
-import {getLocalizedText} from '@/languages/languages';
 import Orders from '@/services/database/orders.model';
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Button, ScrollView, StyleSheet} from 'react-native';
+import {ActivityIndicator, ScrollView, StyleSheet} from 'react-native';
 import {Invoice, Order, OrderCode, OrderDetail, Product} from "@/types/types";
 import {arcaInvoice} from "@/services/taxes/arca";
 import {OrderCodes} from "@/services/database/models";
@@ -11,9 +10,10 @@ import * as Print from 'expo-print';
 import {shareAsync} from 'expo-sharing';
 import {genHtmlInvoice} from "@/utils/gen-html-invoice";
 import {useSession} from "@/services/session/ctx";
-import {sendWhatsapp} from "@/utils/utils";
+import {csvToDb, dataToCsv, getVersion, loadTextFromFile, MimeTypes, saveTextToFile, sendWhatsapp} from "@/utils/utils";
 import {useSQLiteContext} from "expo-sqlite";
 import Products from "@/services/database/products.model";
+import {TopButtons} from "@/components/top-buttons";
 
 export default function OrderPage() {
     const [isLoading, setIsLoading] = useState(false);
@@ -52,6 +52,7 @@ export default function OrderPage() {
     const signInvoice = async (invoice: Invoice) => {
         const {order, customer, total} = invoice;
         if (user && order.orderStatus === 'pending') {
+            setIsLoading(true);
             const arcaInvoiceProps = {
                 user,
                 order: invoice.order,
@@ -61,7 +62,8 @@ export default function OrderPage() {
             const res = await arcaInvoice(arcaInvoiceProps);
             //TODO: si esta caido el server de afip alertar para reitentar
             if (!res) {
-                alert('SERVIDOR ARCA CAIDO REINTENTAR POR FAVOR')
+                alert('SERVIDOR ARCA CAIDO REINTENTAR POR FAVOR');
+                setIsLoading(false);
                 return;
             }
             const signature = JSON.parse(res);
@@ -92,6 +94,7 @@ export default function OrderPage() {
                 orderExpiration: order.orderExpiration
             } as Order;
             Orders.update(db, updateOrder);
+            setIsLoading(false);
             return  {...order, ...updateOrder} as Order;
         }
         return order;
@@ -99,7 +102,6 @@ export default function OrderPage() {
 
     const handleWsp = async (invoice: Invoice) => {
         const {orderDetails, customer, company, total} = invoice;
-        setIsLoading(true);
         const order = await signInvoice(invoice);
         if (!order) return;
         const details = orderDetails.map((orderDetail: OrderDetail) => {
@@ -111,32 +113,27 @@ export default function OrderPage() {
             \n${invoice.order.orderSignature}`;
             sendWhatsapp(customerContact, message);
         } else alert('NEED PHONE NUMBER');
-        setIsLoading(false);
         refreshData();
         setSelected(order.orderCode);
     }
 
     const handlePrint = async (invoice: Invoice) => {
-        setIsLoading(true);
         const order = await signInvoice(invoice);
         if (!order) return;
         const inv = {...invoice, order};
         const html = genHtmlInvoice(inv);
         await Print.printAsync({html});
-        setIsLoading(false);
         refreshData();
         setSelected(order.orderCode);
     };
 
     const handleFile = async (invoice: Invoice) => {
-        setIsLoading(true);
         const order = await signInvoice(invoice);
         if (!order) return;
         const inv = {...invoice, order};
         const html = genHtmlInvoice(inv);
         const {uri} = await Print.printToFileAsync({html});
         await shareAsync(uri, {UTI: '.pdf', mimeType: 'application/pdf'});
-        setIsLoading(false);
         refreshData();
         setSelected(order.orderCode);
     };
@@ -147,16 +144,34 @@ export default function OrderPage() {
         setSelected(orderCode);
     };
 
+    const handleImport = async () => {
+        const csv = await loadTextFromFile(MimeTypes.csv);
+        setIsLoading(true);
+        if (csv) csvToDb(db, 'orders', csv);
+        setIsLoading(false);
+        refreshData();
+    }
+
+    const handleExport = async () => {
+        setIsLoading(true);
+        const content = dataToCsv(data);
+        await saveTextToFile(content, `orders${getVersion()}.csv`, MimeTypes.csv);
+        setIsLoading(false);
+    }
+
     useEffect(() => {
         refreshData();
     }, []);
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            <Button
-                title={addOrder ? getLocalizedText("cancel") : getLocalizedText("create")}
-                onPress={() => setAddOrder(!addOrder)}
-                color={addOrder ? 'red' : '#2196F3'}/>
+            <TopButtons
+                create={addOrder}
+                onCancel={() => setAddOrder(false)}
+                onCreate={() => setAddOrder(true)}
+                onImport={handleImport}
+                onExport={handleExport}
+            />
             {addOrder
                 ? <OrderAdd onSave={handleSave}/>
                 : <OrderList

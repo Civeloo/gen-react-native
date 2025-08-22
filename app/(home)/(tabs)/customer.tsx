@@ -1,13 +1,22 @@
 import {CustomerList} from '@/components/customers/customer-list';
 import {CustomerForm} from '@/components/customers/customer-form';
-import {getLocalizedText} from '@/languages/languages';
 import Customers from '@/services/database/customers.model';
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Button, ScrollView, StyleSheet} from 'react-native';
+import {ActivityIndicator, ScrollView, StyleSheet} from 'react-native';
 import {Company, Customer} from "@/types/types";
 import {useSQLiteContext} from "expo-sqlite";
-import {cleanPhoneNumber, getCustomerCode} from "@/utils/utils";
+import {
+    cleanPhoneNumber,
+    csvToDb,
+    dataToCsv,
+    getCustomerCode,
+    getVersion,
+    loadTextFromFile,
+    MimeTypes,
+    saveTextToFile
+} from "@/utils/utils";
 import {Companies} from "@/services/database/models";
+import {TopButtons} from "@/components/top-buttons";
 
 export default function CustomerPage() {
     const [isLoading, setIsLoading] = useState(false);
@@ -46,16 +55,34 @@ export default function CustomerPage() {
         setCustomer(item);
     };
 
+    const handleImport = async () => {
+        const csv = await loadTextFromFile(MimeTypes.csv);
+        setIsLoading(true);
+        if (csv) csvToDb(db, 'customers', csv);
+        setIsLoading(false);
+        refreshData();
+    }
+
+    const handleExport = async () => {
+        setIsLoading(true);
+        const content = dataToCsv(data);
+        await saveTextToFile(content, `customers${getVersion()}.csv`, MimeTypes.csv);
+        setIsLoading(false);
+    }
+
     useEffect(() => {
         refreshData();
     }, []);
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            <Button
-                title={customer ? getLocalizedText("cancel") : getLocalizedText("create")}
-                onPress={() => setCustomer(customer ? null : newCustomer)}
-                color={customer ? 'red' : '#2196F3'}/>
+            <TopButtons
+                create={!!customer}
+                onCancel={() => setCustomer(null)}
+                onCreate={() => setCustomer(newCustomer)}
+                onImport={handleImport}
+                onExport={handleExport}
+            />
             {customer
                 ? <CustomerForm customer={customer} onSave={handleSave} onRemove={handleRemove}/>
                 : <CustomerList
