@@ -75,8 +75,8 @@ export default function ProductPage() {
                         <Button
                             title={getLocalizedText("create")}
                             onPress={() => setProduct({} as Product)}/>
-                        <Button title={'import'} onPress={handleImport} color={'green'}/>
-                        <Button title={'export'} onPress={handleExport} color={'orange'}/>
+                        <Button title={getLocalizedText('import')} onPress={handleImport} color={'green'}/>
+                        <Button title={getLocalizedText('export')} onPress={handleExport} color={'orange'}/>
                     </View>
                     <ProductList
                         data={data}

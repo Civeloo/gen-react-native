@@ -32,8 +32,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({product, onSave, onRemo
             productID: product.productID || '',
             productName: product?.productName || '',
             // productUnit: product?.productUnit || '',
-            productPrice: String(product?.productPrice || 0),
-            productQuantity: String(product?.productQuantity || 0),
+            productPrice: String(product?.productPrice || ''),
+            productQuantity: String(product?.productQuantity || ''),
         }
     });
 
