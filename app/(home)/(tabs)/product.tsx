@@ -3,9 +3,10 @@ import {ProductForm} from '@/components/products/product-form';
 import {getLocalizedText} from '@/languages/languages';
 import Products from '@/services/database/products.model';
 import React, {useEffect, useState} from 'react';
-import {Button, StyleSheet, ScrollView, ActivityIndicator} from 'react-native';
+import {ActivityIndicator, Button, ScrollView, StyleSheet, View} from 'react-native';
 import {Product} from "@/types/types";
 import {useSQLiteContext} from "expo-sqlite";
+import {csvToDb, dataToCsv, getVersion, loadTextFromFile, MimeTypes, saveTextToFile} from "@/utils/utils";
 
 export default function ProductPage() {
     const [isLoading, setIsLoading] = useState(false);
@@ -40,23 +41,48 @@ export default function ProductPage() {
         setProduct(item);
     };
 
+    const handleImport = async () => {
+        const csv = await loadTextFromFile(MimeTypes.csv);
+        setIsLoading(true);
+        if (csv) csvToDb(db, 'products', csv);
+        setIsLoading(false);
+        refreshData();
+    }
+
+    const handleExport = async () => {
+        setIsLoading(true);
+        const content = dataToCsv(data);
+        await saveTextToFile(content, `products${getVersion()}.csv`, MimeTypes.csv);
+        setIsLoading(false);
+    }
+
     useEffect(() => {
         refreshData()
-        setIsLoading(false);
     }, []);
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            <Button
-                title={product ? getLocalizedText("cancel") : getLocalizedText("create")}
-                onPress={() => setProduct(product ? null : {} as Product)}
-                color={product ? 'red' : '#2196F3'}/>
             {product
-                ? <ProductForm product={product} onSave={handleSave} onRemove={handleRemove}/>
-                : <ProductList
-                    data={data}
-                    onEdit={handleEdit}
-                    onRefresh={() => refreshData()}/>
+                ? <>
+                    <Button
+                        title={getLocalizedText("cancel")}
+                        onPress={() => setProduct(null)}
+                        color={'red'}/>
+                    <ProductForm product={product} onSave={handleSave} onRemove={handleRemove}/>
+                </>
+                : <>
+                    <View style={styles.buttons}>
+                        <Button
+                            title={getLocalizedText("create")}
+                            onPress={() => setProduct({} as Product)}/>
+                        <Button title={'import'} onPress={handleImport} color={'green'}/>
+                        <Button title={'export'} onPress={handleExport} color={'orange'}/>
+                    </View>
+                    <ProductList
+                        data={data}
+                        onEdit={handleEdit}
+                        onRefresh={() => refreshData()}/>
+                </>
             }
             <ActivityIndicator size="large" animating={isLoading}/>
         </ScrollView>
@@ -67,6 +93,10 @@ const styles = StyleSheet.create({
     container: {
         padding: 16,
         flex: 1,
-        // alignItems: "center",
     },
+    buttons: {
+        backgroundColor: 'silver',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    }
 });

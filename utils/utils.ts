@@ -5,12 +5,16 @@ import * as SecureStore from 'expo-secure-store';
 import * as FileSystem from 'expo-file-system';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as DocumentPicker from 'expo-document-picker';
+import {SQLiteDatabase} from "expo-sqlite";
 
 export enum MimeTypes {
     all = '*/*',
     csr = 'application/pkcs10',
-    crt = 'application/x-x509-ca-cert'
+    crt = 'application/x-x509-ca-cert',
+    csv = 'text/comma-separated-values'
 }
+
+const separator = ',';
 
 const DIRECTORY_KEY = 'downloads_directory_uri';
 
@@ -27,7 +31,7 @@ export const sendWhatsapp = (phoneNumber: number, message: string) => {
         .catch((e) => {
             console.error('An error occurred', e);
         });
-}
+};
 
 export const getRegionCode = () => ExpoLocalization.getLocales()[0].regionCode || 'US';
 
@@ -35,7 +39,7 @@ export const getCustomerCode = (regionCode?: string) => regionCode == 'AR' ? 'C'
 
 export const saveSecureStore = async (key: string, value: string) => {
     await SecureStore.setItemAsync(key, value);
-}
+};
 
 export const getValueForSecureStore = async (key: string) =>
     await SecureStore.getItemAsync(key);
@@ -61,24 +65,6 @@ const blobToBase64 = (blob: Blob): Promise<string> =>
         reader.readAsDataURL(blob);
     });
 
-export const saveFile = async (blob: Blob, fileName: string, mimeType: string, directoryUri?: string | null) => {
-    try {
-        if (!directoryUri) directoryUri = await getOrRequestDirectory();
-        const data = await blobToBase64(blob);
-        if (directoryUri) {
-            FileSystem.StorageAccessFramework.createFileAsync(directoryUri, fileName, mimeType)
-                .then(async (uri) => {
-                    await FileSystem.writeAsStringAsync(uri, data, {encoding: FileSystem.EncodingType.Base64});
-                })
-                .catch((e) => {
-                    console.error(e)
-                });
-        }
-    } catch (error) {
-        // console.error('Error', `Could not Download file ${error}`)
-    }
-}
-
 export const pickDocuments = async (mimeType = MimeTypes.all, multiple = false) => {
     try {
         const result = await DocumentPicker.getDocumentAsync(
@@ -98,16 +84,98 @@ export const pickDocuments = async (mimeType = MimeTypes.all, multiple = false) 
     }
 };
 
-export const getFieldKey = (table:string) => {
-    return (table.at(-1) === 'y') ? table : table.slice(0, -1);
+export const saveFile = async (blob: Blob, fileName: string, mimeType: string, directoryUri?: string | null) => {
+    try {
+        if (!directoryUri) directoryUri = await getOrRequestDirectory();
+        const data = await blobToBase64(blob);
+        if (directoryUri) {
+            FileSystem.StorageAccessFramework.createFileAsync(directoryUri, fileName, mimeType)
+                .then(async (uri) => {
+                    await FileSystem.writeAsStringAsync(uri, data, {encoding: FileSystem.EncodingType.Base64});
+                })
+                .catch((e) => {
+                    console.error(e)
+                });
+        }
+    } catch (error) {
+        console.error('Error', `Could not Download file ${error}`)
+    }
+};
+
+export const saveTextToFile = async (content: string, fileName: string, mimeType: string, directoryUri?: string | null) => {
+    try {
+        if (!directoryUri) directoryUri = await getOrRequestDirectory();
+        if (directoryUri) {
+            FileSystem.StorageAccessFramework.createFileAsync(directoryUri, fileName, mimeType)
+                .then(async (uri) => {
+                    await FileSystem.writeAsStringAsync(uri, content);
+                })
+                .catch((e) => {
+                    console.error(e)
+                });
+        }
+    } catch (error) {
+        console.error(`Error saving file "${fileName}":`, error);
+    }
+};
+
+export const loadTextFromFile = async (mimeType: MimeTypes) => {
+    try {
+        const assets = await pickDocuments(mimeType);
+        if (assets && assets?.length > 0) {
+            const fileUri = assets[0].uri;
+            return await FileSystem.readAsStringAsync(fileUri);
+        }
+    } catch (error) {
+        console.error(error);
+    }
 }
 
-// export const mapTable = (table: string, values: { [x: string]: any; } | undefined) => {
-//     if (!values) return null;
-//     return Object.keys(values).map((key) => {
-//         const k = key.toString().replace(table, '').toLowerCase();
-//         return {
-//             [k]: values[key]
-//         };
-//     }) as unknown;
-// }
+export const getFieldKey = (table: string) => {
+    return (table.at(-1) === 'y') ? table : table.slice(0, -1);
+};
+
+export const dataToCsv = (data: any[]) => {
+    const fields = Object.keys(data[0]).join(separator);
+    const rows = data.map(e => Object.values(e).join(separator)).join('\n');
+    return `${fields}\n${rows}`;
+}
+
+export const csvToDb = (db: SQLiteDatabase, table: string, csv: string) => {
+    const tableID = getFieldKey(table) + 'ID';
+    const lines = csv.split('\n');
+    const fields = lines[0].split(separator);
+    const index = fields.findIndex(uid => uid === tableID);
+    const fieldsStr = fields.join(',');
+    for (let i = 1; i < lines.length; i++) {
+        const row = lines[i].split(separator);
+        let valueTableID = (index !== -1) ? row.at(index) : '';
+        if (!valueTableID) row[index] = getUUIDv4();
+        const values = '"' + row.join('","') + '"';
+        let sql = `SELECT COUNT(*)
+                   FROM ${table}
+                   WHERE ${tableID} = "${valueTableID}";`;
+        const result = db.getFirstSync(sql);
+        const count = Number(Object.values(result).at(0));
+        if (count > 0) {
+            let valueID = '';
+            const setValues = [] as string[];
+            row.forEach((value, i) => {
+                if (i === index) {
+                    valueID = value;
+                } else {
+                    if (fields[i]) setValues.push(`${fields[i]}="${value}"`);
+                }
+            });
+            sql = `UPDATE ${table}
+                   SET ${setValues.join(', ')}
+                   WHERE ${tableID} = "${valueID}";`;
+        } else {
+            sql = `INSERT INTO ${table} (${fieldsStr})
+                   VALUES (${values});`;
+        }
+        db.execSync(sql);
+    }
+}
+
+export const getVersion = () => new Date().getTime();
