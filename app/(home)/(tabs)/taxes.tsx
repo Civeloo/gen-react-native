@@ -4,14 +4,23 @@ import {getLocalizedText} from "@/languages/languages";
 import {router} from "expo-router";
 import {Companies} from "@/services/database/models";
 import {Company} from "@/types/types";
-import {arcaGetCSR, arcaGetToken, arcaRegister, arcaSendCRT} from "@/services/taxes/arca";
+import {
+    ARCA_HOMO,
+    arcaGetCSR,
+    arcaGetInvoiceLast,
+    arcaGetToken,
+    arcaGetValues,
+    arcaLogin,
+    arcaRegister,
+    arcaSendCRT
+} from "@/services/taxes/arca";
 import {useSession} from "@/services/session/ctx";
 import {useSQLiteContext} from "expo-sqlite";
 
 export default function TaxesPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [company, setCompany] = useState<Company>();
-    const [token, setToken] = useState<string|null>();
+    const [token, setToken] = useState<string>('');
 
     const {user} = useSession();
     const email = String(user?.email);
@@ -29,23 +38,41 @@ export default function TaxesPage() {
         setCompany(getData());
     }
 
-    const refreshToken = async() => {
+    const refreshToken = async () => {
         setIsLoading(true);
-        setToken(await arcaGetToken(email));
+        setToken(await arcaGetToken(email) || await arcaLogin({email, password}));
         setIsLoading(false);
     }
 
+    const handleGetValues = async () => {
+        setIsLoading(true);
+        const values = await arcaGetValues(token);
+        alert(values);
+        setIsLoading(false);
+    };
+
+    const handleGetInvoiceLast = async () => {
+        setIsLoading(true);
+        const res = await arcaGetInvoiceLast(token);
+        alert(res);
+        setIsLoading(false);
+    };
+
     const handleGenerate = async () => {
         setIsLoading(true);
-        const companyTin = company?.companyID;
+        const companyTin = company?.companyTin;
         const companyName = company?.companyName;
         const companyContact = company?.companyContact;
         const companyCountry = company?.companyCountry;
         const companyConcept = company?.companyConcept || '';
         const companyPtoVta = company?.companyPtoVta || '';
-        if (!companyTin || !companyName || !companyContact || !companyCountry || companyConcept || companyPtoVta) return alert(getLocalizedText('company_complete'));
-        if (!token) await arcaRegister(email, password);
-        await arcaGetCSR(email, password, companyTin, companyContact, companyName, companyCountry, companyConcept, companyPtoVta);
+        if (!companyTin || !companyName || !companyContact || !companyCountry || !companyConcept || !companyPtoVta) return alert(getLocalizedText('company_complete'));
+        if (!token) {
+            await arcaRegister(email, password).then(async () => {
+                setToken(await arcaLogin({email, password}));
+            });
+        }
+        await arcaGetCSR(token, companyTin, companyContact, companyName, companyCountry, companyConcept, companyPtoVta);
         setIsLoading(false);
     }
 
@@ -54,16 +81,29 @@ export default function TaxesPage() {
         if (!token) return alert(getLocalizedText('csr_please'));
         await arcaSendCRT(email);
         setIsLoading(false);
+        router.back();
     }
 
     useEffect(() => {
         refreshData();
-        refreshToken();
+        (async () => {
+            await refreshToken()
+        })();
     }, []);
 
     return (
         <View style={styles.container}>
             <View style={styles.buttons}>
+                {ARCA_HOMO.toLowerCase() === 'true' && <>
+                    <Button
+                        title={'Get Values'}
+                        onPress={handleGetValues}
+                    />
+                    <Button
+                        title={'Get Last Invoice'}
+                        onPress={handleGetInvoiceLast}
+                    />
+                </>}
                 <Button
                     title={getLocalizedText('csr_generate')}
                     onPress={handleGenerate}

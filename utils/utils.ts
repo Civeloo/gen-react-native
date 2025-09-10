@@ -14,7 +14,7 @@ export enum MimeTypes {
     csv = 'text/comma-separated-values'
 }
 
-const separator = ',';
+const separator = ';';
 
 const DIRECTORY_KEY = 'downloads_directory_uri';
 
@@ -42,7 +42,7 @@ export const saveSecureStore = async (key: string, value: string) => {
 };
 
 export const getValueForSecureStore = async (key: string) =>
-    await SecureStore.getItemAsync(key);
+    await SecureStore.getItemAsync(key) || '';
 
 const getOrRequestDirectory = async (): Promise<string | null> => {
     // const stored = await AsyncStorage.getItem(DIRECTORY_KEY);
@@ -142,6 +142,8 @@ export const dataToCsv = (data: any[]) => {
 }
 
 export const csvToDb = (db: SQLiteDatabase, table: string, csv: string) => {
+    if ((csv.match(/;/g)?.length || 0) < 1)
+        return alert(`USE ${separator} AS SEPARATOR`);
     const tableID = getFieldKey(table) + 'ID';
     const lines = csv.split('\n');
     const fields = lines[0].split(separator);

@@ -4,10 +4,12 @@ import {User} from "@firebase/auth-types";
 import {Order} from "@/types/types";
 
 const ARCA_KEY = String(process.env.EXPO_PUBLIC_ARCA_KEY);
-const ARCA_HOMO = String(process.env.EXPO_PUBLIC_ARCA_HOMO);
+export const ARCA_HOMO = String(process.env.EXPO_PUBLIC_ARCA_HOMO);
 const ARCA_URL = String(process.env.EXPO_PUBLIC_ARCA_API);
 const ARCA_REGISTER_URL = ARCA_URL + String(process.env.EXPO_PUBLIC_ARCA_REGISTER);
 const ARCA_LOGIN_URL = ARCA_URL + String(process.env.EXPO_PUBLIC_ARCA_LOGIN);
+const ARCA_VALUES_URL = ARCA_URL + String(process.env.EXPO_PUBLIC_ARCA_VALUES);
+const ARCA_INVOICE_LAST_URL = ARCA_URL + String(process.env.EXPO_PUBLIC_ARCA_INVOICE_LAST_URL);
 const ARCA_CSR_URL = ARCA_URL + String(process.env.EXPO_PUBLIC_ARCA_CSR);
 const ARCA_CSR_FILE_NAME = 'arca.csr'
 const ARCA_CRT_URL = ARCA_URL + String(process.env.EXPO_PUBLIC_ARCA_CRT);
@@ -41,33 +43,62 @@ export const arcaLogin = async (user: ArcaLogin) => {
     try {
         const response = await fetch(ARCA_LOGIN_URL, {
             method: 'POST',
-            // body: JSON.stringify(user),
             body: JSON.stringify({email: user.email, password: user.password}),
             headers: new Headers({'Content-Type': 'application/json'}),
         });
         const result = await response.json()
         const uid = user.email.replace('@', '').replace('.', '');
-        result?.token && await saveSecureStore(ARCA_KEY + uid, result.token);
-        return result?.token || '';
+        const token = result?.token || '';
+        if (token) await saveSecureStore(ARCA_KEY + uid, token);
+        return token;
     } catch (error) {
         console.error("arcaLogin", error)
     }
 }
 
-export const arcaGetCSR = async (email: string, password: string, tin: string, org: string, cname: string, country: string, concept: string, ptoVta: string) => {
-    let token = await arcaGetToken(email);
-    token = !token ? await arcaLogin({email, password}) : token;
-    fetch(ARCA_CSR_URL, {
+export const arcaGetValues = async (token: string) => {
+    return fetch(ARCA_VALUES_URL, {
+        method: 'GET',
+        headers: new Headers({
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+        })
+    }).then(res => {
+        return res.json();
+    })
+        .catch((error) => {
+            console.error("arcaGetValues", error)
+            return;
+        });
+};
+
+export const arcaGetInvoiceLast = async (token: string) => {
+    return fetch(ARCA_INVOICE_LAST_URL, {
+        method: 'GET',
+        headers: new Headers({
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+        })
+    }).then(res => {
+        return res.json();
+    })
+        .catch((error) => {
+            console.error('arcaGetInvoiceLast', error);
+            return;
+        });
+};
+
+export const arcaGetCSR = async (token: string, tin: string, org: string, cname: string, country: string, concept: string, ptoVta: string) => {
+    return fetch(ARCA_CSR_URL, {
         method: 'POST',
         body: JSON.stringify({
-            email: email,
             id: tin,
-            password: password,
             org: org,
             cn: cname,
             ctry: country,
             cpt: concept,
-            ptoVta: ptoVta
+            pvt: ptoVta,
+            homo: ARCA_HOMO
         }),
         headers: new Headers({
             'Authorization': 'Bearer ' + token,
@@ -100,10 +131,7 @@ export const arcaSendCRT = async (email: string) => {
                 },
                 fieldName: 'file',
                 httpMethod: 'POST',
-                uploadType: FileSystem.FileSystemUploadType.MULTIPART,
-                parameters: {
-                    email: email
-                },
+                uploadType: FileSystem.FileSystemUploadType.MULTIPART
             });
         }
     } catch (error) {
@@ -129,14 +157,16 @@ export const arcaInvoice = async (
         email: String(user?.email),
         password: String(user?.uid)
     };
-    const invoice = {
+    const invoice: { cbte: string, docNro: string, impNeto: number, homo?: string } = {
         cbte: order.orderCode?.slice(1),
         docNro: customerTin,
         impNeto: total
     };
     let token = await arcaGetToken(usr.email);
     token = !token ? await arcaLogin(usr) : token;
-    const body = JSON.stringify({...invoice, homo: ARCA_HOMO});
+
+    const bodyProps = {...invoice};
+    const body = JSON.stringify(bodyProps);
     return fetch(ARCA_INVOICE_URL, {
         method: 'POST',
         body: body,
@@ -145,7 +175,7 @@ export const arcaInvoice = async (
             'Content-Type': 'application/json'
         })
     }).then(res => {
-        return res.json();
+        return res.json().then(json => JSON.parse(json));
     })
         .catch((error) => {
             console.error("arcaGetCSR", error)

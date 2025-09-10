@@ -83,10 +83,8 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
     const companyCountry = methods.watch('companyCountry');
 
     const onSubmit: SubmitHandler<FormValues> = (values) => {
-        console.log('values',values);
         values.companyType = values?.companyType?.toUpperCase() || 'USA';
         const companyValues = values as Company;
-        console.log('companyValues',companyValues);
         onSave(companyValues);
     };
 

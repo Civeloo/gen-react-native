@@ -3,7 +3,7 @@ import {OrderList} from '@/components/orders/order-list';
 import Orders from '@/services/database/orders.model';
 import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, ScrollView, StyleSheet} from 'react-native';
-import {Invoice, Order, OrderCode, OrderDetail, Product} from "@/types/types";
+import {Invoice, Order, OrderCode, OrderDetail} from "@/types/types";
 import {arcaInvoice} from "@/services/taxes/arca";
 import {OrderCodes} from "@/services/database/models";
 import * as Print from 'expo-print';
@@ -12,8 +12,8 @@ import {genHtmlInvoice} from "@/utils/gen-html-invoice";
 import {useSession} from "@/services/session/ctx";
 import {csvToDb, dataToCsv, getVersion, loadTextFromFile, MimeTypes, saveTextToFile, sendWhatsapp} from "@/utils/utils";
 import {useSQLiteContext} from "expo-sqlite";
-import Products from "@/services/database/products.model";
 import {TopButtons} from "@/components/top-buttons";
+import {FECAESolicitarResult} from "@/types/fe-cae-solicitar";
 
 export default function OrderPage() {
     const [isLoading, setIsLoading] = useState(false);
@@ -36,17 +36,18 @@ export default function OrderPage() {
     const [addOrder, setAddOrder] = useState(false);
 
     const handleRemove = (orderDetails: OrderDetail[]) => {
-        setIsLoading(true);
-        orderDetails.map((orderDetail: OrderDetail) => {
-            const product = Products.byId(db, orderDetail.productID).at(0) as Product;
-            Products.update(db, {
-                productID: orderDetail.productID,
-                productQuantity: product.productQuantity + orderDetail.orderDetailQuantity
-            } as Product);
-        });
-        Orders.cancel(db, orderDetails[0]?.orderID);
-        setIsLoading(false);
-        refreshData();
+        // TODO: Cancelar factura en ARCA también
+        // setIsLoading(true);
+        // orderDetails.map((orderDetail: OrderDetail) => {
+        //     const product = Products.byId(db, orderDetail.productID).at(0) as Product;
+        //     Products.update(db, {
+        //         productID: orderDetail.productID,
+        //         productQuantity: product.productQuantity + orderDetail.orderDetailQuantity
+        //     } as Product);
+        // });
+        // Orders.cancel(db, orderDetails[0]?.orderID);
+        // setIsLoading(false);
+        // refreshData();
     };
 
     const signInvoice = async (invoice: Invoice) => {
@@ -59,16 +60,16 @@ export default function OrderPage() {
                 customerTin: customer?.customerTin || '',
                 total
             };
-            const res = await arcaInvoice(arcaInvoiceProps);
+            const res = await arcaInvoice(arcaInvoiceProps) as FECAESolicitarResult;
             //TODO: si esta caido el server de afip alertar para reitentar
-            if (!res) {
+            if (!res || Object.keys(res).length === 0) {
                 alert('SERVIDOR ARCA CAIDO REINTENTAR POR FAVOR');
                 setIsLoading(false);
                 return;
             }
-            const signature = JSON.parse(res);
+            const signature = res.FeDetResp.FECAEDetResponse;
             const customerCodeKey = 'C';
-            const orderNumber = signature.nro;
+            const orderNumber = signature.CbteDesde;
             const orderCode = customerCodeKey + orderNumber.toString();
             const orderCodes = OrderCodes.byId(db, customerCodeKey) as OrderCode[];
             const orderCodeLast = Number(orderCodes?.at(0)?.orderCodeNumber) || 0;
@@ -79,12 +80,11 @@ export default function OrderPage() {
             if (!orderCodeLast) {
                 OrderCodes.add(db, newOrderCode);
             } else {
-                // if (orderNumber > orderCodeLast)
                 OrderCodes.save(db, newOrderCode);
             }
             order.orderCode = orderCode;
-            order.orderSignature = signature.cae.toString();
-            order.orderExpiration = signature.vto.toString();
+            order.orderSignature = signature.CAE.toString();
+            order.orderExpiration = signature.CAEFchVto.toString();
             order.orderStatus = 'invoiced';
             const updateOrder = {
                 orderID: order.orderID,

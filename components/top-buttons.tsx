@@ -18,8 +18,8 @@ export const TopButtons: FC<Props> = ({create, onCancel, onCreate, onImport, onE
             :
             <View style={styles.buttons}>
                 {onCreate && <Button title={getLocalizedText("create")} onPress={onCreate}/>}
-                <Button title={getLocalizedText('import')} onPress={onImport} color={'green'}/>
-                <Button title={getLocalizedText('export')} onPress={onExport} color={'orange'}/>
+                <Button title={getLocalizedText('import_')} onPress={onImport} color={'green'}/>
+                <Button title={getLocalizedText('export_')} onPress={onExport} color={'orange'}/>
             </View>
         }
     </>);
