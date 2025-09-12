@@ -2,8 +2,11 @@ import {Link} from "expo-router";
 import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {getLocalizedText} from "@/languages/languages";
+import {useSession} from "@/services/session/ctx";
 
 export default function Index() {
+
+    const {user} = useSession();
 
     return (<View style={styles.container}>
         <Link style={styles.link}
@@ -34,13 +37,13 @@ export default function Index() {
                 <Text style={styles.buttonText}>{getLocalizedText('company')}</Text>
             </TouchableOpacity>
         </Link>
-        <Link style={styles.link}
+        {user && <Link style={styles.link}
               href="/taxes" asChild>
             <TouchableOpacity style={styles.button}>
                 <Ionicons name={'library'} size={24} color={'white'}/>
                 <Text style={styles.buttonText}>{getLocalizedText('taxes')}</Text>
             </TouchableOpacity>
-        </Link>
+        </Link>}
 
     </View>);
 }

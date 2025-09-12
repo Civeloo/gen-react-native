@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Button, StyleSheet, View} from 'react-native';
+import {ActivityIndicator, Button, StyleSheet, Text, View} from 'react-native';
 import {getLocalizedText} from "@/languages/languages";
 import {router} from "expo-router";
 import {Companies} from "@/services/database/models";
@@ -40,7 +40,7 @@ export default function TaxesPage() {
 
     const refreshToken = async () => {
         setIsLoading(true);
-        setToken(await arcaGetToken(email) || await arcaLogin({email, password}));
+        if (user) setToken(await arcaGetToken(email) || await arcaLogin({email, password}));
         setIsLoading(false);
     }
 
@@ -93,7 +93,7 @@ export default function TaxesPage() {
 
     return (
         <View style={styles.container}>
-            <View style={styles.buttons}>
+            {company?.companyCountry === 'AR' ? <View style={styles.buttons}>
                 {ARCA_HOMO.toLowerCase() === 'true' && <>
                     <Button
                         title={'Get Values'}
@@ -113,6 +113,7 @@ export default function TaxesPage() {
                     onPress={handleCertificate}
                 />}
             </View>
+                : <Text>{company ? getLocalizedText('available_not') : getLocalizedText('company_complete')}</Text>}
             <ActivityIndicator size="large" animating={isLoading}/>
         </View>
     );
