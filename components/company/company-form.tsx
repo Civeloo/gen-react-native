@@ -8,22 +8,10 @@ import {TextInputController} from '../text-input-controller';
 import {Company} from '@/types/types';
 import {DropDownPicker} from '@/components/drop-down-picker';
 import COUNTRIES from '@/languages/countries.json';
+import STATES_AR from '@/languages/states-ar.json';
+import CONCEPTS_AR from '@/languages/concepts-ar.json';
 
-const CONCEPTS = [
-    {
-        'label': 'Productos',
-        'value': '1'
-    },
-    {
-        'label': 'Servicios',
-        'value': '2'
-    },
-    {
-        'label': 'Productos y  Servicios',
-        'value': '3'
-    },
-];
-const getPtoVtas = () => {
+const getPoss = () => {
     const x = [];
     for (let i = 1; i < 10; i++) {
         const nro = String(i);
@@ -49,7 +37,7 @@ const schema = yup
         companyPhone: yup.string().max(50).defined(),
         companyTin: yup.string().max(50).required(),
         companyType: yup.string().max(50).defined(),
-        companyPtoVta: yup.string().max(50).defined(),
+        companyPOS: yup.string().max(50).defined(),
     })
     .required();
 
@@ -75,7 +63,7 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
             companyPhone: company?.companyPhone || '',
             companyTin: company?.companyTin || '',
             companyType: company?.companyType || '',
-            companyPtoVta: company?.companyPtoVta || '',
+            companyPOS: company?.companyPOS || '',
         }
     });
 
@@ -84,7 +72,6 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
     const companyCountry = methods.watch('companyCountry');
 
     const onSubmit: SubmitHandler<FormValues> = (values) => {
-        // values.companyType = values?.companyType?.toUpperCase() || 'USA';
         const companyValues = values as Company;
         onSave(companyValues);
     };
@@ -117,12 +104,7 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
                     name='companyCity'
                     placeholder={getLocalizedText('city_placeholder')}
                 /></View>
-            <View style={styles.input}>
-                <Text style={styles.label}>🏞</Text>
-                <TextInputController
-                    name='companyState'
-                    placeholder={getLocalizedText('state_placeholder')}
-                /></View>
+
             <View style={styles.input}>
                 <Text style={styles.label}>📮</Text>
                 <TextInputController
@@ -151,6 +133,82 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
                     </View>
                 </View>
             </View>
+            {companyCountry === 'AR' ? <>
+                    <View style={styles.dropDownPicker}>
+                        <Text style={styles.label}>🏞</Text>
+                        <View style={styles.dropDownInput}>
+                            <Controller
+                                control={methods.control}
+                                rules={{required: true}}
+                                render={({field: {onChange, value}}) => (
+                                    <DropDownPicker
+                                        data={STATES_AR}
+                                        placeholder={getLocalizedText('state_placeholder')}
+                                        onChange={onChange}
+                                        value={value}
+                                    />
+                                )}
+                                name='companyState'
+                            />
+                            <View style={styles.error}>
+                                {errors?.companyState &&
+                                    <Text style={styles.errorText}>{errors?.companyState.message}</Text>}
+                            </View>
+                        </View>
+                    </View>
+                    <View style={styles.dropDownPicker}>
+                        <Text style={styles.label}>🧾</Text>
+                        <View style={styles.dropDownInput}>
+                            <Controller
+                                control={methods.control}
+                                rules={{required: true}}
+                                render={({field: {onChange, value}}) => (
+                                    <DropDownPicker
+                                        data={CONCEPTS_AR}
+                                        placeholder={getLocalizedText('concept_placeholder')}
+                                        onChange={onChange}
+                                        value={value}
+                                    />
+                                )}
+                                name='companyConcept'
+                            />
+                            <View style={styles.error}>
+                                {errors?.companyConcept &&
+                                    <Text style={styles.errorText}>{errors?.companyConcept.message}</Text>}
+                            </View>
+                        </View>
+                    </View>
+                    <View style={styles.dropDownPicker}>
+                        <Text style={styles.label}>🏪</Text>
+                        <View style={styles.dropDownInput}>
+                            <Controller
+                                control={methods.control}
+                                rules={{required: true}}
+                                render={({field: {onChange, value}}) => (
+                                    <DropDownPicker
+                                        data={getPoss()}
+                                        placeholder={getLocalizedText('pto_vta_placeholder')}
+                                        onChange={onChange}
+                                        value={value}
+                                    />
+                                )}
+                                name='companyPOS'
+                            />
+                            <View style={styles.error}>
+                                {errors?.companyPOS &&
+                                    <Text style={styles.errorText}>{errors?.companyPOS.message}</Text>}
+                            </View>
+                        </View>
+                    </View>
+                </>
+                :
+                <View style={styles.input}>
+                    <Text style={styles.label}>🏞</Text>
+                    <TextInputController
+                        name='companyState'
+                        placeholder={getLocalizedText('state_placeholder')}
+                    /></View>
+            }
             <View style={styles.input}>
                 <Text style={styles.label}>📞</Text>
                 <TextInputController
@@ -171,52 +229,7 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
                     name='companyType'
                     placeholder={getLocalizedText('type_placeholder')}
                 /></View>*/}
-            {companyCountry === 'AR' && <>
-                <View style={styles.dropDownPicker}>
-                    <Text style={styles.label}>🧾</Text>
-                    <View style={styles.dropDownInput}>
-                        <Controller
-                            control={methods.control}
-                            rules={{required: true}}
-                            render={({field: {onChange, value}}) => (
-                                <DropDownPicker
-                                    data={CONCEPTS}
-                                    placeholder={getLocalizedText('concept_placeholder')}
-                                    onChange={onChange}
-                                    value={value}
-                                />
-                            )}
-                            name='companyConcept'
-                        />
-                        <View style={styles.error}>
-                            {errors?.companyConcept &&
-                                <Text style={styles.errorText}>{errors?.companyConcept.message}</Text>}
-                        </View>
-                    </View>
-                </View>
-                <View style={styles.dropDownPicker}>
-                    <Text style={styles.label}>🏪</Text>
-                    <View style={styles.dropDownInput}>
-                        <Controller
-                            control={methods.control}
-                            rules={{required: true}}
-                            render={({field: {onChange, value}}) => (
-                                <DropDownPicker
-                                    data={getPtoVtas()}
-                                    placeholder={getLocalizedText('pto_vta_placeholder')}
-                                    onChange={onChange}
-                                    value={value}
-                                />
-                            )}
-                            name='companyPtoVta'
-                        />
-                        <View style={styles.error}>
-                            {errors?.companyPtoVta &&
-                                <Text style={styles.errorText}>{errors?.companyPtoVta.message}</Text>}
-                        </View>
-                    </View>
-                </View>
-            </>}
+            {/*<Text style={styles.errorText}>{JSON.stringify(errors)}</Text>*/}
             <View style={styles.okButton}>
                 <Button title={getLocalizedText('ok')} onPress={methods.handleSubmit(onSubmit)}/>
             </View>

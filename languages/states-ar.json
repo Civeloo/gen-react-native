@@ -1,0 +1,98 @@
+[
+  {
+    "label": "Ciudad Autónoma de Buenos Aires",
+    "value": "AR-C"
+  },
+  {
+    "label": "Neuquén",
+    "value": "AR-Q"
+  },
+  {
+    "label": "San Luis",
+    "value": "AR-D"
+  },
+  {
+    "label": "Santa Fe",
+    "value": "AR-S"
+  },
+  {
+    "label": "La Rioja",
+    "value": "AR-F"
+  },
+  {
+    "label": "Catamarca",
+    "value": "AR-K"
+  },
+  {
+    "label": "Tucumán",
+    "value": "AR-T"
+  },
+  {
+    "label": "Chaco",
+    "value": "AR-H"
+  },
+  {
+    "label": "Formosa",
+    "value": "AR-P"
+  },
+  {
+    "label": "Santa Cruz",
+    "value": "AR-Z"
+  },
+  {
+    "label": "Chubut",
+    "value": "AR-U"
+  },
+  {
+    "label": "Mendoza",
+    "value": "AR-M"
+  },
+  {
+    "label": "Entre Ríos",
+    "value": "AR-E"
+  },
+  {
+    "label": "San Juan",
+    "value": "AR-J"
+  },
+  {
+    "label": "Jujuy",
+    "value": "AR-Y"
+  },
+  {
+    "label": "Santiago del Estero",
+    "value": "AR-G"
+  },
+  {
+    "label": "Río Negro",
+    "value": "AR-R"
+  },
+  {
+    "label": "Corrientes",
+    "value": "AR-W"
+  },
+  {
+    "label": "Misiones",
+    "value": "AR-N"
+  },
+  {
+    "label": "Salta",
+    "value": "AR-A"
+  },
+  {
+    "label": "Córdoba",
+    "value": "AR-X"
+  },
+  {
+    "label": "Buenos Aires",
+    "value": "AR-B"
+  },
+  {
+    "label": "La Pampa",
+    "value": "AR-L"
+  },
+  {
+    "label": "Tierra del Fuego",
+    "value": "AR-V"
+  }
+]

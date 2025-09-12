@@ -28,6 +28,6 @@ export const INITIAL_COMPANY = {
         companyPhone: '',
         companyTin: '',
         companyType: getRegionCode(),
-        companyPtoVta: ''
+        companyPOS: ''
     },
 }

@@ -65,14 +65,14 @@ export default function TaxesPage() {
         const companyContact = company?.companyContact;
         const companyCountry = company?.companyCountry;
         const companyConcept = company?.companyConcept || '';
-        const companyPtoVta = company?.companyPtoVta || '';
-        if (!companyTin || !companyName || !companyContact || !companyCountry || !companyConcept || !companyPtoVta) return alert(getLocalizedText('company_complete'));
+        const companyPOS = company?.companyPOS || '';
+        if (!companyTin || !companyName || !companyContact || !companyCountry || !companyConcept || !companyPOS) return alert(getLocalizedText('company_complete'));
         if (!token) {
             await arcaRegister(email, password).then(async () => {
                 setToken(await arcaLogin({email, password}));
             });
         }
-        await arcaGetCSR(token, companyTin, companyContact, companyName, companyCountry, companyConcept, companyPtoVta);
+        await arcaGetCSR(token, companyTin, companyContact, companyName, companyCountry, companyConcept, companyPOS);
         setIsLoading(false);
     }
 

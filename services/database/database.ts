@@ -13,7 +13,7 @@ async function migrateDbIfNeeded(db: SQLiteDatabase) {
     }
 
     const createTables = `
-    CREATE TABLE IF NOT EXISTS company (
+CREATE TABLE IF NOT EXISTS company (
         companyID TEXT PRIMARY KEY NOT NULL,
         companyName TEXT,
         companyContact TEXT,
@@ -26,7 +26,7 @@ async function migrateDbIfNeeded(db: SQLiteDatabase) {
         companyPhone TEXT,
         companyTin TEXT,
         companyType TEXT,
-        companyPtoVta TEXT
+        companyPOS TEXT
      );
 CREATE TABLE IF NOT EXISTS categories (
         categoryID TEXT PRIMARY KEY NOT NULL,

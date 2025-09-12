@@ -11,7 +11,7 @@ export type Company = {
     companyPhone: string;
     companyTin: string;
     companyType: string;
-    companyPtoVta: string;
+    companyPOS: string;
 };
 
 export type Category = {

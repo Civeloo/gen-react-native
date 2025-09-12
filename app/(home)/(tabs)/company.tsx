@@ -20,8 +20,10 @@ export default function CompanyPage() {
     }
 
     const handleSave = (values: Company) => {
+        setIsLoading(true);
         Companies.save(db, values);
         refreshData();
+        setIsLoading(false);
         router.back();
     };
 
