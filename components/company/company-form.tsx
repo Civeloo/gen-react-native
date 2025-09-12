@@ -1,6 +1,6 @@
 import {getLocalizedText} from '@/languages/languages';
 import {yupResolver} from '@hookform/resolvers/yup';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Controller, FormProvider, SubmitHandler, useForm} from 'react-hook-form';
 import {Button, Platform, StyleSheet, Text, View} from 'react-native';
 import * as yup from 'yup';
@@ -39,15 +39,15 @@ const schema = yup
     .object({
         companyID: yup.string().defined(),
         companyName: yup.string().max(50).required(),
-        companyContact: yup.string().max(50).defined(),
+        companyContact: yup.string().max(50).required(),
         companyAddress: yup.string().max(100).defined(),
         companyCity: yup.string().max(50).defined(),
         companyState: yup.string().max(50).defined(),
         companyPostalCode: yup.string().max(50).defined(),
-        companyCountry: yup.string().max(50).defined(),
+        companyCountry: yup.string().max(50).required(),
         companyConcept: yup.string().max(50).defined(),
         companyPhone: yup.string().max(50).defined(),
-        companyTin: yup.string().max(50).defined(),
+        companyTin: yup.string().max(50).required(),
         companyType: yup.string().max(50).defined(),
         companyPtoVta: yup.string().max(50).defined(),
     })
@@ -59,7 +59,6 @@ type CompanyFormProps = {
     company: Company;
     onSave: (values: Company) => void;
 };
-
 export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
     const {...methods} = useForm<FormValues>({
         resolver: yupResolver(schema),
@@ -80,10 +79,12 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
         }
     });
 
+    const {reset, formState: {errors}} = methods;
+
     const companyCountry = methods.watch('companyCountry');
 
     const onSubmit: SubmitHandler<FormValues> = (values) => {
-        values.companyType = values?.companyType?.toUpperCase() || 'USA';
+        // values.companyType = values?.companyType?.toUpperCase() || 'USA';
         const companyValues = values as Company;
         onSave(companyValues);
     };
@@ -130,19 +131,25 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
                 /></View>
             <View style={styles.dropDownPicker}>
                 <Text style={styles.label}>🌎</Text>
-                <Controller
-                    control={methods.control}
-                    rules={{required: true}}
-                    render={({field: {onChange, value}}) => (
-                        <DropDownPicker
-                            data={COUNTRIES}
-                            placeholder={getLocalizedText('country_placeholder')}
-                            onChange={onChange}
-                            value={value}
-                        />
-                    )}
-                    name='companyCountry'
-                />
+                <View style={styles.dropDownInput}>
+                    <Controller
+                        control={methods.control}
+                        rules={{required: true}}
+                        render={({field: {onChange, value}}) => (
+                            <DropDownPicker
+                                data={COUNTRIES}
+                                placeholder={getLocalizedText('country_placeholder')}
+                                onChange={onChange}
+                                value={value}
+                            />
+                        )}
+                        name='companyCountry'
+                    />
+                    <View style={styles.error}>
+                        {errors?.companyCountry &&
+                            <Text style={styles.errorText}>{errors?.companyCountry.message}</Text>}
+                    </View>
+                </View>
             </View>
             <View style={styles.input}>
                 <Text style={styles.label}>📞</Text>
@@ -158,44 +165,56 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
                     placeholder={getLocalizedText('tin_placeholder')}
                     keyboardType='default'
                 /></View>
-            <View style={styles.input}>
+            {/*<View style={styles.input}>
                 <Text style={styles.label}>🏢</Text>
                 <TextInputController
                     name='companyType'
                     placeholder={getLocalizedText('type_placeholder')}
-                /></View>
+                /></View>*/}
             {companyCountry === 'AR' && <>
                 <View style={styles.dropDownPicker}>
                     <Text style={styles.label}>🧾</Text>
-                    <Controller
-                        control={methods.control}
-                        rules={{required: true}}
-                        render={({field: {onChange, value}}) => (
-                            <DropDownPicker
-                                data={CONCEPTS}
-                                placeholder={getLocalizedText('concept_placeholder')}
-                                onChange={onChange}
-                                value={value}
-                            />
-                        )}
-                        name='companyConcept'
-                    />
+                    <View style={styles.dropDownInput}>
+                        <Controller
+                            control={methods.control}
+                            rules={{required: true}}
+                            render={({field: {onChange, value}}) => (
+                                <DropDownPicker
+                                    data={CONCEPTS}
+                                    placeholder={getLocalizedText('concept_placeholder')}
+                                    onChange={onChange}
+                                    value={value}
+                                />
+                            )}
+                            name='companyConcept'
+                        />
+                        <View style={styles.error}>
+                            {errors?.companyConcept &&
+                                <Text style={styles.errorText}>{errors?.companyConcept.message}</Text>}
+                        </View>
+                    </View>
                 </View>
                 <View style={styles.dropDownPicker}>
                     <Text style={styles.label}>🏪</Text>
-                    <Controller
-                        control={methods.control}
-                        rules={{required: true}}
-                        render={({field: {onChange, value}}) => (
-                            <DropDownPicker
-                                data={getPtoVtas()}
-                                placeholder={getLocalizedText('pto_vta_placeholder')}
-                                onChange={onChange}
-                                value={value}
-                            />
-                        )}
-                        name='companyPtoVta'
-                    />
+                    <View style={styles.dropDownInput}>
+                        <Controller
+                            control={methods.control}
+                            rules={{required: true}}
+                            render={({field: {onChange, value}}) => (
+                                <DropDownPicker
+                                    data={getPtoVtas()}
+                                    placeholder={getLocalizedText('pto_vta_placeholder')}
+                                    onChange={onChange}
+                                    value={value}
+                                />
+                            )}
+                            name='companyPtoVta'
+                        />
+                        <View style={styles.error}>
+                            {errors?.companyPtoVta &&
+                                <Text style={styles.errorText}>{errors?.companyPtoVta.message}</Text>}
+                        </View>
+                    </View>
                 </View>
             </>}
             <View style={styles.okButton}>
@@ -203,6 +222,12 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
             </View>
         </View>
     );
+
+    useEffect(() => {
+        if (company) {
+            reset(company);
+        }
+    }, [company, reset]);
 
     return (
         <View style={styles.container}>
@@ -229,25 +254,33 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         gap: 10,
-        // height:50
     },
     label: {
         fontSize: 28,
         fontWeight: 'bold',
         width: 40,
         textAlign: 'center',
-        // alignSelf: 'center',
-        // backgroundColor: 'yellow'
     },
     dropDownPicker: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
         gap: 10,
-        marginBottom: 20,
+        // marginBottom: 20,
+    },
+    dropDownInput: {
+        width: '100%',
+        flexDirection: 'column',
     },
     okButton: {
         flex: 1,
         marginBottom: 40
-    }
+    },
+    error: {
+        height: 20,
+    },
+    errorText: {
+        color: 'red',
+    },
+
 });

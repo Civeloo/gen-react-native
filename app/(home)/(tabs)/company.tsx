@@ -32,6 +32,7 @@ export default function CompanyPage() {
         setIsLoading(false);
         setData({} as Company);
         refreshData();
+        router.back();
     }
 
     const handleExport = async () => {

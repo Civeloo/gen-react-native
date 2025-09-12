@@ -1,6 +1,7 @@
 {
   "address_placeholder": "Dirección",
   "amount": "Monto",
+  "available_not": "No disponible en tu país en este momento",
   "CFBundleDisplayName": "GeN",
   "NSContactsUsageDescription": "App de gestión comercial",
   "cancel": "Cancelar",
@@ -9,7 +10,7 @@
   "clear_all": "Borrar todo",
   "confirm": "Confirmar",
   "confirm_placeholder": "Reescriba su Contraseña",
-  "contact_placeholder": "Contacto",
+  "contact_placeholder": "Nombre de contacto (dueño)",
   "concept_placeholder": "Concepto",
   "company": "Empresa",
   "company_name_placeholder": "Nombre de empresa",
