@@ -46,10 +46,10 @@ export const OrderList: FC<Props> = ({data, selected, onRemove, onWsp, onPrint, 
                     <Text style={styles.title}>{customerName}</Text>
                     <Text style={styles.detail}>{orderCode}</Text>
                     <Text style={styles.date}>{orderDate.split('T')[0]}</Text>
-                    <Button
+                    {!order.orderSignature && <Button
                         title="  -  "
                         color="red"
-                        onPress={() => handleRemove(orderDetails)}/>
+                        onPress={() => handleRemove(orderDetails)}/>}
                 </View>
                 <View style={styles.detailList}>
                     {orderDetails.map((orderDetail: OrderDetail) => {

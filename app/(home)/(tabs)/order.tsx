@@ -3,7 +3,7 @@ import {OrderList} from '@/components/orders/order-list';
 import Orders from '@/services/database/orders.model';
 import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, ScrollView, StyleSheet} from 'react-native';
-import {Invoice, Order, OrderCode, OrderDetail} from "@/types/types";
+import {Invoice, Order, OrderCode, OrderDetail, Product} from "@/types/types";
 import {arcaInvoice} from "@/services/taxes/arca";
 import {OrderCodes} from "@/services/database/models";
 import * as Print from 'expo-print';
@@ -14,6 +14,7 @@ import {csvToDb, dataToCsv, getVersion, loadTextFromFile, MimeTypes, saveTextToF
 import {useSQLiteContext} from "expo-sqlite";
 import {TopButtons} from "@/components/top-buttons";
 import {FECAESolicitarResult} from "@/types/fe-cae-solicitar";
+import Products from "@/services/database/products.model";
 
 export default function OrderPage() {
     const [isLoading, setIsLoading] = useState(false);
@@ -37,17 +38,17 @@ export default function OrderPage() {
 
     const handleRemove = (orderDetails: OrderDetail[]) => {
         // TODO: Cancelar factura en ARCA también
-        // setIsLoading(true);
-        // orderDetails.map((orderDetail: OrderDetail) => {
-        //     const product = Products.byId(db, orderDetail.productID).at(0) as Product;
-        //     Products.update(db, {
-        //         productID: orderDetail.productID,
-        //         productQuantity: product.productQuantity + orderDetail.orderDetailQuantity
-        //     } as Product);
-        // });
-        // Orders.cancel(db, orderDetails[0]?.orderID);
-        // setIsLoading(false);
-        // refreshData();
+        setIsLoading(true);
+        orderDetails.map((orderDetail: OrderDetail) => {
+            const product = Products.byId(db, orderDetail.productID).at(0) as Product;
+            Products.update(db, {
+                productID: orderDetail.productID,
+                productQuantity: product.productQuantity + orderDetail.orderDetailQuantity
+            } as Product);
+        });
+        Orders.cancel(db, orderDetails[0]?.orderID);
+        setIsLoading(false);
+        refreshData();
     };
 
     const signInvoice = async (invoice: Invoice) => {
@@ -101,12 +102,10 @@ export default function OrderPage() {
     }
 
     const handleWsp = async (invoice: Invoice) => {
-        const {orderDetails, customer, company, total} = invoice;
-        const order = await signInvoice(invoice);
-        if (!order) return;
+        const {order, orderDetails, customer, company, total} = invoice;
         const details = orderDetails.map((orderDetail: OrderDetail) => {
             return `${orderDetail.orderDetailName} x ${orderDetail.orderDetailQuantity} - $ ${(orderDetail.orderDetailPrice * orderDetail.orderDetailQuantity).toFixed(2)}`;
-        })
+        });
         const customerContact = Number(customer.customerContact);
         if (customerContact) {
             const message = `${company?.companyName || ''}\n${order.orderCode}\n${order.orderDate.split('T')[0]}\n${details.join('\n')}\n$ ${total.toFixed(2)}
@@ -118,13 +117,12 @@ export default function OrderPage() {
     }
 
     const handlePrint = async (invoice: Invoice) => {
-        const order = await signInvoice(invoice);
-        if (!order) return;
-        const inv = {...invoice, order};
-        const html = genHtmlInvoice(inv);
-        await Print.printAsync({html});
+        const html = genHtmlInvoice(invoice);
+        await Print.printAsync({
+            html
+        });
         refreshData();
-        setSelected(order.orderCode);
+        setSelected(invoice.order.orderCode);
     };
 
     const handleFile = async (invoice: Invoice) => {
