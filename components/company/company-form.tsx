@@ -67,7 +67,7 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
         }
     });
 
-    const {reset, formState: {errors}} = methods;
+    const {reset, resetField, formState: {errors}} = methods;
 
     const companyCountry = methods.watch('companyCountry');
 
@@ -242,6 +242,10 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
         }
     }, [company, reset]);
 
+    useEffect(() => {
+        resetField('companyState', {defaultValue: ''});
+    }, [companyCountry]);
+
     return (
         <View style={styles.container}>
             <FormProvider {...methods}>
@@ -300,6 +304,5 @@ const styles = StyleSheet.create({
     },
     keyboarAvoidingView: {
         flex: 1,
-        // paddingBottom: 10
     }
 });
