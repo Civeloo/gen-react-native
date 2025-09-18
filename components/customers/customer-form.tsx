@@ -60,7 +60,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({customer, onSave, onR
                 <Text style={styles.label}>📞</Text>
                 <TextInputController
                     name="customerContact"
-                    placeholder={getLocalizedText('contact_placeholder')}
+                    placeholder={getLocalizedText('phone_placeholder')}
                     keyboardType="default"
                 /></View>
             <View style={styles.input}>
