@@ -2,14 +2,14 @@
   "expo": {
     "name": "gen",
     "slug": "gen-react-native",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "civeloo-gen",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "android": {
-      "versionCode": 4,
+      "versionCode": 5,
       "package": "com.civeloo.gen",
       "intentFilters": [
         {
@@ -34,9 +34,11 @@
       "googleServicesFile": "./google-services.json",
       "edgeToEdgeEnabled": true,
       "permissions": [
+        "android.permission.NOTIFICATIONS",
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.READ_EXTERNAL_STORAGE"
-      ]
+      ],
+      "softwareKeyboardLayoutMode": "pan"
     },
     "locales": {
       "en": "./languages/en.json",
@@ -68,8 +70,14 @@
         "expo-localization",
         {
           "supportedLocales": {
-            "ios": ["en", "es"],
-            "android": ["en", "es"]
+            "ios": [
+              "en",
+              "es"
+            ],
+            "android": [
+              "en",
+              "es"
+            ]
           }
         }
       ],
@@ -87,7 +95,16 @@
           "iCloudContainerEnvironment": "Production"
         }
       ],
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableOnBackInvokedCallback": true,
+            "enableProguardInReleaseBuilds": true
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

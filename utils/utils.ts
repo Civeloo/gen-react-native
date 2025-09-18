@@ -29,7 +29,7 @@ export const sendWhatsapp = (phoneNumber: number, message: string) => {
     const url = `https://wa.me/${phoneNumber}?text=${text}`;
     Linking.openURL(url)
         .catch((e) => {
-            console.error('An error occurred', e);
+            //console.error('An error occurred', e);
         });
 };
 
@@ -80,7 +80,7 @@ export const pickDocuments = async (mimeType = MimeTypes.all, multiple = false) 
             alert("Document selection cancelled.");
         }
     } catch (error) {
-        console.error("Error picking documents:", error);
+        //console.error("Error picking documents:", error);
     }
 };
 
@@ -94,11 +94,11 @@ export const saveFile = async (blob: Blob, fileName: string, mimeType: string, d
                     await FileSystem.writeAsStringAsync(uri, data, {encoding: FileSystem.EncodingType.Base64});
                 })
                 .catch((e) => {
-                    console.error(e)
+                    //console.error(e)
                 });
         }
     } catch (error) {
-        console.error('Error', `Could not Download file ${error}`)
+        //console.error('Error', `Could not Download file ${error}`)
     }
 };
 
@@ -111,11 +111,11 @@ export const saveTextToFile = async (content: string, fileName: string, mimeType
                     await FileSystem.writeAsStringAsync(uri, content);
                 })
                 .catch((e) => {
-                    console.error(e)
+                    //console.error(e)
                 });
         }
     } catch (error) {
-        console.error(`Error saving file "${fileName}":`, error);
+        //console.error(`Error saving file "${fileName}":`, error);
     }
 };
 
@@ -127,7 +127,7 @@ export const loadTextFromFile = async (mimeType: MimeTypes) => {
             return await FileSystem.readAsStringAsync(fileUri);
         }
     } catch (error) {
-        console.error(error);
+        //console.error(error);
     }
 }
 

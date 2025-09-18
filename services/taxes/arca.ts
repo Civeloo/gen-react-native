@@ -30,7 +30,7 @@ export const arcaRegister = async (email: string, password: string) => {
             body: JSON.stringify({email: email, password: password}),
         });
     } catch (error) {
-        console.error("arcaRegister", error)
+        //console.error("arcaRegister", error)
     }
 }
 
@@ -52,7 +52,7 @@ export const arcaLogin = async (user: ArcaLogin) => {
         if (token) await saveSecureStore(ARCA_KEY + uid, token);
         return token;
     } catch (error) {
-        console.error("arcaLogin", error)
+        //console.error("arcaLogin", error)
     }
 }
 
@@ -67,7 +67,7 @@ export const arcaGetValues = async (token: string) => {
         return res.json();
     })
         .catch((error) => {
-            console.error("arcaGetValues", error)
+            //console.error("arcaGetValues", error)
             return;
         });
 };
@@ -83,12 +83,12 @@ export const arcaGetInvoiceLast = async (token: string) => {
         return res.json();
     })
         .catch((error) => {
-            console.error('arcaGetInvoiceLast', error);
+            //console.error('arcaGetInvoiceLast', error);
             return;
         });
 };
 
-export const arcaGetCSR = async (token: string, tin: string, org: string, cname: string, country: string, concept: string, ptoVta: string) => {
+export const arcaGetCSR = async (token: string, tin: string, org: string, cname: string, country: string, concept: string, pos: string) => {
     return fetch(ARCA_CSR_URL, {
         method: 'POST',
         body: JSON.stringify({
@@ -97,7 +97,7 @@ export const arcaGetCSR = async (token: string, tin: string, org: string, cname:
             cn: cname,
             ctry: country,
             cpt: concept,
-            pvt: ptoVta,
+            pvt: pos,
             homo: ARCA_HOMO
         }),
         headers: new Headers({
@@ -115,7 +115,7 @@ export const arcaGetCSR = async (token: string, tin: string, org: string, cname:
             await saveFile(blob, ARCA_CSR_FILE_NAME, MimeTypes.csr);
         })
         .catch((error) => {
-            console.error("arcaGetCSR", error)
+            //console.error("arcaGetCSR", error)
         });
 }
 
@@ -135,7 +135,7 @@ export const arcaSendCRT = async (email: string) => {
             });
         }
     } catch (error) {
-        console.error("arcaSendCRT", error);
+        //console.error("arcaSendCRT", error);
     }
 }
 
@@ -178,7 +178,7 @@ export const arcaInvoice = async (
         return res.json().then(json => JSON.parse(json));
     })
         .catch((error) => {
-            console.error("arcaGetCSR", error)
+            //console.error("arcaGetCSR", error)
             return;
         });
 }
