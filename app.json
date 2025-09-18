@@ -2,14 +2,14 @@
   "expo": {
     "name": "gen",
     "slug": "gen-react-native",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "civeloo-gen",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "android": {
-      "versionCode": 5,
+      "versionCode": 6,
       "package": "com.civeloo.gen",
       "intentFilters": [
         {
