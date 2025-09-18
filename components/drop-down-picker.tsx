@@ -25,13 +25,12 @@ export const DropDownPicker: FC<DropDownPickerProps> = ({data, placeholder, valu
     };
 
     const renderItem = ({item}: { item: Item }) => (
-        <View style={styles.item}>
-            <TouchableOpacity
-                key={item?.value}
-                onPress={() => handleSelect(item)}>
-                <Text style={styles.itemText}>{item?.label}</Text>
-            </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+            style={styles.item}
+            key={item?.value}
+            onPress={() => handleSelect(item)}>
+            <Text style={styles.itemText}>{item?.label}</Text>
+        </TouchableOpacity>
     );
 
     return (
@@ -95,7 +94,7 @@ const styles = StyleSheet.create({
         gap: 10,
         paddingVertical: 20,
     },
-    item: {margin: 10},
+    item: {paddingVertical: 20, paddingHorizontal: 40},
     itemText: {
         textAlign: 'center',
         fontSize: 16,
