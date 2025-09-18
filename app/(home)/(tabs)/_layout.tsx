@@ -36,6 +36,7 @@ export default function TabLayout() {
                         tabBarIconStyle: {
                             marginTop: 10,
                         },
+                        tabBarHideOnKeyboard: true
                     }}>
                     <Tabs.Screen
                         name="index"

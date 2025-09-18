@@ -3,7 +3,7 @@ import {getLocalizedText} from '@/languages/languages';
 import {yupResolver} from '@hookform/resolvers/yup';
 import React from 'react';
 import {FormProvider, SubmitHandler, useForm} from 'react-hook-form';
-import {Button, Platform, StyleSheet, Text, View} from 'react-native';
+import {Button, KeyboardAvoidingView, Platform, StyleSheet, Text, View} from 'react-native';
 import * as yup from 'yup';
 
 const schema = yup
@@ -56,7 +56,11 @@ export const SignInForm: React.FC<SignInFormProps> = ({onSave}) => {
                         {FormContent}
                     </form>
                 ) : (
-                    FormContent
+                    <KeyboardAvoidingView
+                        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                        style={styles.keyboarAvoidingView}>
+                        {FormContent}
+                    </KeyboardAvoidingView>
                 )}
             </FormProvider>
 
@@ -76,5 +80,8 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 56,
         fontWeight: 'bold',
+    },
+    keyboarAvoidingView: {
+        // flex: 1
     }
 });

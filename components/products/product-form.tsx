@@ -2,7 +2,7 @@ import {getLocalizedText} from '@/languages/languages';
 import {yupResolver} from "@hookform/resolvers/yup";
 import React from 'react';
 import {FormProvider, SubmitHandler, useForm} from 'react-hook-form';
-import {Button, Platform, StyleSheet, Text, View} from 'react-native';
+import {Button, KeyboardAvoidingView, Platform, StyleSheet, Text, View} from 'react-native';
 import * as yup from "yup";
 import {TextInputController} from '../text-input-controller';
 import {Product} from "@/types/types";
@@ -92,7 +92,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({product, onSave, onRemo
                         {FormContent}
                     </form>
                 ) : (
-                    FormContent
+                    <KeyboardAvoidingView
+                        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                        style={styles.keyboarAvoidingView}>
+                        {FormContent}
+                    </KeyboardAvoidingView>
                 )}
             </FormProvider>
         </View>
@@ -121,5 +125,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
-    okButton: {flex: 1}
+    okButton: {
+        flex: 1
+    },
+    keyboarAvoidingView: {
+        flex: 1
+    },
 });

@@ -3,7 +3,7 @@ import {getLocalizedText} from '@/languages/languages';
 import {yupResolver} from '@hookform/resolvers/yup';
 import React from 'react';
 import {FormProvider, SubmitHandler, useForm} from 'react-hook-form';
-import {Button, Platform, StyleSheet, Text, View} from 'react-native';
+import {Button, KeyboardAvoidingView, Platform, StyleSheet, Text, View} from 'react-native';
 import * as yup from 'yup';
 import {SignDataProps} from '@/types/sign-data-props';
 
@@ -65,7 +65,11 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({onSave}) => {
                         {FormContent}
                     </form>
                 ) : (
-                    FormContent
+                    <KeyboardAvoidingView
+                        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                        style={styles.keyboarAvoidingView}>
+                        {FormContent}
+                    </KeyboardAvoidingView>
                 )}
             </FormProvider>
         </View>
@@ -74,7 +78,6 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({onSave}) => {
 
 const styles = StyleSheet.create({
     container: {
-        // flex: 1,
         width: '100%',
         alignItems: 'center',
         justifyContent: 'space-evenly',
@@ -85,5 +88,8 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 56,
         fontWeight: "bold",
+    },
+    keyboarAvoidingView: {
+        // flex: 1
     },
 });

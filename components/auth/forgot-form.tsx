@@ -3,7 +3,7 @@ import {getLocalizedText} from '@/languages/languages';
 import {yupResolver} from '@hookform/resolvers/yup';
 import React from 'react';
 import {FormProvider, SubmitHandler, useForm} from 'react-hook-form';
-import {Button, Platform, StyleSheet, Text, View} from 'react-native';
+import {Button, KeyboardAvoidingView, Platform, StyleSheet, Text, View} from 'react-native';
 import * as yup from 'yup';
 
 const schema = yup
@@ -51,7 +51,11 @@ export const ForgotForm: React.FC<ForgotFormProps> = ({onSave}) => {
                         {FormContent}
                     </form>
                 ) : (
-                    FormContent
+                    <KeyboardAvoidingView
+                        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                        style={styles.keyboarAvoidingView}>
+                        {FormContent}
+                    </KeyboardAvoidingView>
                 )}
             </FormProvider>
         </View>
@@ -72,5 +76,8 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 56,
         fontWeight: 'bold',
+    },
+    keyboarAvoidingView: {
+        // flex: 1
     }
 });

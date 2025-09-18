@@ -2,7 +2,7 @@ import {getLocalizedText} from '@/languages/languages';
 import {yupResolver} from '@hookform/resolvers/yup';
 import React, {useEffect} from 'react';
 import {Controller, FormProvider, SubmitHandler, useForm} from 'react-hook-form';
-import {Button, Platform, StyleSheet, Text, View} from 'react-native';
+import {Button, KeyboardAvoidingView, Platform, StyleSheet, Text, View} from 'react-native';
 import * as yup from 'yup';
 import {TextInputController} from '../text-input-controller';
 import {Company} from '@/types/types';
@@ -249,8 +249,11 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({company, onSave}) => {
                     <form onSubmit={methods.handleSubmit(onSubmit)}>
                         {FormContent}
                     </form>
-                ) : (
-                    FormContent
+                ) : (<KeyboardAvoidingView
+                        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                        style={styles.keyboarAvoidingView}>
+                        {FormContent}
+                    </KeyboardAvoidingView>
                 )}
             </FormProvider>
         </View>
@@ -295,5 +298,8 @@ const styles = StyleSheet.create({
     errorText: {
         color: 'red',
     },
-
+    keyboarAvoidingView: {
+        flex: 1,
+        // paddingBottom: 10
+    }
 });
