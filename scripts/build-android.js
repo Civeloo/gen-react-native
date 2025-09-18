@@ -16,13 +16,13 @@ const prebuild = spawn('expo', [' prebuild --platform android --clean'], {
 });
 
 prebuild.on('exit', () => {
-    console.log('ADD KEYSTORE');
+    console.info('ADD KEYSTORE');
     fs.copyFileSync(path + keystore.file, path + 'android/app/' + keystore.file)
 
-    console.log('ADD DEFAULT LOCALE');
+    console.info('ADD DEFAULT LOCALE');
     fs.copyFileSync(path + 'android/app/src/main/res/values-b+en/strings.xml', path + 'android/app/src/main/res/values/strings.xml');
 
-    console.log('UPDATE GRADLE VARIABLES');
+    console.info('UPDATE GRADLE VARIABLES');
     const content = `
 MYAPP_UPLOAD_STORE_FILE=${keystore.file}
 MYAPP_UPLOAD_KEY_ALIAS=${keystore.keyAlias}
@@ -36,7 +36,7 @@ MYAPP_UPLOAD_KEY_PASSWORD=${keystore.keyPassword}
     fs.writeFileSync(path + dotGradle + '/gradle.properties', content);
     fs.appendFileSync(path + 'android/gradle.properties', content);
 
-    console.log('ADD SIGNING CONFIG TO BUILD.GRADLE');
+    console.info('ADD SIGNING CONFIG TO BUILD.GRADLE');
     const buildGradle = fs.readFileSync(path + appBuildGradle, 'utf8');
     const lines = buildGradle.split('\n');
     const newBuildGradle = [];
