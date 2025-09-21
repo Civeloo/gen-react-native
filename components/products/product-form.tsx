@@ -1,11 +1,12 @@
 import {getLocalizedText} from '@/languages/languages';
 import {yupResolver} from "@hookform/resolvers/yup";
-import React from 'react';
+import React, {useState} from 'react';
 import {FormProvider, SubmitHandler, useForm} from 'react-hook-form';
-import {Button, KeyboardAvoidingView, Platform, StyleSheet, Text, View} from 'react-native';
+import {Button, KeyboardAvoidingView, Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import * as yup from "yup";
 import {TextInputController} from '../text-input-controller';
 import {Product} from "@/types/types";
+import {BarcodeScanner} from "@/components/barcode-scanner";
 
 const schema = yup
     .object({
@@ -14,6 +15,7 @@ const schema = yup
         // productUnit: yup.string().max(50).required(),
         productPrice: yup.string().required(),
         productQuantity: yup.string().required(),
+        productBarcode: yup.string().defined()
     })
     .required();
 
@@ -34,15 +36,26 @@ export const ProductForm: React.FC<ProductFormProps> = ({product, onSave, onRemo
             // productUnit: product?.productUnit || '',
             productPrice: String(product?.productPrice || ''),
             productQuantity: String(product?.productQuantity || ''),
+            productBarcode: String(product?.productBarcode || '')
         }
     });
 
-    const onSubmit: SubmitHandler<FormValues> = (values:FormValues) => {
+    const [scan, setScan] = useState(false);
+
+    const handleScan = (data: string) => {
+        if (data) {
+            methods.setValue('productBarcode', data);
+            setScan(false);
+        }
+    };
+
+    const onSubmit: SubmitHandler<FormValues> = (values: FormValues) => {
         const productValues = {
             productID: values.productID,
             productName: values.productName,
             productPrice: Number(values.productPrice),
             productQuantity: Number(values.productQuantity),
+            productBarcode: values.productBarcode,
         };
         onSave(productValues);
         methods.reset();
@@ -72,6 +85,21 @@ export const ProductForm: React.FC<ProductFormProps> = ({product, onSave, onRemo
                     keyboardType="numeric"
                 />
             </View>
+            <View style={styles.input}>
+                <Text style={styles.label}>🛒</Text>
+                <TextInputController
+                    name="productBarcode"
+                    placeholder={getLocalizedText('barcode_placeholder')}
+                    keyboardType="numeric"
+                />
+                <TouchableOpacity
+                    style={{position: 'absolute', right: 11}}
+                    onPress={() => {
+                        setScan(scan => !scan)
+                    }}>
+                    <Text style={styles.scan}>|||||</Text>
+                </TouchableOpacity>
+            </View>
             <View style={styles.buttons}>
                 <View style={styles.okButton}>
                     <Button title={getLocalizedText('ok')} onPress={methods.handleSubmit(onSubmit)}/>
@@ -81,6 +109,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({product, onSave, onRemo
                     title="  -  "
                     onPress={() => onRemove(product?.productID)}/>}
             </View>
+            {scan && <View style={styles.camera}>
+                <BarcodeScanner onScan={handleScan}/>
+            </View>}
         </View>
     );
 
@@ -94,7 +125,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({product, onSave, onRemo
                 ) : (
                     <KeyboardAvoidingView
                         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-                        style={styles.keyboarAvoidingView}>
+                        style={styles.keyboardAvoidingView}>
                         {FormContent}
                     </KeyboardAvoidingView>
                 )}
@@ -128,7 +159,17 @@ const styles = StyleSheet.create({
     okButton: {
         flex: 1
     },
-    keyboarAvoidingView: {
+    keyboardAvoidingView: {
         flex: 1
     },
+    scan: {
+        height: 'auto',
+        padding: 5,
+        backgroundColor: 'black',
+        fontSize: 20,
+        color: 'white',
+    },
+    camera: {
+        marginVertical: 20
+    }
 });
