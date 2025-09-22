@@ -30,7 +30,11 @@ export const OrderList: FC<Props> = ({data, selected, onRemove, onWsp, onPrint, 
 
     const renderItem = ({item}: { item: Order }) => {
         const order = item;
-        const orderDetails = OrderDetails.where(db, 'orderID', order.orderID) as OrderDetail[];
+        const orderDetails = OrderDetails.where(db, [{
+            key: 'orderID',
+            value: order.orderID,
+            condition: '='
+        }]) as OrderDetail[];
         const customer = Customers.byId(db, order?.customerID).at(0) as Customer;
         const customerName = String(customer?.customerName || getLocalizedText('cash_customer'));
         const total = orderDetails.reduce((acc, orderDetail) => acc + orderDetail.orderDetailPrice * orderDetail.orderDetailQuantity, 0);
@@ -59,7 +63,7 @@ export const OrderList: FC<Props> = ({data, selected, onRemove, onWsp, onPrint, 
                             <Text key={orderDetail.orderDetailName + orderDetail.productID} style={styles.detail}>
                                 {detail}
                             </Text>
-                        )
+                        );
                     })}
                 </View>
                 <View style={styles.cardFooter}>

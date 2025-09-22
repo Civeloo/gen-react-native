@@ -29,12 +29,7 @@ const Orders = (() => {
     //     where((getCell) => getCell('status') != 'cancelled');
     // });
     const getNotCancelledOrders = (db: SQLiteDatabase) =>
-        base.where(db, 'orderStatus', 'cancelled', '!=');
-    // Object.entries(queries.getResultTable('notCancelledOrders'))
-    //     .map(([id, value]) => ({
-    //         id,
-    //         ...value
-    //     }));
+        base.where(db, [{key: 'orderStatus', value: 'cancelled', condition: '!='}]);
 
     const cancel = (db: SQLiteDatabase, id: string) =>
         base.update(db, {orderID: id, orderStatus: 'cancelled'});

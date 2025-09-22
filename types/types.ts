@@ -102,3 +102,6 @@ export type Invoice = {
     company: Company;
     total: number;
 };
+
+export type SelectedProduct = Product & { qty: number };
+export type SelectedProducts = { [key: string]: SelectedProduct };

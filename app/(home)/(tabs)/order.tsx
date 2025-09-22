@@ -40,7 +40,7 @@ export default function OrderPage() {
         // TODO: Cancelar factura en ARCA también
         setIsLoading(true);
         orderDetails.map((orderDetail: OrderDetail) => {
-            const product = Products.byId(db, orderDetail.productID).at(0) as Product;
+            const product = Products.byId(db, orderDetail.productID)?.at(0) as Product;
             Products.update(db, {
                 productID: orderDetail.productID,
                 productQuantity: product.productQuantity + orderDetail.orderDetailQuantity

@@ -1,6 +1,6 @@
 import {getFieldKey, getUUIDv4} from '@/utils/utils';
-import {SQLiteDatabase} from "expo-sqlite";
 import * as SQLite from "expo-sqlite";
+import {SQLiteDatabase} from "expo-sqlite";
 // import {db, relations} from './database';
 
 type Data = { [x: string]: any; status?: string; };
@@ -26,16 +26,18 @@ const setPartialRow = (db: SQLiteDatabase, table: string, id: string, data: Data
     db.execSync(sql);
 }
 
-const get = (db: SQLiteDatabase, table: string, key: string, value: string, condition = '=') => {
+const get = (db: SQLiteDatabase, table: string, fields: { key: string, value: string, condition: string }[]) => {
     const sql = `SELECT *
                  FROM ${table}
-                 WHERE ${key} ${condition} "${value}"`;
-    return db.getAllSync(sql)// as [{ [x: string]: any; }];
+                 WHERE ${fields.map(e =>
+                         `${e.key} ${e.condition || '='} "${(e.condition === 'LIKE') ? `%${e.value}%` : e.value}"`).join(' OR ')}`;
+    return db.getAllSync(sql);// as [{ [x: string]: any; }];
 }
 
 const getRow = (db: SQLiteDatabase, table: string, id: string) => {
     const tableID = getFieldKey(table) + 'ID';
-    return get(db, table, tableID, id);
+    const fields = [{key: tableID, value: id, condition: '='}];
+    return get(db, table, fields);
 }
 
 const getTable = (db: SQLiteDatabase, table: string) => {
@@ -54,13 +56,13 @@ const delRow = (db: SQLiteDatabase, table: string, id: string) => {
     return db.runSync(sql, {$value: id});
 }
 
-const transaction = (db: SQLiteDatabase, fn: () => SQLite.SQLiteRunResult | undefined) => {
-    Promise.all([
-        db.withTransactionAsync(async () => {
-            fn
-        })
-    ]);
-}
+// const transaction = (db: SQLiteDatabase, fn: () => SQLite.SQLiteRunResult | undefined) => {
+//     Promise.all([
+//         db.withTransactionAsync(async () => {
+//             fn
+//         })
+//     ]);
+// }
 
 const Model = (table: string) => {
 
@@ -127,8 +129,8 @@ const Model = (table: string) => {
         return getTable(db, table);
     };
 
-    const where = (db: SQLiteDatabase, key: string, value: string, condition = '=') =>
-        get(db, table, key, value, condition);
+    const where = (db: SQLiteDatabase, fields: { key: string, value: string, condition: string }[]) =>
+        get(db, table, fields);
 
     return {
         add,
