@@ -142,42 +142,49 @@ export const dataToCsv = (data: any[]) => {
 }
 
 export const csvToDb = (db: SQLiteDatabase, table: string, csv: string) => {
-    if ((csv.match(/;/g)?.length || 0) < 1)
-        return alert(`USE ${separator} AS SEPARATOR`);
-    const tableID = getFieldKey(table) + 'ID';
-    const lines = csv.split('\n');
-    const fields = lines[0].split(separator);
-    const index = fields.findIndex(uid => uid === tableID);
-    const fieldsStr = fields.join(',');
-    for (let i = 1; i < lines.length; i++) {
-        const row = lines[i].split(separator);
-        let valueTableID = (index !== -1) ? row.at(index) : '';
-        if (!valueTableID) row[index] = getUUIDv4();
-        const values = '"' + row.join('","') + '"';
-        let sql = `SELECT COUNT(*)
-                   FROM ${table}
-                   WHERE ${tableID} = "${valueTableID}";`;
-        const result = db.getFirstSync(sql);
-        const count = Number(Object.values(result).at(0));
-        if (count > 0) {
-            let valueID = '';
-            const setValues = [] as string[];
-            row.forEach((value, i) => {
-                if (i === index) {
-                    valueID = value;
-                } else {
-                    if (fields[i]) setValues.push(`${fields[i]}="${value}"`);
-                }
-            });
-            sql = `UPDATE ${table}
-                   SET ${setValues.join(', ')}
-                   WHERE ${tableID} = "${valueID}";`;
-        } else {
-            sql = `INSERT INTO ${table} (${fieldsStr})
-                   VALUES (${values});`;
+    try {
+        if ((csv.match(/;/g)?.length || 0) < 1)
+            return alert(`USE ${separator} AS SEPARATOR`);
+        const tableID = getFieldKey(table) + 'ID';
+        const lines = csv.split('\n');
+        const fields = lines[0].split(separator);
+        const index = fields.findIndex(uid => uid === tableID);
+        const fieldsStr = fields.join(',');
+        for (let i = 1; i < lines.length; i++) {
+            const row = lines[i].split(separator);
+            let valueTableID = (index !== -1) ? row.at(index) : '';
+            if (!valueTableID) row[index] = getUUIDv4();
+            const values = '"' + row.join('","') + '"';
+            let sql = `SELECT COUNT(*)
+                       FROM ${table}
+                       WHERE ${tableID} = "${valueTableID}";`;
+            const result = db.getFirstSync(sql);
+            const count = result ? Number(Object.values(result).at(0)): 0;
+            if (count > 0) {
+                let valueID = '';
+                const setValues = [] as string[];
+                row.forEach((value, i) => {
+                    if (i === index) {
+                        valueID = value;
+                    } else {
+                        if (fields[i]) setValues.push(`${fields[i]}="${value}"`);
+                    }
+                });
+                sql = `UPDATE ${table}
+                       SET ${setValues.join(', ')}
+                       WHERE ${tableID} = "${valueID}";`;
+            } else {
+                sql = `INSERT INTO ${table} (${fieldsStr})
+                       VALUES (${values});`;
+            }
+            db.execSync(sql);
         }
-        db.execSync(sql);
+    } catch (error) {
+        console.error(error);
     }
 }
 
 export const getVersion = () => new Date().getTime();
+
+export const dateToRFC3339 = (yyyymmdd: string) =>
+    yyyymmdd.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');

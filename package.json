@@ -1,7 +1,7 @@
 {
   "name": "gen-react-native",
   "main": "expo-router/entry",
-  "version": "0.0.6",
+  "version": "0.0.8",
   "scripts": {
     "start": "expo start -c",
     "android": "expo prebuild -p android && expo run:android",
@@ -75,7 +75,8 @@
     "reconnecting-websocket": "^4.4.0",
     "yup": "^1.6.1",
     "expo-build-properties": "~0.14.8",
-    "expo-camera": "~16.1.11"
+    "expo-camera": "~16.1.11",
+    "react-native-svg": "15.11.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

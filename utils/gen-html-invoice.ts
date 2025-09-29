@@ -1,7 +1,17 @@
 import {Invoice, OrderDetail} from "@/types/types";
 import {getLocalizedText} from "@/languages/languages";
+import {getQRCodeSvg} from "@/utils/gen-qr";
+import {arcaQrValue} from "@/services/taxes/arca";
 
 export function genHtmlInvoice(invoice: Invoice) {
+    const {order,  company, customer, total} = invoice;
+    const orderSignature = order?.orderSignature;
+    let qrSvg = '';
+    let vtoCae = '';
+    if (!!order?.orderSignature) {
+        vtoCae = order?.orderExpiration?.replace(/(\d{4})(\d{2})(\d{2})/, '$1/$2/$3')||'';
+        qrSvg = getQRCodeSvg({size: 128, value: arcaQrValue(invoice)});
+    }
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,7 +58,6 @@ export function genHtmlInvoice(invoice: Invoice) {
         }
 
         .company-info p {
-            color: #666;
             margin-bottom: 3px;
         }
 
@@ -146,11 +155,16 @@ export function genHtmlInvoice(invoice: Invoice) {
 
         .invoice-footer {
             border-top: 2px solid #e5e7eb;
-            padding-top: 20px;
+            margin: 0 20px;
             text-align: center;
-            color: #666;
         }
-
+        
+        .invoice-qr {
+            display: flex;
+            justify-content: start;
+            gap: 20px;
+        }      
+        
         .payment-terms {
             background: #fef3c7;
             border: 1px solid #f59e0b;
@@ -164,7 +178,6 @@ export function genHtmlInvoice(invoice: Invoice) {
             margin-bottom: 10px;
         }
 
-        /* Print Styles */
         @media print {
             body {
                 background: white;
@@ -218,32 +231,32 @@ export function genHtmlInvoice(invoice: Invoice) {
 <body>
     <div class="invoice-container">
         <!-- Invoice Header -->
-        <div class="invoice-header">
+        <header class="invoice-header">
             <div class="company-info">
-                <h1>${invoice.company.companyName}</h1>
+                <h1>${company?.companyName || ''}</h1>
 <!--                <p>123 Business Street</p>-->
 <!--                <p>City, State 12345</p>-->
 <!--                <p>Phone: (555) 123-4567</p>-->
 <!--                <p>Email: info@yourcompany.com</p>-->
             </div>
             <div class="invoice-title">
-                <h2>${invoice.order.orderCode}</h2>
+                <h2>${order?.orderCode}</h2>
 <!--                <p><strong>${getLocalizedText('invoice').toUpperCase()}</strong></p>-->
             </div>
-        </div>
+        </header>
         <!-- Invoice Meta Information -->
         <div class="invoice-meta">
             <div class="bill-to">
 <!--                <h3>Bill To</h3>-->
 <!--                <p><strong>Client Company Name</strong></p>-->
-                <p>${invoice.customer.customerName}</p>
+                <p>${customer?.customerName}</p>
 <!--                <p>456 Client Avenue</p>-->
 <!--                <p>Client City, State 67890</p>-->
 <!--                <p>john@clientcompany.com</p>-->
             </div>
             <div class="invoice-details">
 <!--                <h3>${getLocalizedText('details')}</h3>-->
-                <p><strong>${getLocalizedText('date')}: </strong>${(new Date(invoice.order.orderDate)).toDateString()}</p>
+                <p><strong>${getLocalizedText('date')}: </strong>${(new Date(order?.orderDate)).toDateString()}</p>
 <!--                <p><strong>Due Date:</strong> February 14, 2024</p>-->
 <!--                <p><strong>Payment Terms:</strong> Net 30</p>-->
 <!--                <p><strong>Project:</strong> Website Development</p>-->
@@ -263,11 +276,11 @@ export function genHtmlInvoice(invoice: Invoice) {
 ` + (invoice.orderDetails.map((orderDetail: OrderDetail) => {
         return (`<tr>
                         <td>
-                            <small>${orderDetail.orderDetailName}</small>
+                            <small>${orderDetail?.orderDetailName}</small>
                         </td>
-                        <td class="text-center">${orderDetail.orderDetailQuantity}</td>
-                            <td class="text-right">${orderDetail.orderDetailPrice}</td>
-                        <td class="text-right">${(orderDetail.orderDetailPrice * orderDetail.orderDetailQuantity).toFixed(2)}</td>
+                        <td class="text-center">${orderDetail?.orderDetailQuantity}</td>
+                            <td class="text-right">${orderDetail?.orderDetailPrice}</td>
+                        <td class="text-right">${(orderDetail?.orderDetailPrice * orderDetail?.orderDetailQuantity).toFixed(2)}</td>
                         </tr>`)
     })) + `                
             </tbody>
@@ -286,7 +299,7 @@ export function genHtmlInvoice(invoice: Invoice) {
 <!--                </tr>-->
                 <tr>
                     <td><strong>TOTAL:</strong></td>
-                    <td class="text-right"><strong>$ </strong>${invoice.total}</td>
+                    <td class="text-right"><strong>$ </strong>${total}</td>
                 </tr>
             </table>
         </div>
@@ -299,13 +312,26 @@ export function genHtmlInvoice(invoice: Invoice) {
 <!--            <p><strong>Late Fee:</strong> 1.5% per month on overdue amounts</p>-->
 <!--        </div>-->
 
-        <!-- Invoice Footer -->
-        <div class="invoice-footer">
-        ` + (`<p><strong>${getLocalizedText('invoice_signature')}: </strong>${invoice.order.orderSignature}</p>`) + `
+    </div>
+
+    <!-- Invoice Footer -->
+    <footer class="invoice-footer" >
+        ` + (!!qrSvg ? `<div>
+            <div style="text-align: right;position: relative; top:40px;right: 0">
+            <p><strong>${getLocalizedText('invoice_signature')}N°: </strong>${orderSignature}</p>
+            <p><strong>Fecha de Vto. de CAE: </strong>${vtoCae}</p>            
+            </div>
+            <div class="invoice-qr">
+            ${qrSvg}
+            <div style="text-align: left;color: black;">
+                <h2 style="font-size: 58px;font-weight: 900;letter-spacing: 2px">ARCA</h2>
+                <h3 style="font-size: 16px;font-style: italic;">Comprobante Autorizado</h3>
+                <p style="font-size: 8px;font-style: italic;inline-size:fit-content;">Esta administración Federal no se resaponsabiliza por la veracidad en los datos ingresados en el detalle de la operación</p>
+            </div>
+        </div></div>` : '') + `
 <!--            <p>Thank you for your business!</p>-->
 <!--            <p>If you have any questions about this invoice, please contact us at (555) 123-4567</p>-->
-        </div>
-    </div>
-</body>
-</html>`;
+    </footer>
+    </body>
+    </html>`;
 }

@@ -68,7 +68,10 @@ export default function OrderPage() {
                 setIsLoading(false);
                 return;
             }
-            const signature = res.FeDetResp.FECAEDetResponse;
+            const feDetResp = res?.FeDetResp;
+            const feDetRespArr = Array.isArray(feDetResp) ? feDetResp : [feDetResp];
+            const fECAEDetResponseArr = feDetRespArr.map((f) => f.FECAEDetResponse);
+            const signature = fECAEDetResponseArr[0];
             const customerCodeKey = 'C';
             const orderNumber = signature.CbteDesde;
             const orderCode = customerCodeKey + orderNumber.toString();
@@ -78,11 +81,10 @@ export default function OrderPage() {
                 orderCodeID: customerCodeKey,
                 orderCodeNumber: orderNumber
             } as OrderCode;
-            if (!orderCodeLast) {
+            if (!orderCodeLast)
                 OrderCodes.add(db, newOrderCode);
-            } else {
+            else
                 OrderCodes.save(db, newOrderCode);
-            }
             order.orderCode = orderCode;
             order.orderSignature = signature.CAE.toString();
             order.orderExpiration = signature.CAEFchVto.toString();
@@ -96,7 +98,7 @@ export default function OrderPage() {
             } as Order;
             Orders.update(db, updateOrder);
             setIsLoading(false);
-            return  {...order, ...updateOrder} as Order;
+            return {...order, ...updateOrder} as Order;
         }
         return order;
     }

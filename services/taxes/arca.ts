@@ -1,7 +1,14 @@
-import {getValueForSecureStore, MimeTypes, pickDocuments, saveFile, saveSecureStore} from "@/utils/utils";
+import {
+    dateToRFC3339,
+    getValueForSecureStore,
+    MimeTypes,
+    pickDocuments,
+    saveFile,
+    saveSecureStore
+} from "@/utils/utils";
 import * as FileSystem from "expo-file-system";
 import {User} from "@firebase/auth-types";
-import {Order} from "@/types/types";
+import {Invoice, Order} from "@/types/types";
 
 const ARCA_KEY = String(process.env.EXPO_PUBLIC_ARCA_KEY);
 export const ARCA_HOMO = String(process.env.EXPO_PUBLIC_ARCA_HOMO);
@@ -178,7 +185,33 @@ export const arcaInvoice = async (
         return res.json().then(json => JSON.parse(json));
     })
         .catch((error) => {
-            //console.error("arcaGetCSR", error)
+            console.error("arcaGetCSR", error)
             return;
         });
+}
+
+export const getDoc = (docNro:string)=>
+    (docNro && docNro !== '0') ? {nro: docNro, tipo: 96} : {nro: '23000000000', tipo: 80};
+
+export const arcaQrValue = (invoice: Invoice) => {
+    const {order, customer, company, total} = invoice;
+    const orderNumber = order?.orderCode.slice(1);
+    const doc = getDoc(customer?.customerTin);
+    const qrValues = {
+        ver: 1,
+        fecha: dateToRFC3339(order?.orderDate),
+        cuit: Number(company?.companyTin),
+        ptoVta: Number(company?.companyPOS),
+        tipoCmp: 11,
+        nroCmp: Number(orderNumber),
+        importe: Number(total),
+        moneda: 'PES',
+        ctz: 1,
+        tipoDocRec: Number(doc.tipo),
+        nroDocRec: Number(doc.nro),
+        tipoCodAut: 'A',
+        codAut: Number(order?.orderSignature)
+    };
+    const qrValuesJSON = JSON.stringify(qrValues);
+    return `https://www.afip.gob.ar/fe/qr/?p=${btoa(qrValuesJSON)}`;
 }
