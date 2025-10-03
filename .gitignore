@@ -43,3 +43,5 @@ ios
 google-services.json
 GoogleService-Info.plist
 *.keystore
+
+storybook.requires.ts
