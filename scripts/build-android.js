@@ -1,10 +1,10 @@
 const {spawn} = require('node:child_process');
 const fs = require('node:fs');
-const path = '';// 'C:\\pj\\gen-react-native\\';
-// const path = '';
+const path = '';
+
 const keystore = {
-    file: process.env['KEYSTORE_FILE'],//'gen-react-native.keystore',
-    keyAlias: process.env['KEYSTORE_ALIAS'],//'my-key-alias',
+    file: process.env['KEYSTORE_FILE'],
+    keyAlias: process.env['KEYSTORE_ALIAS'],
     password: process.env['KEYSTORE_PASS'],
     keyPassword: process.env['KEYSTORE_KEY_PASS']
 };
