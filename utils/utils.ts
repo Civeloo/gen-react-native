@@ -137,7 +137,7 @@ export const getFieldKey = (table: string) => {
 };
 
 export const dataToCsv = (data: any[]) => {
-    if (!(data?.length > 0)) return '';
+    if (!(data?.length > 0) || !(Object.keys(data[0]).length > 0)) return '';
     const fields = Object.keys(data[0]).join(separator);
     const rows = data.map(e => Object.values(e).join(separator)).join('\n');
     return `${fields}\n${rows}`;
@@ -180,6 +180,7 @@ export const csvToDb = (db: SQLiteDatabase, table: string, csv: string) => {
                        VALUES (${values});`;
             }
             db.execSync(sql);
+            alert('File imported!');
         }
     } catch (error) {
         console.error(error);
