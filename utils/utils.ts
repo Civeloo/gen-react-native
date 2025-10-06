@@ -3,7 +3,7 @@ import * as Linking from "expo-linking";
 import ExpoLocalization from "expo-localization/src/ExpoLocalization";
 import * as SecureStore from 'expo-secure-store';
 import * as FileSystem from 'expo-file-system';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import Storage from 'expo-sqlite/kv-store';
 import * as DocumentPicker from 'expo-document-picker';
 import {SQLiteDatabase} from "expo-sqlite";
 
@@ -28,14 +28,14 @@ export const sendWhatsapp = (phoneNumber: number, message: string) => {
     const text = encodeURIComponent(message);
     const url = `https://wa.me/${phoneNumber}?text=${text}`;
     Linking.openURL(url)
-        .catch((e) => {
-            //console.error('An error occurred', e);
+        .catch((err) => {
+            console.error('An error occurred', err);
         });
 };
 
 export const getRegionCode = () => ExpoLocalization.getLocales()[0].regionCode || 'US';
 
-export const getCustomerCode = (regionCode?: string) => regionCode == 'AR' ? 'C' : '#';
+export const getCustomerCode = (regionCode?: string) => regionCode === 'AR' ? 'C' : '#';
 
 export const saveSecureStore = async (key: string, value: string) => {
     await SecureStore.setItemAsync(key, value);
@@ -45,12 +45,12 @@ export const getValueForSecureStore = async (key: string) =>
     await SecureStore.getItemAsync(key) || '';
 
 const getOrRequestDirectory = async (): Promise<string | null> => {
-    // const stored = await AsyncStorage.getItem(DIRECTORY_KEY);
-    // if (stored) return stored;
+    const stored = Storage.getItemSync(DIRECTORY_KEY);
+    if (stored) return stored;
     const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
     if (!permissions.granted) return null;
     const uri = permissions.directoryUri;
-    await AsyncStorage.setItem(DIRECTORY_KEY, uri);
+    Storage.setItemSync(DIRECTORY_KEY, uri);
     return uri;
 };
 
@@ -79,8 +79,8 @@ export const pickDocuments = async (mimeType = MimeTypes.all, multiple = false) 
         } else {
             alert("Document selection cancelled.");
         }
-    } catch (error) {
-        //console.error("Error picking documents:", error);
+    } catch (err) {
+        console.error("Error picking documents:", err);
     }
 };
 
@@ -93,29 +93,30 @@ export const saveFile = async (blob: Blob, fileName: string, mimeType: string, d
                 .then(async (uri) => {
                     await FileSystem.writeAsStringAsync(uri, data, {encoding: FileSystem.EncodingType.Base64});
                 })
-                .catch((e) => {
-                    //console.error(e)
+                .catch((err) => {
+                    console.error(err)
                 });
         }
-    } catch (error) {
-        //console.error('Error', `Could not Download file ${error}`)
+    } catch (err) {
+        console.error('Error', `Could not Download file ${err}`)
     }
 };
 
-export const saveTextToFile = async (content: string, fileName: string, mimeType: string, directoryUri?: string | null) => {
+export const saveTextToFile = async (content: string, fileName: string, mimeType: string) => {
+    if (!content) return alert('Not content!');
     try {
-        if (!directoryUri) directoryUri = await getOrRequestDirectory();
-        if (directoryUri) {
-            FileSystem.StorageAccessFramework.createFileAsync(directoryUri, fileName, mimeType)
-                .then(async (uri) => {
-                    await FileSystem.writeAsStringAsync(uri, content);
-                })
-                .catch((e) => {
-                    //console.error(e)
-                });
-        }
-    } catch (error) {
-        //console.error(`Error saving file "${fileName}":`, error);
+        const directoryUri = await getOrRequestDirectory();
+        if (!directoryUri) return;
+        FileSystem.StorageAccessFramework.createFileAsync(directoryUri, fileName, mimeType)
+            .then(async (uri) => {
+                await FileSystem.writeAsStringAsync(uri, content);
+                alert('File saved!');
+            })
+            .catch((err) => {
+                console.error(err)
+            });
+    } catch (err) {
+        console.error(`Error saving file "${fileName}":`, err);
     }
 };
 
@@ -126,8 +127,8 @@ export const loadTextFromFile = async (mimeType: MimeTypes) => {
             const fileUri = assets[0].uri;
             return await FileSystem.readAsStringAsync(fileUri);
         }
-    } catch (error) {
-        //console.error(error);
+    } catch (err) {
+        console.error(err);
     }
 }
 
@@ -136,6 +137,7 @@ export const getFieldKey = (table: string) => {
 };
 
 export const dataToCsv = (data: any[]) => {
+    if (!(data?.length > 0)) return '';
     const fields = Object.keys(data[0]).join(separator);
     const rows = data.map(e => Object.values(e).join(separator)).join('\n');
     return `${fields}\n${rows}`;
@@ -159,7 +161,7 @@ export const csvToDb = (db: SQLiteDatabase, table: string, csv: string) => {
                        FROM ${table}
                        WHERE ${tableID} = "${valueTableID}";`;
             const result = db.getFirstSync(sql);
-            const count = result ? Number(Object.values(result).at(0)): 0;
+            const count = result ? Number(Object.values(result).at(0)) : 0;
             if (count > 0) {
                 let valueID = '';
                 const setValues = [] as string[];
