@@ -164,11 +164,12 @@ export const arcaInvoice = async (
         email: String(user?.email),
         password: String(user?.uid)
     };
-    const invoice: { cbte: string, docNro: string, impNeto: number, homo?: string } = {
+    const invoice: { cbteTipo?:number, cbte: string, cbteFch?: string, docNro: string, impNeto: number } = {
         cbte: order.orderCode?.slice(1),
         docNro: customerTin,
         impNeto: total
     };
+    if (!!order?.orderSignature) invoice['cbteTipo'] = 13;
     let token = await arcaGetToken(usr.email);
     token = !token ? await arcaLogin(usr) : token;
 
@@ -185,7 +186,7 @@ export const arcaInvoice = async (
         return res.json().then(json => JSON.parse(json));
     })
         .catch((error) => {
-            console.error("arcaGetCSR", error)
+            console.error("arcaInvoice", error)
             return;
         });
 }

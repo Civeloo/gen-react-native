@@ -2,14 +2,14 @@
   "expo": {
     "name": "gen",
     "slug": "gen-react-native",
-    "version": "0.0.9",
+    "version": "0.0.12",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "civeloo-gen",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "android": {
-      "versionCode": 9,
+      "versionCode": 12,
       "package": "com.civeloo.gen",
       "intentFilters": [
         {
@@ -107,7 +107,7 @@
         {
           "android": {
             "enableOnBackInvokedCallback": true,
-            "enableProguardInReleaseBuilds": true
+            "enableProguardInReleaseBuilds": true,
           }
         }
       ]

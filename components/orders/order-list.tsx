@@ -12,7 +12,7 @@ import OrderDetails from "@/services/database/orderDetail.model";
 type Props = {
     data: Order[];
     selected: {};
-    onRemove: (orderDetails: OrderDetail[]) => void;
+    onRemove: (invoice: Invoice) => void;
     onWsp: (invoice: Invoice) => void;
     onPrint: (invoice: Invoice) => void;
     onFile: (invoice: Invoice) => void;
@@ -23,10 +23,6 @@ export const OrderList: FC<Props> = ({data, selected, onRemove, onWsp, onPrint, 
     const [selectedOrder, setSelectedOrder] = useState({});
 
     const db = useSQLiteContext();
-
-    const handleRemove = (orderDetails: OrderDetail[]) => {
-        onRemove(orderDetails);
-    };
 
     const renderItem = ({item}: { item: Order }) => {
         const order = item;
@@ -50,10 +46,10 @@ export const OrderList: FC<Props> = ({data, selected, onRemove, onWsp, onPrint, 
                     <Text style={styles.title}>{customerName}</Text>
                     <Text style={styles.detail}>{orderCode}</Text>
                     <Text style={styles.date}>{orderDate.split('T')[0]}</Text>
-                    {!order.orderSignature && <Button
+                    <Button
                         title="  -  "
                         color="red"
-                        onPress={() => handleRemove(orderDetails)}/>}
+                        onPress={() => onRemove(invoice)}/>
                 </View>
                 <View style={styles.detailList}>
                     {orderDetails.map((orderDetail: OrderDetail) => {

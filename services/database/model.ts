@@ -26,11 +26,11 @@ const setPartialRow = (db: SQLiteDatabase, table: string, id: string, data: Data
     db.execSync(sql);
 }
 
-const get = (db: SQLiteDatabase, table: string, fields: { key: string, value: string, condition: string }[]) => {
+const get = (db: SQLiteDatabase, table: string, fields: { key: string, value: string, condition: string }[], separator='OR') => {
     const sql = `SELECT *
                  FROM ${table}
                  WHERE ${fields.map(e =>
-                         `${e.key} ${e.condition || '='} "${(e.condition === 'LIKE') ? `%${e.value}%` : e.value}"`).join(' OR ')}`;
+                         `${e.key} ${e.condition || '='} "${(e.condition === 'LIKE') ? `%${e.value}%` : e.value}"`).join(` ${separator} `)}`;
     return db.getAllSync(sql);// as [{ [x: string]: any; }];
 }
 
@@ -129,8 +129,8 @@ const Model = (table: string) => {
         return getTable(db, table);
     };
 
-    const where = (db: SQLiteDatabase, fields: { key: string, value: string, condition: string }[]) =>
-        get(db, table, fields);
+    const where = (db: SQLiteDatabase, fields: { key: string, value: string, condition: string }[], separator='OR') =>
+        get(db, table, fields, separator);
 
     return {
         add,

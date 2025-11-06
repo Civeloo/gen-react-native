@@ -26,14 +26,14 @@ export const firebaseSignIn: FirebaseSignProps = (email, password) =>
     signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             const user = userCredential.user;
-            if (!user.emailVerified) {
+            /*if (!user.emailVerified) {
                 sendEmailVerification(user).then();
                 firebaseSignOut();
                 throw {
                     code: "auth/email-not-verified",
                     message: getLocalizedText("verify_email_error"),
                 };
-            }
+            }*/
             return user;
         });
 
@@ -61,8 +61,9 @@ export const firebaseAuthState = () =>
             auth,
             (user) => {
                 unsubscribe();
-                if (user?.emailVerified) resolve(user);
-                else resolve(null);
+                /*if (user?.emailVerified) resolve(user);
+                else resolve(null);*/
+	       resolve(user);
             },
             (error) => {
                 unsubscribe();

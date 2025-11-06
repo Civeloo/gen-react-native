@@ -15,6 +15,7 @@ import {useSQLiteContext} from "expo-sqlite";
 import {TopButtons} from "@/components/top-buttons";
 import {FECAESolicitarResult} from "@/types/fe-cae-solicitar";
 import Products from "@/services/database/products.model";
+import {INVOICED, PENDING} from "@/constants";
 
 export default function OrderPage() {
     const [isLoading, setIsLoading] = useState(false);
@@ -36,9 +37,28 @@ export default function OrderPage() {
     const [selected, setSelected] = useState({});
     const [addOrder, setAddOrder] = useState(false);
 
-    const handleRemove = (orderDetails: OrderDetail[]) => {
-        // TODO: Cancelar factura en ARCA también
+    const isServerDown = (res) => {
+        //TODO: si esta caido el server de afip alertar para reitentar
+        if (!res || Object.keys(res).length === 0) {
+            alert('SERVIDOR ARCA CAIDO REINTENTAR POR FAVOR');
+            setIsLoading(false);
+            return true;
+        }
+    }
+
+    const handleRemove = async (invoice: Invoice) => {
+        const {order, orderDetails, customer, total} = invoice;
         setIsLoading(true);
+        if (user && order.orderStatus === INVOICED) {
+            const arcaInvoiceProps = {
+                user,
+                order: invoice.order,
+                customerTin: customer?.customerTin || '',
+                total
+            };
+            const res = await arcaInvoice(arcaInvoiceProps) as FECAESolicitarResult;
+            if (isServerDown(res)) return;
+        }
         orderDetails.map((orderDetail: OrderDetail) => {
             const product = Products.byId(db, orderDetail.productID)?.at(0) as Product;
             Products.update(db, {
@@ -53,7 +73,7 @@ export default function OrderPage() {
 
     const signInvoice = async (invoice: Invoice) => {
         const {order, customer, total} = invoice;
-        if (user && order.orderStatus === 'pending') {
+        if (user && order.orderStatus === PENDING) {
             setIsLoading(true);
             const arcaInvoiceProps = {
                 user,
@@ -62,12 +82,7 @@ export default function OrderPage() {
                 total
             };
             const res = await arcaInvoice(arcaInvoiceProps) as FECAESolicitarResult;
-            //TODO: si esta caido el server de afip alertar para reitentar
-            if (!res || Object.keys(res).length === 0) {
-                alert('SERVIDOR ARCA CAIDO REINTENTAR POR FAVOR');
-                setIsLoading(false);
-                return;
-            }
+            if (isServerDown(res)) return;
             const feDetResp = res?.FeDetResp;
             const feDetRespArr = Array.isArray(feDetResp) ? feDetResp : [feDetResp];
             const fECAEDetResponseArr = feDetRespArr.map((f) => f.FECAEDetResponse);
@@ -88,7 +103,7 @@ export default function OrderPage() {
             order.orderCode = orderCode;
             order.orderSignature = signature.CAE.toString();
             order.orderExpiration = signature.CAEFchVto.toString();
-            order.orderStatus = 'invoiced';
+            order.orderStatus = INVOICED;
             const updateOrder = {
                 orderID: order.orderID,
                 orderCode: order.orderCode,

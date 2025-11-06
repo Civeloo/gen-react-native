@@ -1,5 +1,6 @@
 import Model from './model';
 import {SQLiteDatabase} from "expo-sqlite";
+import {CANCELLED} from "@/constants";
 
 // indexes.setIndexDefinition(
 //     'byPriority',
@@ -29,10 +30,10 @@ const Orders = (() => {
     //     where((getCell) => getCell('status') != 'cancelled');
     // });
     const getNotCancelledOrders = (db: SQLiteDatabase) =>
-        base.where(db, [{key: 'orderStatus', value: 'cancelled', condition: '!='}]);
+        base.where(db, [{key: 'orderStatus', value: CANCELLED, condition: '!='}]);
 
     const cancel = (db: SQLiteDatabase, id: string) =>
-        base.update(db, {orderID: id, orderStatus: 'cancelled'});
+        base.update(db, {orderID: id, orderStatus: CANCELLED});
 
     return {
         ...base,
