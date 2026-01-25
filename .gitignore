@@ -44,4 +44,4 @@ google-services.json
 GoogleService-Info.plist
 *.keystore
 
-storybook.requires.ts
+storybook.requires.ts.env
