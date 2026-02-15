@@ -36,7 +36,8 @@
       "permissions": [
         "android.permission.NOTIFICATIONS",
         "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.READ_EXTERNAL_STORAGE"
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.CAMERA"
       ],
       "softwareKeyboardLayoutMode": "pan"
     },
@@ -107,13 +108,16 @@
         {
           "android": {
             "enableOnBackInvokedCallback": true,
-            "enableProguardInReleaseBuilds": true,
+            "enableProguardInReleaseBuilds": true
           }
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "ios": {
+      "bundleIdentifier": "com.civeloo.gen"
     }
   }
 }
