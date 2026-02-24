@@ -5,7 +5,7 @@ const withStorybook = require('@storybook/react-native/metro/withStorybook');
 /** @type {import('expo/metro-config').MetroConfig} */
 const defaultConfig = getDefaultConfig(__dirname);
 defaultConfig.resolver.sourceExts.push('cjs');
-defaultConfig.resolver.unstable_enablePackageExports = false;
+defaultConfig.resolver.unstable_enablePackageExports = true;
 // defaultConfig.resolver.assetExts.push('wasm');
 
 // Add COEP and COOP headers to support SharedArrayBuffer

@@ -1,16 +1,28 @@
-import {getLocalizedText} from '@/languages/languages';
+import { getLocalizedText } from '@/languages/languages';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import {router, Tabs} from 'expo-router';
-import React, {Suspense} from "react";
-import {useSession} from "@/services/session/ctx";
-import {DB_NAME, migrateDbIfNeeded} from '@/services/database/database';
-import {BackButton} from "@/components/back-button";
-import {SignOutButton} from "@/components/sign-out-button";
-import {ActivityIndicator, StyleSheet, View} from "react-native";
-import {SQLiteProvider} from "expo-sqlite";
+import { router, Tabs } from 'expo-router';
+import React, { useRef, Suspense, useState, useEffect } from "react";
+import { useSession } from "@/services/session/ctx";
+import { DB_NAME, migrateDbIfNeeded } from '@/services/database/database';
+import { BackButton } from "@/components/back-button";
+import { SignOutButton } from "@/components/sign-out-button";
+import { ActivityIndicator, Platform, StyleSheet, View } from "react-native";
+import { SQLiteProvider } from "expo-sqlite";
+import { BannerAd, BannerAdSize, TestIds, useForeground, AdsConsent } from 'react-native-google-mobile-ads';
+import { ADD_UNIT_ID } from '@/constants';
+
+const adUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : ADD_UNIT_ID;
 
 export default function TabLayout() {
-    const {session, signOut} = useSession();
+    const [canRequestAds, setCanRequestAds] = useState(false);
+
+    const { session, signOut } = useSession();
+
+    const bannerRef = useRef<BannerAd>(null);
+
+    useForeground(() => {
+        Platform.OS === 'ios' && bannerRef.current?.load();
+    });
 
     const handleSignOut = () => {
         if (session) {
@@ -21,8 +33,13 @@ export default function TabLayout() {
         }
     }
 
+
+    useEffect(() => {
+        AdsConsent.requestInfoUpdate().then((it) => setCanRequestAds(it.canRequestAds));
+    }, []);
+
     return (<>
-        <Suspense fallback={<ActivityIndicator size="large"/>}>
+        <Suspense fallback={<ActivityIndicator size="large" />}>
             <SQLiteProvider databaseName={DB_NAME} onInit={migrateDbIfNeeded} useSuspense>
                 <Tabs
                     screenOptions={{
@@ -42,11 +59,11 @@ export default function TabLayout() {
                         name="index"
                         options={{
                             title: getLocalizedText('index'),
-                            tabBarIcon: ({color, focused}) => (
-                                <Ionicons name={focused ? 'home-sharp' : 'home-outline'} color={color} size={24}/>
+                            tabBarIcon: ({ color, focused }) => (
+                                <Ionicons name={focused ? 'home-sharp' : 'home-outline'} color={color} size={24} />
                             ),
                             headerRight: () => (<View style={styles.headerRight}>
-                                <SignOutButton signOut={!!session} onSignOut={handleSignOut}/>
+                                <SignOutButton signOut={!!session} onSignOut={handleSignOut} />
                             </View>),
                         }}
                     />
@@ -54,11 +71,11 @@ export default function TabLayout() {
                         name="order"
                         options={{
                             title: getLocalizedText('orders'),
-                            tabBarIcon: ({color, focused}) => (
-                                <Ionicons name={focused ? 'apps' : 'apps-outline'} color={color} size={24}/>
+                            tabBarIcon: ({ color, focused }) => (
+                                <Ionicons name={focused ? 'apps' : 'apps-outline'} color={color} size={24} />
                             ),
                             headerLeft: () => (
-                                <BackButton onPress={() => router.back()}/>
+                                <BackButton onPress={() => router.back()} />
                             ),
                         }}
                     />
@@ -67,11 +84,11 @@ export default function TabLayout() {
                         options={{
                             title: getLocalizedText('products'),
                             href: "/product?refresh=true",
-                            tabBarIcon: ({color, focused}) => (
-                                <Ionicons name={focused ? 'add-circle' : 'add-circle-outline'} color={color} size={24}/>
+                            tabBarIcon: ({ color, focused }) => (
+                                <Ionicons name={focused ? 'add-circle' : 'add-circle-outline'} color={color} size={24} />
                             ),
                             headerLeft: () => (
-                                <BackButton onPress={() => router.back()}/>
+                                <BackButton onPress={() => router.back()} />
                             ),
                         }}
                     />
@@ -79,11 +96,11 @@ export default function TabLayout() {
                         name="customer"
                         options={{
                             title: getLocalizedText('customers'),
-                            tabBarIcon: ({color, focused}) => (
-                                <Ionicons name={focused ? 'person' : 'person-outline'} color={color} size={24}/>
+                            tabBarIcon: ({ color, focused }) => (
+                                <Ionicons name={focused ? 'person' : 'person-outline'} color={color} size={24} />
                             ),
                             headerLeft: () => (
-                                <BackButton onPress={() => router.back()}/>
+                                <BackButton onPress={() => router.back()} />
                             ),
                         }}
                     />
@@ -91,11 +108,11 @@ export default function TabLayout() {
                         name="company"
                         options={{
                             title: getLocalizedText('company'),
-                            tabBarIcon: ({color, focused}) => (
-                                <Ionicons name={focused ? 'business' : 'business-outline'} color={color} size={24}/>
+                            tabBarIcon: ({ color, focused }) => (
+                                <Ionicons name={focused ? 'business' : 'business-outline'} color={color} size={24} />
                             ),
                             headerLeft: () => (
-                                <BackButton onPress={() => router.back()}/>
+                                <BackButton onPress={() => router.back()} />
                             ),
                         }}
                     />
@@ -104,7 +121,7 @@ export default function TabLayout() {
                         options={{
                             title: getLocalizedText('taxes'),
                             headerLeft: () => (
-                                <BackButton onPress={() => router.back()}/>
+                                <BackButton onPress={() => router.back()} />
                             ),
                             href: null
                         }}
@@ -112,6 +129,7 @@ export default function TabLayout() {
                 </Tabs>
             </SQLiteProvider>
         </Suspense>
+        {!!canRequestAds && <BannerAd ref={bannerRef} unitId={adUnitId} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />}
     </>);
 }
 
